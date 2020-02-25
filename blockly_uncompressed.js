@@ -177,6 +177,10 @@ goog.addDependency('../../core/variable_events.js', ['Blockly.Events.VarBase', '
 goog.addDependency('../../core/variable_map.js', ['Blockly.VariableMap'], ['Blockly.Events', 'Blockly.Events.VarDelete', 'Blockly.Events.VarRename', 'Blockly.Msg', 'Blockly.utils', 'Blockly.utils.object'], {});
 goog.addDependency('../../core/variable_model.js', ['Blockly.VariableModel'], ['Blockly.Events', 'Blockly.Events.VarCreate', 'Blockly.utils'], {});
 goog.addDependency('../../core/variables.js', ['Blockly.Variables'], ['Blockly.Blocks', 'Blockly.Msg', 'Blockly.VariableModel', 'Blockly.Xml', 'Blockly.utils', 'Blockly.utils.xml'], {});
+goog.addDependency('../../core/module_events.js', ['Blockly.Events.ModuleBase', 'Blockly.Events.ModuleCreate', 'Blockly.Events.ModuleDelete', 'Blockly.Events.ModuleRename'], ['Blockly.Events', 'Blockly.Events.Abstract', 'Blockly.utils.object'], {});
+goog.addDependency('../../core/module_manager.js', ['Blockly.ModuleManager'], ['Blockly.Events', 'Blockly.Events.ModuleDelete', 'Blockly.Events.ModuleRename', 'Blockly.Msg', 'Blockly.utils', 'Blockly.utils.object'], {});
+goog.addDependency('../../core/module_model.js', ['Blockly.ModuleModel'], ['Blockly.Events', 'Blockly.Events.ModuleCreate', 'Blockly.utils'], {});
+goog.addDependency('../../core/modulebar.js', ['Blockly.ModuleBar'], ['Blockly.Css', 'Blockly.Events', 'Blockly.Events.Ui', 'Blockly.Touch', 'Blockly.navigation', 'Blockly.utils', 'Blockly.utils.Rect', 'Blockly.utils.aria', 'Blockly.utils.colour', 'Blockly.utils.dom', 'Blockly.utils.object'], {});
 goog.addDependency('../../core/variables_dynamic.js', ['Blockly.VariablesDynamic'], ['Blockly.Blocks', 'Blockly.Msg', 'Blockly.VariableModel', 'Blockly.Variables', 'Blockly.utils.xml'], {});
 goog.addDependency('../../core/warning.js', ['Blockly.Warning'], ['Blockly.Bubble', 'Blockly.Events', 'Blockly.Events.Ui', 'Blockly.Icon', 'Blockly.utils.dom', 'Blockly.utils.object'], {});
 goog.addDependency('../../core/widgetdiv.js', ['Blockly.WidgetDiv'], ['Blockly.utils.style'], {});
