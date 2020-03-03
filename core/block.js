@@ -532,6 +532,15 @@ Blockly.Block.prototype.getModuleId = function() {
 };
 
 /**
+ * Returns module order for this block.
+ * @return int
+ * @package
+ */
+Blockly.Block.prototype.getModuleOrder = function() {
+  return this.workspace.getModuleManager().getModuleOrder(this.moduleId_);
+};
+
+/**
  * Returns is this block in active module.
  * @return string
  * @package
