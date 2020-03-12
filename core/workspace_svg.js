@@ -22,6 +22,7 @@ goog.require('Blockly.Gesture');
 goog.require('Blockly.Grid');
 goog.require('Blockly.MarkerManager');
 goog.require('Blockly.Msg');
+goog.require('Blockly.ModuleBar');
 goog.require('Blockly.navigation');
 goog.require('Blockly.Options');
 goog.require('Blockly.registry');
