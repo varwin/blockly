@@ -58,7 +58,6 @@ Blockly.Flyout = function(workspaceOptions) {
   // Keep the workspace visibility consistent with the flyout's visibility.
   this.workspace_.setVisible(this.isVisible_);
 
-  console.log()
   /**
    * Is RTL vs LTR.
    * @type {boolean}
