@@ -102,6 +102,8 @@ Blockly.Xml.modulesToDom = function(workspace) {
     var element = Blockly.utils.xml.createElement('module');
     element.appendChild(Blockly.utils.xml.createTextNode(module.name));
     element.id = module.getId();
+    element.setAttribute('scroll-x', module.scrollX.toString());
+    element.setAttribute('scroll-y', module.scrollY.toString());
     modules.appendChild(element);
   }
   return modules;
@@ -507,6 +509,10 @@ Blockly.Xml.domToWorkspace = function(xml, workspace) {
 
   if (workspace instanceof Blockly.WorkspaceSvg) {
     workspace.getModuleBar().render();
+    var activeModule = workspace.getModuleManager().getActiveModule();
+    if (activeModule) {
+      workspace.scroll(activeModule.scrollX, activeModule.scrollY);
+    }
   }
 
   // Re-enable workspace resizing.
@@ -666,7 +672,7 @@ Blockly.Xml.domToModules = function(xmlModules, workspace) {
       continue;  // Skip text nodes.
     }
 
-    workspace.getModuleManager().createModule(xmlChild.textContent, xmlChild.getAttribute('id'));
+    workspace.getModuleManager().createModule(xmlChild.textContent, xmlChild.getAttribute('id'), xmlChild.getAttribute('scroll-x'), xmlChild.getAttribute('scroll-y'));
   }
 
   var activeId = xmlModules.getAttribute('active');

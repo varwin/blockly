@@ -1337,7 +1337,7 @@ Blockly.WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
       // distance with neighbouring blocks.
       do {
         var collide = false;
-        var allBlocks = this.getAllBlocks(false);
+        var allBlocks = this.getAllBlocks(false, true);
         for (var i = 0, otherBlock; (otherBlock = allBlocks[i]); i++) {
           var otherXY = otherBlock.getRelativeToSurfaceXY();
           if (Math.abs(blockX - otherXY.x) <= 1 &&
@@ -1644,7 +1644,7 @@ Blockly.WorkspaceSvg.prototype.onMouseWheel_ = function(e) {
  *   bounding box containing the blocks on the workspace.
  */
 Blockly.WorkspaceSvg.prototype.getBlocksBoundingBox = function() {
-  var topBlocks = this.getTopBlocks(false);
+  var topBlocks = this.getTopBlocks(false, true);
   var topComments = this.getTopComments(false);
   var topElements = topBlocks.concat(topComments);
   // There are no blocks, return empty rectangle.
@@ -2223,6 +2223,14 @@ Blockly.WorkspaceSvg.prototype.scroll = function(x, y) {
 
   this.scrollX = x;
   this.scrollY = y;
+
+  // Record active module workspace coordinates
+  var activeModule = this.getModuleManager().getActiveModule();
+  if (activeModule) {
+    activeModule.scrollX = x;
+    activeModule.scrollY = y;
+  }
+
   if (this.scrollbar) {
     // The content position (displacement from the content's top-left to the
     // origin) plus the scroll position (displacement from the view's top-left

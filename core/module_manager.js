@@ -146,15 +146,19 @@ Blockly.ModuleManager.prototype.moveModule = function(module, newOrder) {
  * @param {string} name The name of the module.
  * @param {?string=} opt_id The unique ID of the module. This will default to
  *     a UUID.
+*  @param {?number=} scrollX Current horizontal scrolling offset in pixel units.
+*  @param {?number=} scrollY Current vertical scrolling offset in pixel units.
  * @return {!Blockly.ModuleModel} The newly created module.
  */
-Blockly.ModuleManager.prototype.createModule = function(name, opt_id) {
+Blockly.ModuleManager.prototype.createModule = function(name, opt_id, scrollX, scrollY) {
   if (opt_id && this.getModuleById(opt_id)) {
     return this.getModuleById(opt_id);
   }
 
   var id = opt_id || Blockly.utils.genUid();
   var module = new Blockly.ModuleModel(this.workspace, name, id);
+  module.scrollX = scrollX || 0;
+  module.scrollY = scrollY || 0;
 
   this.moduleMap_.push(module);
 
@@ -264,6 +268,7 @@ Blockly.ModuleManager.prototype.activateModule = function(module) {
     var xml = Blockly.Xml.workspaceToDom(this.workspace);
     this.workspace.clear();
     Blockly.Xml.domToWorkspace(xml, this.workspace);
+    this.workspace.scroll(module.scrollX, module.scrollY);
 
     Blockly.Events.enable();
 
