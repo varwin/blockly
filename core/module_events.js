@@ -98,6 +98,8 @@ Blockly.Events.ModuleCreate.prototype.type = Blockly.Events.MODULE_CREATE;
 Blockly.Events.ModuleCreate.prototype.toJson = function() {
   var json = Blockly.Events.ModuleCreate.superClass_.toJson.call(this);
   json['moduleName'] = this.moduleName;
+  json['scrollX'] = this.scrollX;
+  json['scrollY'] = this.scrollY;
   return json;
 };
 
@@ -108,6 +110,8 @@ Blockly.Events.ModuleCreate.prototype.toJson = function() {
 Blockly.Events.ModuleCreate.prototype.fromJson = function(json) {
   Blockly.Events.ModuleCreate.superClass_.fromJson.call(this, json);
   this.moduleName = json['moduleName'];
+  this.scrollX = json['scrollX'];
+  this.scrollY = json['scrollY'];
 };
 
 /**
@@ -117,7 +121,7 @@ Blockly.Events.ModuleCreate.prototype.fromJson = function(json) {
 Blockly.Events.ModuleCreate.prototype.run = function(forward) {
   var moduleManager = this.getEventWorkspace_().getModuleManager();
   if (forward) {
-    moduleManager.createModule(this.moduleName, this.moduleId);
+    moduleManager.createModule(this.moduleName, this.moduleId, this.scrollX, this.scrollY);
   } else {
     moduleManager.deleteModule(moduleManager.getModuleById(this.moduleId));
   }
@@ -136,6 +140,8 @@ Blockly.Events.ModuleDelete = function(module) {
   }
   Blockly.Events.ModuleDelete.superClass_.constructor.call(this, module);
   this.moduleName = module.name;
+  this.scrollX = module.scrollX;
+  this.scrollY = module.scrollY;
 };
 Blockly.utils.object.inherits(Blockly.Events.ModuleDelete, Blockly.Events.ModuleBase);
 
@@ -152,6 +158,8 @@ Blockly.Events.ModuleDelete.prototype.type = Blockly.Events.MODULE_DELETE;
 Blockly.Events.ModuleDelete.prototype.toJson = function() {
   var json = Blockly.Events.ModuleDelete.superClass_.toJson.call(this);
   json['moduleName'] = this.moduleName;
+  json['scrollX'] = this.scrollX;
+  json['scrollY'] = this.scrollY;
   return json;
 };
 
@@ -162,6 +170,8 @@ Blockly.Events.ModuleDelete.prototype.toJson = function() {
 Blockly.Events.ModuleDelete.prototype.fromJson = function(json) {
   Blockly.Events.ModuleDelete.superClass_.fromJson.call(this, json);
   this.moduleName = json['moduleName'];
+  this.scrollX = json['scrollX'];
+  this.scrollY = json['scrollY'];
 };
 
 /**
@@ -173,7 +183,7 @@ Blockly.Events.ModuleDelete.prototype.run = function(forward) {
   if (forward) {
     moduleManager.deleteModule(this.getModuleManager().getModuleById(this.moduleId));
   } else {
-    moduleManager.createModule(this.moduleName, this.moduleId);
+    moduleManager.createModule(this.moduleName, this.moduleId, this.scrollX, this.scrollY);
   }
 };
 
