@@ -132,8 +132,7 @@ Blockly.ModuleManager.prototype.renameModule = function(module, newName) {
 Blockly.ModuleManager.prototype.moveModule = function(module, newOrder) {
   var previousOrder = this.getModuleOrder(module.getId());
 
-  this.moduleMap_[previousOrder] = this.moduleMap_[newOrder];
-  this.moduleMap_[newOrder] = module;
+  this.moduleMap_.splice(newOrder,0,this.moduleMap_.splice(previousOrder, 1)[0]);
 
   if (this.workspace instanceof Blockly.WorkspaceSvg && this.workspace.getModuleBar()) {
     this.workspace.getModuleBar().render();

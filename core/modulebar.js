@@ -305,7 +305,14 @@ Blockly.ModuleBar.prototype.onMouseUp_ = function(e) {
   var targetModule = this.workspace_.getModuleManager().getModuleById(this.dragDropTargetModuleEl_.getAttribute('data-module-id'));
   this.dragDropTargetModuleEl_ = null;
 
-  this.workspace_.getModuleManager().moveModule(module, this.workspace_.getModuleManager().getModuleOrder(targetModule.getId()));
+  var oldPostion = this.workspace_.getModuleManager().getModuleOrder(module.getId());
+  var newPosition = this.workspace_.getModuleManager().getModuleOrder(targetModule.getId());
+
+  if (oldPostion > newPosition) {
+    newPosition++;
+  }
+
+  this.workspace_.getModuleManager().moveModule(module, newPosition);
 };
 
 /**
