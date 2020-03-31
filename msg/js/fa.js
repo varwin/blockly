@@ -61,7 +61,7 @@ Blockly.Msg["CONTROLS_WHILEUNTIL_TOOLTIP_WHILE"] = "تا زمانی که یک م
 Blockly.Msg["DEFAULT_MODULE_NAME"] = "General";  // untranslated
 Blockly.Msg["DELETE_ALL_BLOCKS"] = "حذف همهٔ بلاک‌های %1؟";
 Blockly.Msg["DELETE_BLOCK"] = "حذف بلوک";
-Blockly.Msg["DELETE_MODULE"] = "Delete module";  // untranslated
+Blockly.Msg["DELETE_MODULE"] = "Delete";  // untranslated
 Blockly.Msg["DELETE_VARIABLE"] = "متغیر '%1'را پاک کنید";
 Blockly.Msg["DELETE_VARIABLE_CONFIRMATION"] = "تعداد %1 استفاده از متغیر '%2' پاک شود؟";
 Blockly.Msg["DELETE_X_BLOCKS"] = "حذف بلوک‌های %1";
@@ -286,8 +286,8 @@ Blockly.Msg["MATH_TRIG_TOOLTIP_COS"] = "بازگرداندن کسینوس یک �
 Blockly.Msg["MATH_TRIG_TOOLTIP_SIN"] = "بازگرداندن سینوس یک زاویه به درجه (نه رادیان).";
 Blockly.Msg["MATH_TRIG_TOOLTIP_TAN"] = "بازگرداندن تانژانت یک زاویه به درجه (نه رادیان).";
 Blockly.Msg["NEW_COLOUR_VARIABLE"] = "ساخت متغیر رنگ...";
-Blockly.Msg["NEW_MODULE"] = "Create module";  // untranslated
-Blockly.Msg["NEW_MODULE_TITLE"] = "New module name:";  // untranslated
+Blockly.Msg["NEW_MODULE"] = "Create";  // untranslated
+Blockly.Msg["NEW_MODULE_TITLE"] = "Name:";  // untranslated
 Blockly.Msg["NEW_NUMBER_VARIABLE"] = "ساخت متغیر عددی...";
 Blockly.Msg["NEW_STRING_VARIABLE"] = "ساخت متغیر رشته...";
 Blockly.Msg["NEW_VARIABLE"] = "ایجاد متغیر...";
@@ -323,8 +323,8 @@ Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "ورودی‌ها";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "افزودن، حذف یا دوباره مرتب‌کردن ورودی این تابع.";
 Blockly.Msg["REDO"] = "انجام دوباره";
 Blockly.Msg["REMOVE_COMMENT"] = "حذف نظر";
-Blockly.Msg["RENAME_MODULE"] = "Rename module";  // untranslated
-Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename module to:";  // untranslated
+Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
+Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated
 Blockly.Msg["RENAME_VARIABLE"] = "تغییر نام متغیر...";
 Blockly.Msg["RENAME_VARIABLE_TITLE"] = "تغییر نام همهٔ متغیرهای «%1» به:";
 Blockly.Msg["TEXT_APPEND_HELPURL"] = "https://github.com/google/blockly/wiki/Text#text-modification";  // untranslated
