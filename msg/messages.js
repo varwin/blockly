@@ -137,18 +137,18 @@ Blockly.Msg.DEFAULT_MODULE_NAME = 'General';
 // Module renaming.
 /** @type {string} */
 /// button hint - Hint on the button used to launch the module renaming dialogue.
-Blockly.Msg.RENAME_MODULE = 'Rename module';
+Blockly.Msg.RENAME_MODULE = 'Rename';
 /** @type {string} */
 /// prompt - Prompts the user to enter the new name for a module.
-Blockly.Msg.RENAME_MODULE_TITLE = 'Rename module to:';
+Blockly.Msg.RENAME_MODULE_TITLE = 'Rename to:';
 
 // Module creation
 /** @type {string} */
 /// button hint - Hint on the button used to launch the module creation dialogue.
-Blockly.Msg.NEW_MODULE = 'Create module';
+Blockly.Msg.NEW_MODULE = 'Create';
 /** @type {string} */
 /// prompt - Prompts the user to enter the name for a new module.
-Blockly.Msg.NEW_MODULE_TITLE = 'New module name:';
+Blockly.Msg.NEW_MODULE_TITLE = 'Name:';
 
 // Module deletion.
 /** @type {string} */
@@ -159,7 +159,7 @@ Blockly.Msg.LAST_MODULE_DELETE_RESTRICTION = 'Can\'t delete the last module.';
 Blockly.Msg.NOT_EMPTY_MODULE_DELETE_RESTRICTION = 'Can\'t delete not empty module. Delete all module blocks first.';
 /** @type {string} */
 /// button hint - Hint on the button used to launch the module deletion.
-Blockly.Msg.DELETE_MODULE = 'Delete module';
+Blockly.Msg.DELETE_MODULE = 'Delete';
 
 // Variable renaming.
 /** @type {string} */

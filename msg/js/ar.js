@@ -61,7 +61,7 @@ Blockly.Msg["CONTROLS_WHILEUNTIL_TOOLTIP_WHILE"] = "بما ان القيمة ص�
 Blockly.Msg["DEFAULT_MODULE_NAME"] = "General";  // untranslated
 Blockly.Msg["DELETE_ALL_BLOCKS"] = "حذف %1 قطعة؟";
 Blockly.Msg["DELETE_BLOCK"] = "احذف القطعة";
-Blockly.Msg["DELETE_MODULE"] = "Delete module";  // untranslated
+Blockly.Msg["DELETE_MODULE"] = "Delete";  // untranslated
 Blockly.Msg["DELETE_VARIABLE"] = "حذف المتغير %1";
 Blockly.Msg["DELETE_VARIABLE_CONFIRMATION"] = "حذف%1 1 استخدامات المتغير '%2'؟";
 Blockly.Msg["DELETE_X_BLOCKS"] = "احذف %1 قطع";
@@ -286,8 +286,8 @@ Blockly.Msg["MATH_TRIG_TOOLTIP_COS"] = "يرجع جيب التمام لدرجة 
 Blockly.Msg["MATH_TRIG_TOOLTIP_SIN"] = "يرجع جيب التمام لدرجة (لا زواية نصف قطرية).";
 Blockly.Msg["MATH_TRIG_TOOLTIP_TAN"] = "يرجع الظل لدرجة (لا دائرة نصف قطرية).";
 Blockly.Msg["NEW_COLOUR_VARIABLE"] = "انشاء متغير لوني...";
-Blockly.Msg["NEW_MODULE"] = "Create module";  // untranslated
-Blockly.Msg["NEW_MODULE_TITLE"] = "New module name:";  // untranslated
+Blockly.Msg["NEW_MODULE"] = "Create";  // untranslated
+Blockly.Msg["NEW_MODULE_TITLE"] = "Name:";  // untranslated
 Blockly.Msg["NEW_NUMBER_VARIABLE"] = "انشاء متغير رقمي...";
 Blockly.Msg["NEW_STRING_VARIABLE"] = "انشاء متغير نصي...";
 Blockly.Msg["NEW_VARIABLE"] = "إنشاء متغير...";
@@ -323,8 +323,8 @@ Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "المدخلات";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "إضافة أو إزالة أو إعادة ترتيب المدخلات لهذه المهمة.";
 Blockly.Msg["REDO"] = "إعادة";
 Blockly.Msg["REMOVE_COMMENT"] = "أزل التعليق";
-Blockly.Msg["RENAME_MODULE"] = "Rename module";  // untranslated
-Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename module to:";  // untranslated
+Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
+Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated
 Blockly.Msg["RENAME_VARIABLE"] = "إعادة تسمية المتغير...";
 Blockly.Msg["RENAME_VARIABLE_TITLE"] = "إعادة تسمية كافة المتغيرات '%1' إلى:";
 Blockly.Msg["TEXT_APPEND_HELPURL"] = "https://github.com/google/blockly/wiki/Text#text-modification";  // untranslated
