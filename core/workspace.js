@@ -1,18 +1,7 @@
 /**
  * @license
  * Copyright 2012 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
@@ -30,12 +19,15 @@ goog.require('Blockly.utils.math');
 goog.require('Blockly.VariableMap');
 goog.require('Blockly.ModuleManager');
 
+goog.requireType('Blockly.IASTNodeLocation');
+
 
 /**
  * Class for a workspace.  This is a data structure that contains blocks.
  * There is no UI, and can be created headlessly.
  * @param {!Blockly.Options=} opt_options Dictionary of options.
  * @constructor
+ * @implements {Blockly.IASTNodeLocation}
  */
 Blockly.Workspace = function(opt_options) {
   /** @type {string} */
@@ -198,7 +190,7 @@ Blockly.Workspace.prototype.sortObjects_ = function(a, b) {
 };
 
 /**
- * Add a block to the list of top blocks.
+ * Adds a block to the list of top blocks.
  * @param {!Blockly.Block} block Block to add.
  */
 Blockly.Workspace.prototype.addTopBlock = function(block) {
@@ -206,7 +198,7 @@ Blockly.Workspace.prototype.addTopBlock = function(block) {
 };
 
 /**
- * Remove a block from the list of top blocks.
+ * Removes a block from the list of top blocks.
  * @param {!Blockly.Block} block Block to remove.
  */
 Blockly.Workspace.prototype.removeTopBlock = function(block) {
@@ -292,7 +284,7 @@ Blockly.Workspace.prototype.getBlocksByType = function(type, ordered) {
 };
 
 /**
- * Add a comment to the list of top comments.
+ * Adds a comment to the list of top comments.
  * @param {!Blockly.WorkspaceComment} comment comment to add.
  * @package
  */
@@ -309,7 +301,7 @@ Blockly.Workspace.prototype.addTopComment = function(comment) {
 };
 
 /**
- * Remove a comment from the list of top comments.
+ * Removes a comment from the list of top comments.
  * @param {!Blockly.WorkspaceComment} comment comment to remove.
  * @package
  */
@@ -387,8 +379,6 @@ Blockly.Workspace.prototype.clear = function() {
       Blockly.Events.setGroup(true);
     }
 
-    this.getModuleManager().clear();
-
     while (this.topBlocks_.length) {
       this.topBlocks_[0].dispose(false);
     }
@@ -402,6 +392,9 @@ Blockly.Workspace.prototype.clear = function() {
     if (this.potentialVariableMap_) {
       this.potentialVariableMap_.clear();
     }
+
+
+    this.getModuleManager().clear();
   } finally {
     this.isClearing = false;
   }
@@ -449,17 +442,6 @@ Blockly.Workspace.prototype.getVariableUsesById = function(id) {
  */
 Blockly.Workspace.prototype.deleteVariableById = function(id) {
   this.variableMap_.deleteVariableById(id);
-};
-
-/**
- * Deletes a variable and all of its uses from this workspace without asking
- * the user for confirmation.
- * @param {!Blockly.VariableModel} variable Variable to delete.
- * @param {!Array.<!Blockly.Block>} uses An array of uses of the variable.
- * @private
- */
-Blockly.Workspace.prototype.deleteVariableInternal_ = function(variable, uses) {
-  this.variableMap_.deleteVariableInternal(variable, uses);
 };
 
 /**
@@ -530,7 +512,7 @@ Blockly.Workspace.prototype.getAllVariables = function() {
 
 /**
  * Returns all variable names of all types.
- * @return {!Array<string>} List of all variable names of all types.
+ * @return {!Array.<string>} List of all variable names of all types.
  */
 Blockly.Workspace.prototype.getAllVariableNames = function() {
   return this.variableMap_.getAllVariableNames();
@@ -591,8 +573,11 @@ Blockly.Workspace.prototype.remainingCapacityOfType = function(type) {
   if (!this.options.maxInstances) {
     return Infinity;
   }
-  return (this.options.maxInstances[type] || Infinity) -
-      this.getBlocksByType(type, false).length;
+
+  var maxInstanceOfType = (this.options.maxInstances[type] !== undefined) ?
+      this.options.maxInstances[type] : Infinity;
+
+  return maxInstanceOfType - this.getBlocksByType(type, false).length;
 };
 
 /**

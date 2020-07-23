@@ -1,18 +1,7 @@
 /**
  * @license
  * Copyright 2012 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
@@ -50,7 +39,7 @@ Blockly.Xml.workspaceToDom = function(workspace, opt_noId) {
   if (modulesElement.hasChildNodes()) {
     xml.appendChild(modulesElement);
   }
-  
+
   var variablesElement = Blockly.Xml.variablesToDom(
       Blockly.Variables.allUsedVarModels(workspace));
   if (variablesElement.hasChildNodes()) {
@@ -116,10 +105,20 @@ Blockly.Xml.modulesToDom = function(workspace) {
  * @return {!Element} Tree of XML elements.
  */
 Blockly.Xml.blockToDomWithXY = function(block, opt_noId) {
+  if (block.isInsertionMarker()) {  // Skip over insertion markers.
+    block = block.getChildren(false)[0];
+    if (!block) {
+      // Disappears when appended. Cast to ANY b/c DocumentFragment -> Element
+      // is invalid. We have to cast to ANY in between.
+      return /** @type{?} */ (new DocumentFragment());
+    }
+  }
+
   var width;  // Not used in LTR.
   if (block.workspace.RTL) {
     width = block.workspace.getWidth();
   }
+
   var element = Blockly.Xml.blockToDom(block, opt_noId);
   var xy = block.getRelativeToSurfaceXY();
   element.setAttribute('x',
@@ -171,6 +170,19 @@ Blockly.Xml.allFieldsToDom_ = function(block, element) {
  * @return {!Element} Tree of XML elements.
  */
 Blockly.Xml.blockToDom = function(block, opt_noId, opt_noModule) {
+  // Skip over insertion markers.
+  if (block.isInsertionMarker()) {
+    var child = block.getChildren(false)[0];
+    if (child) {
+      return Blockly.Xml.blockToDom(child);
+    } else {
+      // Disappears when appended. Cast to ANY b/c DocumentFragment -> Element
+      // is invalid. We have to cast to ANY in between.
+      return /** @type{?} */ (new DocumentFragment());
+    }
+  }
+
+
   var element =
       Blockly.utils.xml.createElement(block.isShadow() ? 'shadow' : 'block');
   element.setAttribute('type', block.type);
@@ -230,8 +242,11 @@ Blockly.Xml.blockToDom = function(block, opt_noId, opt_noModule) {
         container.appendChild(Blockly.Xml.cloneShadow_(shadow, opt_noId, opt_noModule));
       }
       if (childBlock) {
-        container.appendChild(Blockly.Xml.blockToDom(childBlock, opt_noId, opt_noModule));
-        empty = false;
+        var elem = Blockly.Xml.blockToDom(childBlock, opt_noId, opt_noModule);
+        if (elem.nodeType == Blockly.utils.dom.NodeType.ELEMENT_NODE) {
+          container.appendChild(elem);
+          empty = false;
+        }
       }
     }
     container.setAttribute('name', input.name);
@@ -261,9 +276,12 @@ Blockly.Xml.blockToDom = function(block, opt_noId, opt_noModule) {
 
   var nextBlock = block.getNextBlock();
   if (nextBlock) {
-    var container = Blockly.utils.xml.createElement('next');
-    container.appendChild(Blockly.Xml.blockToDom(nextBlock, opt_noId, opt_noModule));
-    element.appendChild(container);
+    var elem = Blockly.Xml.blockToDom(nextBlock, opt_noId, opt_noModule);
+    if (elem.nodeType == Blockly.utils.dom.NodeType.ELEMENT_NODE) {
+      var container = Blockly.utils.xml.createElement('next');
+      container.appendChild(elem);
+      element.appendChild(container);
+    }
   }
   var shadow = block.nextConnection && block.nextConnection.getShadowDom();
   if (shadow && (!nextBlock || !nextBlock.isShadow())) {
@@ -301,7 +319,7 @@ Blockly.Xml.cloneShadow_ = function(shadow, opt_noId, opt_noModule) {
       while (node && !node.nextSibling) {
         textNode = node;
         node = node.parentNode;
-        if (textNode.nodeType == Blockly.utils.dom.Node.TEXT_NODE &&
+        if (textNode.nodeType == Blockly.utils.dom.NodeType.TEXT_NODE &&
             textNode.data.trim() == '' && node.firstChild != textNode) {
           // Prune whitespace after a tag.
           Blockly.utils.dom.removeNode(textNode);
@@ -310,7 +328,8 @@ Blockly.Xml.cloneShadow_ = function(shadow, opt_noId, opt_noModule) {
       if (node) {
         textNode = node;
         node = node.nextSibling;
-        if (textNode.nodeType == Blockly.utils.dom.Node.TEXT_NODE && textNode.data.trim() == '') {
+        if (textNode.nodeType == Blockly.utils.dom.NodeType.TEXT_NODE &&
+            textNode.data.trim() == '') {
           // Prune whitespace before a tag.
           Blockly.utils.dom.removeNode(textNode);
         }
@@ -340,7 +359,9 @@ Blockly.Xml.domToText = function(dom) {
     oldText = text;
     text = text.replace(regexp, '$1&#10;$2');
   } while (text != oldText);
-  return text;
+  // Unpack self-closing tags.  These tags fail when embedded in HTML.
+  // <block name="foo"/> -> <block name="foo"></block>
+  return text.replace(/<(\w+)([^<]*)\/>/g, '<$1$2></$1>');
 };
 
 /**
@@ -649,7 +670,7 @@ Blockly.Xml.domToBlock = function(xmlBlock, workspace) {
  */
 Blockly.Xml.domToVariables = function(xmlVariables, workspace) {
   for (var i = 0, xmlChild; (xmlChild = xmlVariables.childNodes[i]); i++) {
-    if (xmlChild.nodeType != Blockly.utils.dom.Node.ELEMENT_NODE) {
+    if (xmlChild.nodeType != Blockly.utils.dom.NodeType.ELEMENT_NODE) {
       continue;  // Skip text nodes.
     }
     var type = xmlChild.getAttribute('type');
@@ -668,7 +689,7 @@ Blockly.Xml.domToVariables = function(xmlVariables, workspace) {
  */
 Blockly.Xml.domToModules = function(xmlModules, workspace) {
   for (var i = 0, xmlChild; (xmlChild = xmlModules.childNodes[i]); i++) {
-    if (xmlChild.nodeType !== Blockly.utils.dom.Node.ELEMENT_NODE) {
+    if (xmlChild.nodeType !== Blockly.utils.dom.NodeType.ELEMENT_NODE) {
       continue;  // Skip text nodes.
     }
 
@@ -704,7 +725,7 @@ Blockly.Xml.domToBlockHeadless_ = function(xmlBlock, workspace) {
 
   var blockChild = null;
   for (var i = 0, xmlChild; (xmlChild = xmlBlock.childNodes[i]); i++) {
-    if (xmlChild.nodeType == Blockly.utils.dom.Node.TEXT_NODE) {
+    if (xmlChild.nodeType == Blockly.utils.dom.NodeType.TEXT_NODE) {
       // Ignore any text at the <block> level.  It's all whitespace anyway.
       continue;
     }
@@ -714,7 +735,7 @@ Blockly.Xml.domToBlockHeadless_ = function(xmlBlock, workspace) {
     var childBlockElement = null;
     var childShadowElement = null;
     for (var j = 0, grandchild; (grandchild = xmlChild.childNodes[j]); j++) {
-      if (grandchild.nodeType == Blockly.utils.dom.Node.ELEMENT_NODE) {
+      if (grandchild.nodeType == Blockly.utils.dom.NodeType.ELEMENT_NODE) {
         if (grandchild.nodeName.toLowerCase() == 'block') {
           childBlockElement = /** @type {!Element} */ (grandchild);
         } else if (grandchild.nodeName.toLowerCase() == 'shadow') {
