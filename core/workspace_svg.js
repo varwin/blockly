@@ -766,8 +766,9 @@ Blockly.WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
     this.toolbox_ = new ToolboxClass(this);
   }
 
-  this.moduleBar_ = new Blockly.ModuleBar(this);
-
+  if (this.options.showModuleBar) {
+    this.moduleBar_ = new Blockly.ModuleBar(this);
+  }
 
   if (this.grid_) {
     this.grid_.update(this.scale);

@@ -372,7 +372,9 @@ Blockly.init_ = function(mainWorkspace) {
   }
 
   // init module box
-  mainWorkspace.getModuleBar().init();
+  if (mainWorkspace.getModuleBar()) {
+    mainWorkspace.getModuleBar().init();
+  }
 
   var verticalSpacing = Blockly.Scrollbar.scrollbarThickness;
   if (options.hasTrashcan) {

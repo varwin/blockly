@@ -529,7 +529,9 @@ Blockly.Xml.domToWorkspace = function(xml, workspace) {
   }
 
   if (workspace instanceof Blockly.WorkspaceSvg) {
-    workspace.getModuleBar().render();
+    if (workspace.getModuleBar()) {
+      workspace.getModuleBar().render();
+    }
     var activeModule = workspace.getModuleManager().getActiveModule();
     if (activeModule) {
       workspace.scroll(activeModule.scrollX, activeModule.scrollY);
