@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "Adaugă un comentariu";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "Nu se poate șterge variabila '%1' deoarece face parte din definiția funcției '%2'";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "Schimbaţi valoarea:";
 Blockly.Msg["CLEAN_UP"] = "Curăță blocări";

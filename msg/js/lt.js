@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "Palikti komentarą";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "Negalima ištrinti kintamojo '%1', nes jis yra dalis funkcijos '%2'";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "Keisti reikšmę:";
 Blockly.Msg["CLEAN_UP"] = "Išvalyti blokus";

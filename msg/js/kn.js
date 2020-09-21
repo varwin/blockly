@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "ಟಿಪ್ಪಣಿ ಸೇರಿಸು";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "%1' ಮಾರ್ಪಡಿಸಬಹುದಾದ ಮೂಲಾಂಶವನ್ನು ಅಳಿಸಲು ಬರುವುದಿಲ್ಲ. ಏಕೆಂದರೆ ಅದು '%2' ಕೆಲಸದಲ್ಲಿ ಉಪಯೋಗಿಸಲ್ಪಟ್ಟಿದೆ";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "ಮೌಲ್ಯ ಬದಲಾಯಿಸು:";
 Blockly.Msg["CLEAN_UP"] = "ಬ್ಲಾಕ್‍ಗಳನ್ನು ಸ್ವಚ್ಛಗೊಳಿಸು";

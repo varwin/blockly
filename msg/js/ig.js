@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "Tịnye okwu";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "Agaghị ekpochapụlị agbanwe '%1' maka nsonye ya na nkọwa nke ọrụ ahụ '%2'";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "Gbanwee akara:";
 Blockly.Msg["CLEAN_UP"] = "Hichapụ ngọngọ";

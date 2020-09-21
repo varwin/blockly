@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "Pridať komentár";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "Nie je možné zmazať premennú „%1“, pretože je súčasťou definície funkcie „%2“";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "Zmeniť hodnotu:";
 Blockly.Msg["CLEAN_UP"] = "Narovnať bloky";

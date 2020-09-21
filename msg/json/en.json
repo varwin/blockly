@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2020-07-29 11:17:25.982000",
+		"lastupdated": "2020-09-21 10:54:07.350000",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -16,6 +16,7 @@
 	"INLINE_INPUTS": "Inline Inputs",
 	"DELETE_BLOCK": "Delete Block",
 	"DELETE_X_BLOCKS": "Delete %1 Blocks",
+	"BLOCK_MOVE_TO_MODULE": "Move to '%1'",
 	"DELETE_ALL_BLOCKS": "Delete all %1 blocks?",
 	"CLEAN_UP": "Clean up Blocks",
 	"COLLAPSE_BLOCK": "Collapse Block",

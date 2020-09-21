@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "Aldoni komenton";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "Ne povas forigi la variablon '%1' ĉar ĝi estas parto de la difino de la funkcio '%2'";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "Ŝangi valoron:";
 Blockly.Msg["CLEAN_UP"] = "Purigi blokojn";

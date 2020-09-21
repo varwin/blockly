@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "コメントを追加";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "変数 '%1' は関数 '%2' の定義の一部であるため、削除できません";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "値を変える：";
 Blockly.Msg["CLEAN_UP"] = "ブロックを整理する";
