@@ -796,7 +796,7 @@ Blockly.BlockSvg.prototype.generateContextMenu = function() {
       menuOptions.push(disableOption);
     }
 
-    if (this.isMovable() && this.workspace.getModuleManager().getAllModules().length > 1) {
+    if (this.workspace.options.showModuleBar && this.isMovable() && this.workspace.getModuleManager().getAllModules().length > 1) {
       this.workspace.getModuleManager().getAllModules().forEach(function (module) {
         if (block.getModuleId() !== module.getId()) {
           menuOptions.push(Blockly.ContextMenu.blockMoveToModuleOption(block, module));
