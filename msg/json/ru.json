@@ -46,6 +46,7 @@
     "LAST_MODULE_DELETE_RESTRICTION": "Невозможно удалить последний модуль.",
     "NOT_EMPTY_MODULE_DELETE_RESTRICTION": "Невозможно удалить модуль с блоками. Сначала удалите блоки в модуле.",
     "DELETE_MODULE": "Удалить",
+    "BLOCK_MOVE_TO_MODULE": "Переместить в '%1'",
 	"CHANGE_VALUE_TITLE": "Измените значение:",
 	"RENAME_VARIABLE": "Переименовать переменную…",
 	"RENAME_VARIABLE_TITLE": "Переименовать все переменные '%1' в:",
