@@ -195,6 +195,7 @@ Blockly.ModuleManager.prototype.fireCreateEvent_ = function(module) {
 /**
  * Delete a module and all its top blocks.
  * @param {Blockly.ModuleModel} module Module to delete.
+ * @return {Blockly.ModuleModel} previous sibling module
  */
 Blockly.ModuleManager.prototype.deleteModule = function(module) {
   for (var i = 0; i < this.moduleMap_.length; i++) {
@@ -218,7 +219,7 @@ Blockly.ModuleManager.prototype.deleteModule = function(module) {
         }
       }
 
-      return;
+      return this.moduleMap_[i - 1] || this.moduleMap_[0];
     }
   }
 };
