@@ -243,11 +243,15 @@ Blockly.ContextMenu.blockDeleteOption = function(block) {
 Blockly.ContextMenu.blockMoveToModuleOption = function(block, module) {
   return {
     text: Blockly.Msg['BLOCK_MOVE_TO_MODULE'].replace('%1', module.name),
-    enabled: true,
+    enabled: block.isMovable(),
     callback: function() {
       var workspace = block.workspace;
       var blockId = block.id;
+
       block.setModuleId(module.getId());
+      block.getDescendants(false).forEach(descendant => descendant.setModuleId(module.getId()));
+      block.unplug();
+
       workspace.getModuleManager().activateModule(module);
       workspace.getBlockById(blockId).select();
     }
