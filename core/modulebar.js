@@ -505,7 +505,7 @@ Blockly.ModuleBar.prototype.handleDeleteModule_ = function() {
     Blockly.Events.setGroup(true);
   }
   try {
-    const previousModule = workspace.getModuleManager().deleteModule(activeModule)
+    var previousModule = workspace.getModuleManager().deleteModule(activeModule);
     workspace.getModuleManager().activateModule(previousModule);
   } finally {
     Blockly.Events.setGroup(false);

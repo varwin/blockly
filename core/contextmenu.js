@@ -249,7 +249,9 @@ Blockly.ContextMenu.blockMoveToModuleOption = function(block, module) {
       var blockId = block.id;
 
       block.setModuleId(module.getId());
-      block.getDescendants(false).forEach(descendant => descendant.setModuleId(module.getId()));
+      block.getDescendants(false).forEach(function (descendant) {
+        descendant.setModuleId(module.getId())
+      });
       block.unplug();
 
       workspace.getModuleManager().activateModule(module);
