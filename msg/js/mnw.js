@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "စုတ် လညာတ်";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "မပြံင်လှာဲ '%1' ဂှ် ဇိုတ်ပလီု ဟွံဂွံ၊ ဟိုတ်နူ ဍေဟ်ဂှ် ဆက်စပ်ဒၟံင် ကုဝှင်ရှေန် '%2'";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "သၠာဲ ဍာ်ဒကေဝ်";
 Blockly.Msg["CLEAN_UP"] = "ဖအး ဗလံက်";

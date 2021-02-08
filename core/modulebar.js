@@ -500,7 +500,17 @@ Blockly.ModuleBar.prototype.handleDeleteModule_ = function() {
     return;
   }
 
-  workspace.getModuleManager().deleteModule(activeModule);
+  var existingGroup = Blockly.Events.getGroup();
+  if (!existingGroup) {
+    Blockly.Events.setGroup(true);
+  }
+  try {
+    var previousModule = workspace.getModuleManager().deleteModule(activeModule);
+    workspace.getModuleManager().activateModule(previousModule);
+  } finally {
+    Blockly.Events.setGroup(false);
+  }
+
 };
 
 

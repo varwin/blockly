@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "Megjegyzés hozzáadása";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "A(z) „%1” változó nem törölhető, mert része a(z) „%2” függvény definíciójának.";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "Érték módosítása:";
 Blockly.Msg["CLEAN_UP"] = "Blokkok kiürítése";
@@ -294,6 +295,7 @@ Blockly.Msg["NEW_VARIABLE"] = "Változó létrehozása…";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "Az új változó neve:";
 Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "Az új változó típusa:";
+Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = ".";
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "utasítások engedélyezése";
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "paraméterlistaː";

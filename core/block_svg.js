@@ -796,6 +796,14 @@ Blockly.BlockSvg.prototype.generateContextMenu = function() {
       menuOptions.push(disableOption);
     }
 
+    if (this.workspace.options.showModuleBar && this.isMovable() && this.workspace.getModuleManager().getAllModules().length > 1) {
+      this.workspace.getModuleManager().getAllModules().forEach(function (module) {
+        if (block.getModuleId() !== module.getId()) {
+          menuOptions.push(Blockly.ContextMenu.blockMoveToModuleOption(block, module));
+        }
+      });
+    }
+
     if (this.isDeletable()) {
       menuOptions.push(Blockly.ContextMenu.blockDeleteOption(block));
     }
@@ -1003,7 +1011,7 @@ Blockly.BlockSvg.prototype.dispose = function(healStack, animate) {
  * @package
  */
 Blockly.BlockSvg.prototype.toCopyData = function() {
-  var xml = Blockly.Xml.blockToDom(this, true);
+  var xml = Blockly.Xml.blockToDom(this, true, true);
   // Copy only the selected block and internal blocks.
   Blockly.Xml.deleteNext(xml);
   // Encode start position in XML.
@@ -1149,7 +1157,7 @@ Blockly.BlockSvg.prototype.setWarningText = function(text, opt_id) {
       collapsedParent.setWarningText(Blockly.Msg['COLLAPSED_WARNINGS_WARNING'],
           Blockly.BlockSvg.COLLAPSED_WARNING_ID);
     }
-    
+
     if (!this.warning) {
       this.warning = new Blockly.Warning(this);
       changedState = true;

@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "کمنٹ کریں";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "متغیر '٪ 1' کو حذف نہیں کر سکتا کیونکہ یہ فنکشن کی تعریف کا حصہ ہے '٪ 2'";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "ویلیو تبدیل کریں:";
 Blockly.Msg["CLEAN_UP"] = "بلاکس صاف کریں";

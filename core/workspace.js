@@ -379,8 +379,6 @@ Blockly.Workspace.prototype.clear = function() {
       Blockly.Events.setGroup(true);
     }
 
-    this.getModuleManager().clear();
-
     while (this.topBlocks_.length) {
       this.topBlocks_[0].dispose(false);
     }
@@ -394,6 +392,9 @@ Blockly.Workspace.prototype.clear = function() {
     if (this.potentialVariableMap_) {
       this.potentialVariableMap_.clear();
     }
+
+
+    this.getModuleManager().clear();
   } finally {
     this.isClearing = false;
   }

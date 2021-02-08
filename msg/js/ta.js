@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "கருத்தை சேர்";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "Can't delete the variable '%1' because it's part of the definition of the function '%2'";  // untranslated
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "மதிப்பை மாற்றவும்:";
 Blockly.Msg["CLEAN_UP"] = "Clean up Blocks";  // untranslated
@@ -88,6 +89,7 @@ Blockly.Msg["IOS_VARIABLES_EMPTY_NAME_ERROR"] = "You can't use an empty variable
 Blockly.Msg["IOS_VARIABLES_RENAME_BUTTON"] = "பெயர் மாற்றுக";
 Blockly.Msg["LAST_MODULE_DELETE_RESTRICTION"] = "Can't delete the last module.";  // untranslated
 Blockly.Msg["IOS_VARIABLES_VARIABLE_NAME"] = "மாறிலியின் பெயர்";
+Blockly.Msg["LAST_MODULE_DELETE_RESTRICTION"] = "Can't delete the last module.";  // untranslated
 Blockly.Msg["LISTS_CREATE_EMPTY_HELPURL"] = "https://github.com/google/blockly/wiki/Lists#create-empty-list";  // untranslated
 Blockly.Msg["LISTS_CREATE_EMPTY_TITLE"] = "காலி பட்டியல் உருவாக்க";
 Blockly.Msg["LISTS_CREATE_EMPTY_TOOLTIP"] = "காலி பட்டியல் பின்கொடு.";
@@ -294,6 +296,7 @@ Blockly.Msg["NEW_VARIABLE"] = "மாறிலியை உருவாக்க
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "புதிய மாறிலியின் பெயர்:";
 Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "புதிய மாறிலியின் பெயர்:";
+Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "";  // untranslated
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "வாக்குமூலங்களை அனுமதிக்கவும்";
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "இத்துடன்";

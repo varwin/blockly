@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "ເພີ່ມຄຳອະທິບາຍ";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "Can't delete the variable '%1' because it's part of the definition of the function '%2'";  // untranslated
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "ປ່ຽນຄ່າ:";
 Blockly.Msg["CLEAN_UP"] = "ຈັດລຽນບລັອກໃຫ້ເປັນແຖວ";

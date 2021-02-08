@@ -766,8 +766,9 @@ Blockly.WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
     this.toolbox_ = new ToolboxClass(this);
   }
 
-  this.moduleBar_ = new Blockly.ModuleBar(this);
-
+  if (this.options.showModuleBar) {
+    this.moduleBar_ = new Blockly.ModuleBar(this);
+  }
 
   if (this.grid_) {
     this.grid_.update(this.scale);
@@ -1663,6 +1664,14 @@ Blockly.WorkspaceSvg.prototype.onMouseWheel_ = function(e) {
  */
 Blockly.WorkspaceSvg.prototype.getBlocksBoundingBox = function() {
   var topElements = this.getTopBoundedElements();
+
+  /*
+  TODO:
+  var topBlocks = this.getTopBlocks(false, true);
+  var topComments = this.getTopComments(false);
+  var topElements = topBlocks.concat(topComments);
+   */
+
   // There are no blocks, return empty rectangle.
   if (!topElements.length) {
     return new Blockly.utils.Rect(0, 0, 0, 0);
@@ -2547,8 +2556,10 @@ Blockly.WorkspaceSvg.prototype.getTopBlocks = function(ordered, inActiveModule) 
  * @param {!Blockly.Block} block Block to add.
  */
 Blockly.WorkspaceSvg.prototype.addTopBlock = function(block) {
-  this.addTopBoundedElement(/** @type {!Blockly.BlockSvg} */ (block));
   Blockly.WorkspaceSvg.superClass_.addTopBlock.call(this, block);
+  if (block.workspace.rendered && block.InActiveModule()) {
+    this.addTopBoundedElement(/** @type {!Blockly.BlockSvg} */ (block));
+  }
 };
 
 /**
@@ -2565,9 +2576,10 @@ Blockly.WorkspaceSvg.prototype.removeTopBlock = function(block) {
  * @param {!Blockly.WorkspaceComment} comment comment to add.
  */
 Blockly.WorkspaceSvg.prototype.addTopComment = function(comment) {
-  this.addTopBoundedElement(
-      /** @type {!Blockly.WorkspaceCommentSvg} */ (comment));
   Blockly.WorkspaceSvg.superClass_.addTopComment.call(this, comment);
+  if (comment.workspace.rendered && comment.InActiveModule()) {
+    this.addTopBoundedElement(/** @type {!Blockly.WorkspaceCommentSvg} */ (comment));
+  }
 };
 
 /**

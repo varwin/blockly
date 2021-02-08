@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "Πρόσθεσε Το Σχόλιο";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "Δεν μπορώ να διαγράψω την μεταβλητή '%1' διότι είναι μέρος του ορισμού της λειτουργίας '%2'";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "Άλλαξε την τιμή:";
 Blockly.Msg["CLEAN_UP"] = "Ταξινομείστε τα Μπλοκ";

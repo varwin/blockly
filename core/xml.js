@@ -169,7 +169,7 @@ Blockly.Xml.allFieldsToDom_ = function(block, element) {
  * @param {boolean=} opt_noModule True if the encoder should skip the block module.
  * @return {!Element} Tree of XML elements.
  */
-Blockly.Xml.blockToDom = function(block, opt_noId) {
+Blockly.Xml.blockToDom = function(block, opt_noId, opt_noModule) {
   // Skip over insertion markers.
   if (block.isInsertionMarker()) {
     var child = block.getChildren(false)[0];
@@ -242,7 +242,7 @@ Blockly.Xml.blockToDom = function(block, opt_noId) {
         container.appendChild(Blockly.Xml.cloneShadow_(shadow, opt_noId, opt_noModule));
       }
       if (childBlock) {
-        var elem = Blockly.Xml.blockToDom(childBlock, opt_noId);
+        var elem = Blockly.Xml.blockToDom(childBlock, opt_noId, opt_noModule);
         if (elem.nodeType == Blockly.utils.dom.NodeType.ELEMENT_NODE) {
           container.appendChild(elem);
           empty = false;
@@ -276,7 +276,7 @@ Blockly.Xml.blockToDom = function(block, opt_noId) {
 
   var nextBlock = block.getNextBlock();
   if (nextBlock) {
-    var elem = Blockly.Xml.blockToDom(nextBlock, opt_noId);
+    var elem = Blockly.Xml.blockToDom(nextBlock, opt_noId, opt_noModule);
     if (elem.nodeType == Blockly.utils.dom.NodeType.ELEMENT_NODE) {
       var container = Blockly.utils.xml.createElement('next');
       container.appendChild(elem);
@@ -529,7 +529,9 @@ Blockly.Xml.domToWorkspace = function(xml, workspace) {
   }
 
   if (workspace instanceof Blockly.WorkspaceSvg) {
-    workspace.getModuleBar().render();
+    if (workspace.getModuleBar()) {
+      workspace.getModuleBar().render();
+    }
     var activeModule = workspace.getModuleManager().getActiveModule();
     if (activeModule) {
       workspace.scroll(activeModule.scrollX, activeModule.scrollY);
@@ -689,7 +691,7 @@ Blockly.Xml.domToVariables = function(xmlVariables, workspace) {
  */
 Blockly.Xml.domToModules = function(xmlModules, workspace) {
   for (var i = 0, xmlChild; (xmlChild = xmlModules.childNodes[i]); i++) {
-    if (xmlChild.nodeType !== Blockly.utils.dom.Node.ELEMENT_NODE) {
+    if (xmlChild.nodeType !== Blockly.utils.dom.NodeType.ELEMENT_NODE) {
       continue;  // Skip text nodes.
     }
 

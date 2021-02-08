@@ -134,6 +134,8 @@ Blockly.Options = function(options) {
   this.pathToMedia = pathToMedia;
   /** @type {boolean} */
   this.hasCategories = hasCategories;
+  /** @type {boolean} */
+  this.showModuleBar = options['showModuleBar'];
   /** @type {!Object} */
   this.moveOptions = Blockly.Options.parseMoveOptions(options, hasCategories);
   /** @deprecated  January 2019 */

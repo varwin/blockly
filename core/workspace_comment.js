@@ -37,8 +37,6 @@ Blockly.WorkspaceComment = function(workspace, content, height, width, opt_id) {
   this.id = (opt_id && !workspace.getCommentById(opt_id)) ?
       opt_id : Blockly.utils.genUid();
 
-  workspace.addTopComment(this);
-
   /**
    * The comment's position in workspace units.  (0, 0) is at the workspace's
    * origin; scale does not change this value.
@@ -101,6 +99,14 @@ Blockly.WorkspaceComment = function(workspace, content, height, width, opt_id) {
    * @type {boolean}
    */
   this.isComment = true;
+
+  /**
+   * @type {string}
+   * @private
+   * */
+  this.moduleId_ = workspace.getModuleManager().getActiveModule().getId();
+
+  workspace.addTopComment(this);
 
   Blockly.WorkspaceComment.fireCreateEvent(this);
 };
@@ -264,6 +270,42 @@ Blockly.WorkspaceComment.prototype.setContent = function(content) {
 };
 
 /**
+ * Returns module id for this comment.
+ * @return string
+ * @package
+ */
+Blockly.WorkspaceComment.prototype.getModuleId = function() {
+  return this.moduleId_;
+};
+
+/**
+ * Returns module order for this comment.
+ * @return int
+ * @package
+ */
+Blockly.WorkspaceComment.prototype.getModuleOrder = function() {
+  return this.workspace.getModuleManager().getModuleOrder(this.moduleId_);
+};
+
+/**
+ * Returns is this comment in active module.
+ * @return string
+ * @package
+ */
+Blockly.WorkspaceComment.prototype.InActiveModule = function() {
+  return this.moduleId_ === this.workspace.getModuleManager().getActiveModule().getId();
+};
+
+/**
+ * Set module module id for this comment.
+ * @param {string} moduleId module id.
+ * @package
+ */
+Blockly.WorkspaceComment.prototype.setModuleId = function(moduleId) {
+  return this.moduleId_ = moduleId;
+};
+
+/**
  * Encode a comment subtree as XML with XY coordinates.
  * @param {boolean=} opt_noId True if the encoder should skip the comment ID.
  * @return {!Element} Tree of XML elements.
@@ -291,6 +333,9 @@ Blockly.WorkspaceComment.prototype.toXml = function(opt_noId) {
   if (!opt_noId) {
     commentElement.id = this.id;
   }
+
+  commentElement.setAttribute('module', this.getModuleId());
+
   commentElement.textContent = this.getContent();
   return commentElement;
 };
@@ -328,6 +373,7 @@ Blockly.WorkspaceComment.fromXml = function(xmlComment, workspace) {
 
   var comment = new Blockly.WorkspaceComment(
       workspace, info.content, info.h, info.w, info.id);
+  comment.moduleId_ = info.module;
 
   var commentX = parseInt(xmlComment.getAttribute('x'), 10);
   var commentY = parseInt(xmlComment.getAttribute('y'), 10);
@@ -368,6 +414,8 @@ Blockly.WorkspaceComment.parseAttributes = function(xml) {
     // @type {number}
     y: parseInt(xml.getAttribute('y'), 10),
     // @type {string}
-    content: xml.textContent
+    content: xml.textContent,
+    // @type {string}
+    module: xml.getAttribute('module')
   };
 };

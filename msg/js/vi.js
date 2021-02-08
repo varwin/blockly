@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "Thêm Chú Giải";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "Không thể xóa giá trị '%1' vì nó được bao gồm trong định nghĩa của chức năng '%2'";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "Thay giá trị thành:";
 Blockly.Msg["CLEAN_UP"] = "Sắp xếp lại các khối";

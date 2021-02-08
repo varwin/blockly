@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "Ajouter un commentaire";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "Impossible de supprimer la variable « %1 » parce qu’elle fait partie de la définition de la fonction « %2 »";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "Modifier la valeur :";
 Blockly.Msg["CLEAN_UP"] = "Nettoyer les blocs";

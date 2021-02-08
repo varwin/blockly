@@ -181,7 +181,7 @@ Blockly.Events.ModuleDelete.prototype.fromJson = function(json) {
 Blockly.Events.ModuleDelete.prototype.run = function(forward) {
   var moduleManager = this.getEventWorkspace_().getModuleManager();
   if (forward) {
-    moduleManager.deleteModule(this.getModuleManager().getModuleById(this.moduleId));
+    moduleManager.deleteModule(moduleManager.getModuleById(this.moduleId));
   } else {
     moduleManager.createModule(this.moduleName, this.moduleId, this.scrollX, this.scrollY);
   }

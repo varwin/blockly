@@ -233,6 +233,33 @@ Blockly.ContextMenu.blockDeleteOption = function(block) {
   return deleteOption;
 };
 
+
+/**
+ * Make a context menu option for duplicating the current block.
+ * @param {!Blockly.BlockSvg} block The block where the right-click originated.
+ * @param {!Blockly.ModuleModel} module The module to move block.
+ * @package
+ */
+Blockly.ContextMenu.blockMoveToModuleOption = function(block, module) {
+  return {
+    text: Blockly.Msg['BLOCK_MOVE_TO_MODULE'].replace('%1', module.name),
+    enabled: block.isMovable(),
+    callback: function() {
+      var workspace = block.workspace;
+      var blockId = block.id;
+
+      block.setModuleId(module.getId());
+      block.getDescendants(false).forEach(function (descendant) {
+        descendant.setModuleId(module.getId())
+      });
+      block.unplug();
+
+      workspace.getModuleManager().activateModule(module);
+      workspace.getBlockById(blockId).select();
+    }
+  };
+};
+
 /**
  * Make a context menu option for showing help for the current block.
  * @param {!Blockly.BlockSvg} block The block where the right-click originated.
@@ -269,6 +296,7 @@ Blockly.ContextMenu.blockDuplicateOption = function(block) {
   };
   return duplicateOption;
 };
+
 
 /**
  * Make a context menu option for adding or removing comments on the current

@@ -3,6 +3,7 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "Lisa kommentaar";
+Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "Muutujat '%1' ei saa kustutada, sest see on osa funktsiooni '%2' määratlusest";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "Muuda väärtust:";
 Blockly.Msg["CLEAN_UP"] = "Korista plokid kokku";
