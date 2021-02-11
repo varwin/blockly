@@ -92,7 +92,7 @@ goog.addDependency('../../core/keyboard_nav/tab_navigate_cursor.js', ['Blockly.T
 goog.addDependency('../../core/marker_manager.js', ['Blockly.MarkerManager'], ['Blockly.Cursor', 'Blockly.Marker'], {});
 goog.addDependency('../../core/menu.js', ['Blockly.Menu'], ['Blockly.utils.Coordinate', 'Blockly.utils.KeyCodes', 'Blockly.utils.aria', 'Blockly.utils.dom', 'Blockly.utils.style'], {});
 goog.addDependency('../../core/menuitem.js', ['Blockly.MenuItem'], ['Blockly.utils.IdGenerator', 'Blockly.utils.aria', 'Blockly.utils.dom'], {});
-goog.addDependency('../../core/module_events.js', ['Blockly.Events.ModuleBase', 'Blockly.Events.ModuleCreate', 'Blockly.Events.ModuleDelete', 'Blockly.Events.ModuleRename'], ['Blockly.Events', 'Blockly.Events.Abstract', 'Blockly.utils.object'], {});
+goog.addDependency('../../core/module_events.js', ['Blockly.Events.ModuleBase', 'Blockly.Events.ModuleCreate', 'Blockly.Events.ModuleDelete', 'Blockly.Events.ModuleMove', 'Blockly.Events.ModuleRename', 'Blockly.Events.MoveBlockToModule'], ['Blockly.Events', 'Blockly.Events.Abstract', 'Blockly.utils.object'], {});
 goog.addDependency('../../core/module_manager.js', ['Blockly.ModuleManager'], ['Blockly.Events', 'Blockly.Events.ModuleDelete', 'Blockly.Events.ModuleRename', 'Blockly.ModuleBar', 'Blockly.ModuleModel', 'Blockly.Msg', 'Blockly.utils', 'Blockly.utils.object'], {});
 goog.addDependency('../../core/module_model.js', ['Blockly.ModuleModel'], ['Blockly.Events', 'Blockly.Events.ModuleCreate', 'Blockly.utils'], {});
 goog.addDependency('../../core/modulebar.js', ['Blockly.ModuleBar'], ['Blockly.Css', 'Blockly.Touch', 'Blockly.utils', 'Blockly.utils.aria', 'Blockly.utils.colour', 'Blockly.utils.dom', 'Blockly.utils.object'], {'lang': 'es5'});

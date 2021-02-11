@@ -945,6 +945,59 @@ Blockly.BlockSvg.prototype.getSvgRoot = function() {
 };
 
 /**
+ * Remove render of this block.
+ * @suppress {checkTypes}
+ */
+Blockly.BlockSvg.prototype.removeRender = function() {
+  if (!this.rendered) {
+    return;
+  }
+
+  Blockly.Tooltip.dispose();
+  Blockly.Tooltip.unbindMouseEvents(this.pathObject.svgPath);
+  Blockly.utils.dom.startTextWidthCache();
+
+  // If this block is being dragged, unlink the mouse events.
+  if (Blockly.selected === this) {
+    this.unselect();
+    this.workspace.cancelCurrentGesture();
+  }
+  // If this block has a context menu open, close it.
+  if (Blockly.ContextMenu.currentBlock === this) {
+    Blockly.ContextMenu.hide();
+  }
+
+  var icons = this.getIcons();
+  for (var i = 0, icon; (icon = icons[i]); i++) {
+    icon.setVisible(false);
+  }
+
+  // Stop rerendering.
+  this.rendered = false;
+
+  // Clear pending warnings.
+  if (this.warningTextDb_) {
+    for (var n in this.warningTextDb_) {
+      clearTimeout(this.warningTextDb_[n]);
+    }
+    this.warningTextDb_ = null;
+  }
+
+  // Disable connections tracking and remove parent node from dom
+  if (!this.getParent()) {
+    this.setConnectionTracking(false);
+    Blockly.utils.dom.removeNode(this.svgGroup_);
+  }
+
+  Blockly.utils.dom.stopTextWidthCache();
+
+  // Remove render of all my children.
+  for (var i = this.childBlocks_.length - 1; i >= 0; i--) {
+    this.childBlocks_[i].removeRender();
+  }
+}
+
+/**
  * Dispose of this block.
  * @param {boolean=} healStack If true, then try to heal any gap by connecting
  *     the next statement with the previous statement.  Otherwise, dispose of
