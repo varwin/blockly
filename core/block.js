@@ -41,11 +41,12 @@ goog.requireType('Blockly.IASTNodeLocation');
  *     type-specific functions for this block.
  * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
  *     create a new ID.
+ * @param {string=} moduleId Optional module ID.  Use this ID if provided, otherwise use active module.
  * @constructor
  * @implements {Blockly.IASTNodeLocation}
  * @throws When block is not valid or block name is not allowed.
  */
-Blockly.Block = function(workspace, prototypeName, opt_id) {
+Blockly.Block = function(workspace, prototypeName, opt_id, moduleId) {
   if (Blockly.Generator &&
       typeof Blockly.Generator.prototype[prototypeName] != 'undefined') {
     // Occluding Generator class members is not allowed.
@@ -67,6 +68,13 @@ Blockly.Block = function(workspace, prototypeName, opt_id) {
   this.inputList = [];
   /** @type {boolean|undefined} */
   this.inputsInline = undefined;
+
+  /**
+   * @type {string}
+   * @private
+   * */
+  this.moduleId_ = moduleId ? moduleId : workspace.getModuleManager().getActiveModule().getId();
+
   /**
    * @type {boolean}
    * @private
@@ -512,6 +520,43 @@ Blockly.Block.prototype.unplugFromStack_ = function(opt_healStack) {
       previousTarget.connect(nextTarget);
     }
   }
+};
+
+
+/**
+ * Returns module id for this block.
+ * @return string
+ * @package
+ */
+Blockly.Block.prototype.getModuleId = function() {
+  return this.moduleId_;
+};
+
+/**
+ * Returns module order for this block.
+ * @return int
+ * @package
+ */
+Blockly.Block.prototype.getModuleOrder = function() {
+  return this.workspace.getModuleManager().getModuleOrder(this.getModuleId());
+};
+
+/**
+ * Returns is this block in active module.
+ * @return string
+ * @package
+ */
+Blockly.Block.prototype.InActiveModule = function() {
+  return this.moduleId_ === this.workspace.getModuleManager().getActiveModule().getId();
+};
+
+/**
+ * Set module module id for this block.
+ * @param {string} moduleId module id.
+ * @package
+ */
+Blockly.Block.prototype.setModuleId = function(moduleId) {
+  return this.moduleId_ = moduleId;
 };
 
 /**

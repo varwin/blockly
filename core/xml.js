@@ -34,6 +34,12 @@ goog.require('Blockly.utils.xml');
  */
 Blockly.Xml.workspaceToDom = function(workspace, opt_noId) {
   var xml = Blockly.utils.xml.createElement('xml');
+
+  var modulesElement = Blockly.Xml.modulesToDom(workspace);
+  if (modulesElement.hasChildNodes()) {
+    xml.appendChild(modulesElement);
+  }
+
   var variablesElement = Blockly.Xml.variablesToDom(
       Blockly.Variables.allUsedVarModels(workspace));
   if (variablesElement.hasChildNodes()) {
@@ -68,6 +74,29 @@ Blockly.Xml.variablesToDom = function(variableList) {
     variables.appendChild(element);
   }
   return variables;
+};
+
+/**
+ * Encode a list of modules as XML.
+ * @param {!Blockly.Workspace} workspace The workspace containing blocks.
+ * @return {!Element} Tree of XML elements.
+ */
+Blockly.Xml.modulesToDom = function(workspace) {
+  var modules = Blockly.utils.xml.createElement('modules');
+
+  var moduleList = workspace.getModuleManager().getAllModules();
+  modules.setAttribute('active', workspace.getModuleManager().getActiveModule().getId());
+
+  for (var i = 0, module; (module = moduleList[i]); i++) {
+    var element = Blockly.utils.xml.createElement('module');
+    element.appendChild(Blockly.utils.xml.createTextNode(module.name));
+    element.id = module.getId();
+    element.setAttribute('scroll-x', module.scrollX.toString());
+    element.setAttribute('scroll-y', module.scrollY.toString());
+    element.setAttribute('scale', module.scale.toString());
+    modules.appendChild(element);
+  }
+  return modules;
 };
 
 /**
@@ -138,9 +167,10 @@ Blockly.Xml.allFieldsToDom_ = function(block, element) {
  * Encode a block subtree as XML.
  * @param {!Blockly.Block} block The root block to encode.
  * @param {boolean=} opt_noId True if the encoder should skip the block ID.
+ * @param {boolean=} opt_noModule True if the encoder should skip the block module.
  * @return {!Element} Tree of XML elements.
  */
-Blockly.Xml.blockToDom = function(block, opt_noId) {
+Blockly.Xml.blockToDom = function(block, opt_noId, opt_noModule) {
   // Skip over insertion markers.
   if (block.isInsertionMarker()) {
     var child = block.getChildren(false)[0];
@@ -162,6 +192,10 @@ Blockly.Xml.blockToDom = function(block, opt_noId) {
     // the block's id when domToText is called.
     element.setAttribute('id', block.id);
   }
+  if (!opt_noModule) {
+    element.setAttribute('module', block.getModuleId());
+  }
+
   if (block.mutationToDom) {
     // Custom data for an advanced block.
     var mutation = block.mutationToDom();
@@ -206,10 +240,10 @@ Blockly.Xml.blockToDom = function(block, opt_noId) {
       }
       var shadow = input.connection.getShadowDom();
       if (shadow && (!childBlock || !childBlock.isShadow())) {
-        container.appendChild(Blockly.Xml.cloneShadow_(shadow, opt_noId));
+        container.appendChild(Blockly.Xml.cloneShadow_(shadow, opt_noId, opt_noModule));
       }
       if (childBlock) {
-        var elem = Blockly.Xml.blockToDom(childBlock, opt_noId);
+        var elem = Blockly.Xml.blockToDom(childBlock, opt_noId, opt_noModule);
         if (elem.nodeType == Blockly.utils.dom.NodeType.ELEMENT_NODE) {
           container.appendChild(elem);
           empty = false;
@@ -243,7 +277,7 @@ Blockly.Xml.blockToDom = function(block, opt_noId) {
 
   var nextBlock = block.getNextBlock();
   if (nextBlock) {
-    var elem = Blockly.Xml.blockToDom(nextBlock, opt_noId);
+    var elem = Blockly.Xml.blockToDom(nextBlock, opt_noId, opt_noModule);
     if (elem.nodeType == Blockly.utils.dom.NodeType.ELEMENT_NODE) {
       var container = Blockly.utils.xml.createElement('next');
       container.appendChild(elem);
@@ -252,7 +286,7 @@ Blockly.Xml.blockToDom = function(block, opt_noId) {
   }
   var shadow = block.nextConnection && block.nextConnection.getShadowDom();
   if (shadow && (!nextBlock || !nextBlock.isShadow())) {
-    container.appendChild(Blockly.Xml.cloneShadow_(shadow, opt_noId));
+    container.appendChild(Blockly.Xml.cloneShadow_(shadow, opt_noId, opt_noModule));
   }
 
   return element;
@@ -262,19 +296,23 @@ Blockly.Xml.blockToDom = function(block, opt_noId) {
  * Deeply clone the shadow's DOM so that changes don't back-wash to the block.
  * @param {!Element} shadow A tree of XML elements.
  * @param {boolean=} opt_noId True if the encoder should skip the block ID.
+ * @param {boolean=} opt_noModule True if the encoder should skip the block module.
  * @return {!Element} A tree of XML elements.
  * @private
  */
-Blockly.Xml.cloneShadow_ = function(shadow, opt_noId) {
+Blockly.Xml.cloneShadow_ = function(shadow, opt_noId, opt_noModule) {
   shadow = shadow.cloneNode(true);
   // Walk the tree looking for whitespace.  Don't prune whitespace in a tag.
   var node = shadow;
   var textNode;
   while (node) {
-    if (opt_noId && node.nodeName == 'shadow') {
+    if (opt_noId && node.nodeName === 'shadow') {
       // Strip off IDs from shadow blocks.  There should never be a 'block' as
       // a child of a 'shadow', so no need to check that.
       node.removeAttribute('id');
+    }
+    if (opt_noModule && node.nodeName === 'shadow') {
+      node.removeAttribute('module');
     }
     if (node.firstChild) {
       node = node.firstChild;
@@ -425,9 +463,19 @@ Blockly.Xml.domToWorkspace = function(xml, workspace) {
   }
   var variablesFirst = true;
   try {
+    // first load modules
+    for (var i = 0, xmlChild; (xmlChild = xml.childNodes[i]); i++) {
+      if (xmlChild.nodeName.toLowerCase() === 'modules') {
+        Blockly.Xml.domToModules(xmlChild, workspace);
+      }
+    }
+    workspace.getModuleManager().createDefaultModuleIfNeed();
+
+
     for (var i = 0, xmlChild; (xmlChild = xml.childNodes[i]); i++) {
       var name = xmlChild.nodeName.toLowerCase();
       var xmlChildElement = /** @type {!Element} */ (xmlChild);
+
       if (name == 'block' ||
           (name == 'shadow' && !Blockly.Events.recordUndo)) {
         // Allow top-level shadow blocks if recordUndo is disabled since
@@ -442,6 +490,7 @@ Blockly.Xml.domToWorkspace = function(xml, workspace) {
         if (!isNaN(blockX) && !isNaN(blockY)) {
           block.moveBy(workspace.RTL ? width - blockX : blockX, blockY);
         }
+
         variablesFirst = false;
       } else if (name == 'shadow') {
         throw TypeError('Shadow block cannot be a top-level block.');
@@ -479,6 +528,24 @@ Blockly.Xml.domToWorkspace = function(xml, workspace) {
     }
     Blockly.utils.dom.stopTextWidthCache();
   }
+
+  if (workspace instanceof Blockly.WorkspaceSvg) {
+    if (workspace.getModuleBar()) {
+      workspace.getModuleBar().render();
+    }
+    var activeModule = workspace.getModuleManager().getActiveModule();
+    if (activeModule) {
+      // store scroll positions before scale
+      var scrollX = activeModule.scrollX;
+      var scrollY = activeModule.scrollY;
+      if (workspace.scale !== activeModule.scale) {
+        workspace.setScale(activeModule.scale);
+      }
+
+      workspace.scroll(scrollX, scrollY);
+    }
+  }
+
   // Re-enable workspace resizing.
   if (workspace.setResizesEnabled) {
     workspace.setResizesEnabled(true);
@@ -560,7 +627,7 @@ Blockly.Xml.domToBlock = function(xmlBlock, workspace) {
     var topBlock = Blockly.Xml.domToBlockHeadless_(xmlBlock, workspace);
     // Generate list of all blocks.
     var blocks = topBlock.getDescendants(false);
-    if (workspace.rendered) {
+    if (workspace.rendered && topBlock.InActiveModule()) {
       // Wait to track connections to speed up assembly.
       topBlock.setConnectionTracking(false);
       // Render each block.
@@ -625,6 +692,33 @@ Blockly.Xml.domToVariables = function(xmlVariables, workspace) {
 };
 
 /**
+ * Decode an XML list of modules and add the module to the workspace.
+ * @param {!Element} xmlModules List of XML module elements.
+ * @param {!Blockly.Workspace} workspace The workspace to which the variable
+ *     should be added.
+ */
+Blockly.Xml.domToModules = function(xmlModules, workspace) {
+  for (var i = 0, xmlChild; (xmlChild = xmlModules.childNodes[i]); i++) {
+    if (xmlChild.nodeType !== Blockly.utils.dom.NodeType.ELEMENT_NODE) {
+      continue;  // Skip text nodes.
+    }
+
+    workspace.getModuleManager().createModule(
+        xmlChild.textContent,
+        xmlChild.getAttribute('id'),
+        xmlChild.getAttribute('scroll-x'),
+        xmlChild.getAttribute('scroll-y'),
+        xmlChild.getAttribute('scale')
+    );
+  }
+
+  var activeId = xmlModules.getAttribute('active');
+  if (activeId) {
+    workspace.getModuleManager().setActiveModuleId(activeId);
+  }
+};
+
+/**
  * Decode an XML block tag and create a block (and possibly sub blocks) on the
  * workspace.
  * @param {!Element} xmlBlock XML block element.
@@ -639,7 +733,13 @@ Blockly.Xml.domToBlockHeadless_ = function(xmlBlock, workspace) {
     throw TypeError('Block type unspecified: ' + xmlBlock.outerHTML);
   }
   var id = xmlBlock.getAttribute('id');
-  block = workspace.newBlock(prototypeName, id);
+
+  var moduleId;
+  if (xmlBlock.hasAttribute('module')) {
+    moduleId = xmlBlock.getAttribute('module');
+  }
+
+  block = workspace.newBlock(prototypeName, id, moduleId);
 
   var blockChild = null;
   for (var i = 0, xmlChild; (xmlChild = xmlBlock.childNodes[i]); i++) {
@@ -673,7 +773,7 @@ Blockly.Xml.domToBlockHeadless_ = function(xmlBlock, workspace) {
         // Custom data for an advanced block.
         if (block.domToMutation) {
           block.domToMutation(xmlChildElement);
-          if (block.initSvg) {
+          if (block.initSvg && block.workspace.rendered && block.InActiveModule()) {
             // Mutation may have added some elements that need initializing.
             block.initSvg();
           }
@@ -685,6 +785,7 @@ Blockly.Xml.domToBlockHeadless_ = function(xmlBlock, workspace) {
               'ignoring block comment.');
           break;
         }
+
         var text = xmlChildElement.textContent;
         var pinned = xmlChildElement.getAttribute('pinned') == 'true';
         var width = parseInt(xmlChildElement.getAttribute('w'), 10);
@@ -696,7 +797,7 @@ Blockly.Xml.domToBlockHeadless_ = function(xmlBlock, workspace) {
           block.commentModel.size = new Blockly.utils.Size(width, height);
         }
 
-        if (pinned && block.getCommentIcon && !block.isInFlyout) {
+        if (pinned && block.getCommentIcon && !block.isInFlyout && block.workspace.rendered && block.InActiveModule()) {
           setTimeout(function() {
             block.getCommentIcon().setVisible(true);
           }, 1);

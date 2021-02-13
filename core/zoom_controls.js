@@ -317,9 +317,8 @@ Blockly.ZoomControls.prototype.createZoomResetSvg_ = function(rnd) {
   // Attach event listeners.
   Blockly.bindEventWithChecks_(zoomresetSvg, 'mousedown', null, function(e) {
     ws.markFocused();
-    ws.setScale(ws.options.zoomOptions.startScale);
     ws.beginCanvasTransition();
-    ws.scrollCenter();
+    ws.zoomToFit();
     setTimeout(ws.endCanvasTransition.bind(ws), 500);
     Blockly.Touch.clearTouchIdentifier();  // Don't block future drags.
     e.stopPropagation();  // Don't start a workspace scroll.

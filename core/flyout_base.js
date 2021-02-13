@@ -917,6 +917,9 @@ Blockly.Flyout.prototype.placeNewBlock_ = function(oldBlock) {
 
   // Create the new block by cloning the block in the flyout (via XML).
   var xml = Blockly.Xml.blockToDom(oldBlock, true);
+  // Remove module from old block
+  xml.removeAttribute('module');
+
   // The target workspace would normally resize during domToBlock, which will
   // lead to weird jumps.  Save it for terminateDrag.
   targetWorkspace.setResizesEnabled(false);
@@ -925,6 +928,7 @@ Blockly.Flyout.prototype.placeNewBlock_ = function(oldBlock) {
   // placed at position (0, 0) in main workspace units.
   var block = /** @type {!Blockly.BlockSvg} */
       (Blockly.Xml.domToBlock(xml, targetWorkspace));
+
   var svgRootNew = block.getSvgRoot();
   if (!svgRootNew) {
     throw Error('block is not rendered.');

@@ -95,6 +95,8 @@ Blockly.Msg.DELETE_BLOCK = 'Delete Block';
 /** @type {string} */
 /// context menu - Permanently delete the %1 selected blocks.\n\nParameters:\n* %1 - an integer greater than 1.
 Blockly.Msg.DELETE_X_BLOCKS = 'Delete %1 Blocks';
+/// context menu - Move selected block to module %1. \n\nParameters:\n* %1 - the module name.
+Blockly.Msg.BLOCK_MOVE_TO_MODULE = 'Move to "%1"';
 /** @type {string} */
 /// confirmation prompt - Question the user if they really wanted to permanently delete all %1 blocks.\n\nParameters:\n* %1 - an integer greater than 1.
 Blockly.Msg.DELETE_ALL_BLOCKS = 'Delete all %1 blocks?';
@@ -128,6 +130,38 @@ Blockly.Msg.UNDO = 'Undo';
 /** @type {string} */
 /// context menu - Undo the previous undo action.\n{{Identical|Redo}}
 Blockly.Msg.REDO = 'Redo';
+
+
+/** @type {string} */
+/// default module name.
+Blockly.Msg.DEFAULT_MODULE_NAME = 'General';
+
+// Module renaming.
+/** @type {string} */
+/// button hint - Hint on the button used to launch the module renaming dialogue.
+Blockly.Msg.RENAME_MODULE = 'Rename';
+/** @type {string} */
+/// prompt - Prompts the user to enter the new name for a module.
+Blockly.Msg.RENAME_MODULE_TITLE = 'Rename to:';
+
+// Module creation
+/** @type {string} */
+/// button hint - Hint on the button used to launch the module creation dialogue.
+Blockly.Msg.NEW_MODULE = 'Create';
+/** @type {string} */
+/// prompt - Prompts the user to enter the name for a new module.
+Blockly.Msg.NEW_MODULE_TITLE = 'Name:';
+
+// Module deletion.
+/** @type {string} */
+/// alert - Tells the user that they can't delete a module because it's last module.
+Blockly.Msg.LAST_MODULE_DELETE_RESTRICTION = 'Can\'t delete the last module.';
+/** @type {string} */
+/// alert - Tells the user that they can't delete a module because it's last module.
+Blockly.Msg.NOT_EMPTY_MODULE_DELETE_RESTRICTION = 'Can\'t delete not empty module. Delete all module blocks first.';
+/** @type {string} */
+/// button hint - Hint on the button used to launch the module deletion.
+Blockly.Msg.DELETE_MODULE = 'Delete';
 
 // Variable renaming.
 /** @type {string} */

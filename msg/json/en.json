@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2020-06-25 16:02:02.440339",
+		"lastupdated": "2021-02-13 17:04:27.233000",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -16,6 +16,7 @@
 	"INLINE_INPUTS": "Inline Inputs",
 	"DELETE_BLOCK": "Delete Block",
 	"DELETE_X_BLOCKS": "Delete %1 Blocks",
+	"BLOCK_MOVE_TO_MODULE": "Move to '%1'",
 	"DELETE_ALL_BLOCKS": "Delete all %1 blocks?",
 	"CLEAN_UP": "Clean up Blocks",
 	"COLLAPSE_BLOCK": "Collapse Block",
@@ -27,6 +28,14 @@
 	"HELP": "Help",
 	"UNDO": "Undo",
 	"REDO": "Redo",
+	"DEFAULT_MODULE_NAME": "General",
+	"RENAME_MODULE": "Rename",
+	"RENAME_MODULE_TITLE": "Rename to:",
+	"NEW_MODULE": "Create",
+	"NEW_MODULE_TITLE": "Name:",
+	"LAST_MODULE_DELETE_RESTRICTION": "Can't delete the last module.",
+	"NOT_EMPTY_MODULE_DELETE_RESTRICTION": "Can't delete not empty module. Delete all module blocks first.",
+	"DELETE_MODULE": "Delete",
 	"CHANGE_VALUE_TITLE": "Change value:",
 	"RENAME_VARIABLE": "Rename variable...",
 	"RENAME_VARIABLE_TITLE": "Rename all '%1' variables to:",
