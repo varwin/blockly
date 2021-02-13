@@ -146,11 +146,12 @@ Blockly.ModuleManager.prototype.moveModule = function(module, newOrder) {
  * @param {string} name The name of the module.
  * @param {?string=} opt_id The unique ID of the module. This will default to
  *     a UUID.
-*  @param {?number=} scrollX Current horizontal scrolling offset in pixel units.
-*  @param {?number=} scrollY Current vertical scrolling offset in pixel units.
+*  @param {?number=} scrollX WS horizontal scrolling offset in pixel units.
+*  @param {?number=} scrollY WS vertical scrolling offset in pixel units.
+*  @param {?number=} scale WS scale.
  * @return {!Blockly.ModuleModel} The newly created module.
  */
-Blockly.ModuleManager.prototype.createModule = function(name, opt_id, scrollX, scrollY) {
+Blockly.ModuleManager.prototype.createModule = function(name, opt_id, scrollX, scrollY, scale) {
   if (opt_id && this.getModuleById(opt_id)) {
     return this.getModuleById(opt_id);
   }
@@ -159,6 +160,9 @@ Blockly.ModuleManager.prototype.createModule = function(name, opt_id, scrollX, s
   var module = new Blockly.ModuleModel(this.workspace, name, id);
   module.scrollX = scrollX || 0;
   module.scrollY = scrollY || 0;
+  if (scale) {
+    module.scale = scale
+  }
 
   this.moduleMap_.push(module);
 
@@ -221,6 +225,8 @@ Blockly.ModuleManager.prototype.moveBlockToModule = function (block, module) {
     Blockly.Events.disable();
     this.activateModule(module);
     Blockly.Events.enable();
+
+    this.workspace.centerOnBlock(block.id);
 
     block.select();
 
@@ -382,6 +388,8 @@ Blockly.ModuleManager.prototype.activateModule = function(module) {
         // blocks have rendered.
         enableConnectionTracking(topBlock);
         topBlock.updateDisabled();
+
+        this.workspace.addTopBoundedElement(topBlock);
       }
 
       // Re-enable workspace resizing.
@@ -390,10 +398,16 @@ Blockly.ModuleManager.prototype.activateModule = function(module) {
       }
 
       // Allow the scrollbars to resize and move based on the new contents.
-      // TODO(@picklesrus): #387. Remove when domToBlock avoids resizing.
       this.workspace.resizeContents();
 
-      this.workspace.scroll(module.scrollX, module.scrollY);
+      // store scroll positions before scale
+      var scrollX = module.scrollX;
+      var scrollY = module.scrollY;
+      if (this.workspace.scale !== module.scale) {
+        this.workspace.setScale(module.scale);
+      }
+
+      this.workspace.scroll(scrollX, scrollY);
 
       if (this.workspace.getModuleBar()) {
         this.workspace.getModuleBar().render();

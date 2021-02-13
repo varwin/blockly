@@ -41,11 +41,12 @@ goog.requireType('Blockly.IASTNodeLocation');
  *     type-specific functions for this block.
  * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
  *     create a new ID.
+ * @param {string=} moduleId Optional module ID.  Use this ID if provided, otherwise use active module.
  * @constructor
  * @implements {Blockly.IASTNodeLocation}
  * @throws When block is not valid or block name is not allowed.
  */
-Blockly.Block = function(workspace, prototypeName, opt_id) {
+Blockly.Block = function(workspace, prototypeName, opt_id, moduleId) {
   if (Blockly.Generator &&
       typeof Blockly.Generator.prototype[prototypeName] != 'undefined') {
     // Occluding Generator class members is not allowed.
@@ -72,7 +73,7 @@ Blockly.Block = function(workspace, prototypeName, opt_id) {
    * @type {string}
    * @private
    * */
-  this.moduleId_ = workspace.getModuleManager().getActiveModule().getId();
+  this.moduleId_ = moduleId ? moduleId : workspace.getModuleManager().getActiveModule().getId();
 
   /**
    * @type {boolean}
@@ -537,7 +538,7 @@ Blockly.Block.prototype.getModuleId = function() {
  * @package
  */
 Blockly.Block.prototype.getModuleOrder = function() {
-  return this.workspace.getModuleManager().getModuleOrder(this.moduleId_);
+  return this.workspace.getModuleManager().getModuleOrder(this.getModuleId());
 };
 
 /**

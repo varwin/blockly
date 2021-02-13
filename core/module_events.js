@@ -102,6 +102,7 @@ Blockly.Events.ModuleCreate.prototype.toJson = function() {
   json['moduleName'] = this.moduleName;
   json['scrollX'] = this.scrollX;
   json['scrollY'] = this.scrollY;
+  json['scale'] = this.scale;
   return json;
 };
 
@@ -114,6 +115,7 @@ Blockly.Events.ModuleCreate.prototype.fromJson = function(json) {
   this.moduleName = json['moduleName'];
   this.scrollX = json['scrollX'];
   this.scrollY = json['scrollY'];
+  this.scale = json['scale'];
 };
 
 /**
@@ -123,7 +125,7 @@ Blockly.Events.ModuleCreate.prototype.fromJson = function(json) {
 Blockly.Events.ModuleCreate.prototype.run = function(forward) {
   var moduleManager = this.getEventWorkspace_().getModuleManager();
   if (forward) {
-    moduleManager.createModule(this.moduleName, this.moduleId, this.scrollX, this.scrollY);
+    moduleManager.createModule(this.moduleName, this.moduleId, this.scrollX, this.scrollY, this.scale);
   } else {
     moduleManager.deleteModule(moduleManager.getModuleById(this.moduleId));
   }
@@ -144,6 +146,7 @@ Blockly.Events.ModuleDelete = function(module) {
   this.moduleName = module.name;
   this.scrollX = module.scrollX;
   this.scrollY = module.scrollY;
+  this.scale = module.scale;
 };
 Blockly.utils.object.inherits(Blockly.Events.ModuleDelete, Blockly.Events.ModuleBase);
 
@@ -161,7 +164,8 @@ Blockly.Events.ModuleDelete.prototype.toJson = function() {
   var json = Blockly.Events.ModuleDelete.superClass_.toJson.call(this);
   json['moduleName'] = this.moduleName;
   json['scrollX'] = this.scrollX;
-  json['scrollY'] = this.scrollY;
+  json['scrollX'] = this.scrollX;
+  json['scale'] = this.scale;
   return json;
 };
 
@@ -174,6 +178,7 @@ Blockly.Events.ModuleDelete.prototype.fromJson = function(json) {
   this.moduleName = json['moduleName'];
   this.scrollX = json['scrollX'];
   this.scrollY = json['scrollY'];
+  this.scale = json['scale'];
 };
 
 /**
@@ -185,7 +190,7 @@ Blockly.Events.ModuleDelete.prototype.run = function(forward) {
   if (forward) {
     moduleManager.deleteModule(moduleManager.getModuleById(this.moduleId));
   } else {
-    moduleManager.createModule(this.moduleName, this.moduleId, this.scrollX, this.scrollY);
+    moduleManager.createModule(this.moduleName, this.moduleId, this.scrollX, this.scrollY, this.scale);
   }
 };
 

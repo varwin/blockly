@@ -45,13 +45,14 @@ goog.requireType('Blockly.ICopyable');
  *     type-specific functions for this block.
  * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
  *     create a new ID.
+ * @param {string=} moduleId Optional module ID.  Use this ID if provided, otherwise use active module.
  * @extends {Blockly.Block}
  * @implements {Blockly.IASTNodeLocationSvg}
  * @implements {Blockly.IBoundedElement}
  * @implements {Blockly.ICopyable}
  * @constructor
  */
-Blockly.BlockSvg = function(workspace, prototypeName, opt_id) {
+Blockly.BlockSvg = function(workspace, prototypeName, opt_id, moduleId) {
   // Create core elements for the block.
   /**
    * @type {!SVGGElement}
@@ -109,7 +110,7 @@ Blockly.BlockSvg = function(workspace, prototypeName, opt_id) {
   svgPath.tooltip = this;
   Blockly.Tooltip.bindMouseEvents(svgPath);
   Blockly.BlockSvg.superClass_.constructor.call(this,
-      workspace, prototypeName, opt_id);
+      workspace, prototypeName, opt_id, moduleId);
 
   // Expose this block's ID on its top-level SVG group.
   if (this.svgGroup_.dataset) {
@@ -987,6 +988,7 @@ Blockly.BlockSvg.prototype.removeRender = function() {
   if (!this.getParent()) {
     this.setConnectionTracking(false);
     Blockly.utils.dom.removeNode(this.svgGroup_);
+    this.workspace.removeTopBoundedElement(this);
   }
 
   Blockly.utils.dom.stopTextWidthCache();

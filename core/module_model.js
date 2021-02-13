@@ -35,8 +35,6 @@ goog.require('Blockly.utils');
  * @param {string} name The name of the module.
  * @param {string} opt_id The unique ID of the module. This will default to
  *     a UUID.
- * @param {number} scrollX Current horizontal scrolling offset in pixel units
- * @param {number} scrollY Current vertical scrolling offset in pixel units
  * @constructor
  */
 Blockly.ModuleModel = function(workspace, name, opt_id) {
@@ -64,16 +62,22 @@ Blockly.ModuleModel = function(workspace, name, opt_id) {
 };
 
 /**
- * Current horizontal scrolling offset in pixel units.
+ * Workspace horizontal scrolling offset in pixel units.
  * @type {number}
  */
 Blockly.ModuleModel.prototype.scrollX = 0;
 
 /**
- * Current vertical scrolling offset in pixel units.
+ * Workspace vertical scrolling offset in pixel units.
  * @type {number}
  */
 Blockly.ModuleModel.prototype.scrollY = 0;
+
+/**
+ * Workspace scale.
+ * @type {number}
+ */
+Blockly.ModuleModel.prototype.scale = 1;
 
 /**
  * @return {string} The ID for the module.

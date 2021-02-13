@@ -93,6 +93,7 @@ Blockly.Xml.modulesToDom = function(workspace) {
     element.id = module.getId();
     element.setAttribute('scroll-x', module.scrollX.toString());
     element.setAttribute('scroll-y', module.scrollY.toString());
+    element.setAttribute('scale', module.scale.toString());
     modules.appendChild(element);
   }
   return modules;
@@ -534,7 +535,14 @@ Blockly.Xml.domToWorkspace = function(xml, workspace) {
     }
     var activeModule = workspace.getModuleManager().getActiveModule();
     if (activeModule) {
-      workspace.scroll(activeModule.scrollX, activeModule.scrollY);
+      // store scroll positions before scale
+      var scrollX = activeModule.scrollX;
+      var scrollY = activeModule.scrollY;
+      if (workspace.scale !== activeModule.scale) {
+        workspace.setScale(activeModule.scale);
+      }
+
+      workspace.scroll(scrollX, scrollY);
     }
   }
 
@@ -695,7 +703,13 @@ Blockly.Xml.domToModules = function(xmlModules, workspace) {
       continue;  // Skip text nodes.
     }
 
-    workspace.getModuleManager().createModule(xmlChild.textContent, xmlChild.getAttribute('id'), xmlChild.getAttribute('scroll-x'), xmlChild.getAttribute('scroll-y'));
+    workspace.getModuleManager().createModule(
+        xmlChild.textContent,
+        xmlChild.getAttribute('id'),
+        xmlChild.getAttribute('scroll-x'),
+        xmlChild.getAttribute('scroll-y'),
+        xmlChild.getAttribute('scale')
+    );
   }
 
   var activeId = xmlModules.getAttribute('active');
@@ -719,11 +733,13 @@ Blockly.Xml.domToBlockHeadless_ = function(xmlBlock, workspace) {
     throw TypeError('Block type unspecified: ' + xmlBlock.outerHTML);
   }
   var id = xmlBlock.getAttribute('id');
-  block = workspace.newBlock(prototypeName, id);
 
+  var moduleId;
   if (xmlBlock.hasAttribute('module')) {
-    block.moduleId_ = xmlBlock.getAttribute('module');
+    moduleId = xmlBlock.getAttribute('module');
   }
+
+  block = workspace.newBlock(prototypeName, id, moduleId);
 
   var blockChild = null;
   for (var i = 0, xmlChild; (xmlChild = xmlBlock.childNodes[i]); i++) {
