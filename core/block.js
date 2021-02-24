@@ -79,6 +79,11 @@ Blockly.Block = function(workspace, prototypeName, opt_id, moduleId) {
    * @type {boolean}
    * @private
    */
+  this.obsolete = false;
+  /**
+   * @type {boolean}
+   * @private
+   */
   this.disabled = false;
   /** @type {string|!Function} */
   this.tooltip = '';
@@ -1313,6 +1318,27 @@ Blockly.Block.prototype.setEnabled = function(enabled) {
 };
 
 /**
+ * Get whether this block is obsolete or not.
+ * @return {boolean} True if obsolete.
+ */
+Blockly.Block.prototype.isObsolete = function() {
+  return this.obsolete;
+};
+
+/**
+ * Set whether the block is obsolete or not.
+ * @param {boolean} obsolete True if obsolete.
+ */
+Blockly.Block.prototype.setObsolete = function(obsolete) {
+  this.obsolete = obsolete;
+  if (obsolete) {
+    this.setWarningText(Blockly.Msg["OBSOLETE_WARNING"]);
+  } else {
+    this.setWarningText(null);
+  }
+};
+
+/**
  * Get whether the block is disabled or not due to parents.
  * The block's own disabled property is not considered.
  * @return {boolean} True if disabled.
@@ -1541,6 +1567,9 @@ Blockly.Block.prototype.jsonInit = function(json) {
   }
   if (json['nextStatement'] !== undefined) {
     this.setNextStatement(true, json['nextStatement']);
+  }
+  if (json['obsolete'] === true) {
+    this.setObsolete(true);
   }
   if (json['tooltip'] !== undefined) {
     var rawValue = json['tooltip'];

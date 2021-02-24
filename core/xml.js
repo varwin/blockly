@@ -627,7 +627,7 @@ Blockly.Xml.domToBlock = function(xmlBlock, workspace) {
     var topBlock = Blockly.Xml.domToBlockHeadless_(xmlBlock, workspace);
     // Generate list of all blocks.
     var blocks = topBlock.getDescendants(false);
-    if (workspace.rendered && topBlock.InActiveModule()) {
+    if (workspace.rendered && topBlock.InActiveModule() && (!workspace.isFlyout || !topBlock.isObsolete())) {
       // Wait to track connections to speed up assembly.
       topBlock.setConnectionTracking(false);
       // Render each block.

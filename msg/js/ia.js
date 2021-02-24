@@ -295,6 +295,7 @@ Blockly.Msg["NEW_VARIABLE"] = "Crear variabile...";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "Nomine del nove variabile:";
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "Nove typo de variabile:";
 Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
+Blockly.Msg["OBSOLETE_WARNING"] = "Warning: This block is obsolete. Use a similar new one.";  // untranslated
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "";  // untranslated
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "permitter declarationes";
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "con:";

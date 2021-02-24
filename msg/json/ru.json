@@ -19,6 +19,7 @@
 	"VARIABLES_DEFAULT_NAME": "элемент",
 	"UNNAMED_KEY": "без названия",
 	"TODAY": "Сегодня",
+	"OBSOLETE_WARNING": "Предупреждение: Блок устарел. Замените его на аналогичный новый.",
 	"DUPLICATE_BLOCK": "Дублировать",
 	"ADD_COMMENT": "Добавить комментарий",
 	"REMOVE_COMMENT": "Удалить комментарий",

@@ -295,6 +295,7 @@ Blockly.Msg["NEW_VARIABLE"] = "Aldagaia sortu...";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "Aldagai berriaren izena:";
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "Aldagai mota berria:";
 Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
+Blockly.Msg["OBSOLETE_WARNING"] = "Warning: This block is obsolete. Use a similar new one.";  // untranslated
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "";  // untranslated
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "allow statements";  // untranslated
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "honekin";

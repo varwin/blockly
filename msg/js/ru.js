@@ -295,6 +295,7 @@ Blockly.Msg["NEW_VARIABLE"] = "Создать переменную…";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "Имя новой переменной:";
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "Новый тип переменной:";
 Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Невозможно удалить модуль с блоками. Сначала удалите блоки в модуле.";
+Blockly.Msg["OBSOLETE_WARNING"] = "Предупреждение: Блок устарел. Замените его на аналогичный новый.";
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "";  // untranslated
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "разрешить операторы";
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "с:";

@@ -295,6 +295,7 @@ Blockly.Msg["NEW_VARIABLE"] = "Skapa variabel...";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "Nytt variabelnamn:";
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "Ny variabeltyp:";
 Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
+Blockly.Msg["OBSOLETE_WARNING"] = "Warning: This block is obsolete. Use a similar new one.";  // untranslated
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "";  // untranslated
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "tillåta uttalanden";
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "med:";

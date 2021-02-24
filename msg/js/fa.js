@@ -295,6 +295,7 @@ Blockly.Msg["NEW_VARIABLE"] = "ایجاد متغیر...";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "نام متغیر تازه:";
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "نوع متغیر جدید:";
 Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
+Blockly.Msg["OBSOLETE_WARNING"] = "Warning: This block is obsolete. Use a similar new one.";  // untranslated
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "";  // untranslated
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "اجازه اظهارات";
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "با:";

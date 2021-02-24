@@ -295,6 +295,7 @@ Blockly.Msg["NEW_VARIABLE"] = "Створити змінну...";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "Нова назва змінної:";
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "Тип нової змінної:";
 Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
+Blockly.Msg["OBSOLETE_WARNING"] = "Warning: This block is obsolete. Use a similar new one.";  // untranslated
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "-ий.";
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "дозволити дії";
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "з:";

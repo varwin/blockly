@@ -295,6 +295,7 @@ Blockly.Msg["NEW_VARIABLE"] = "変数の作成…";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "新しい変数の名前：";
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "新しい変数の型:";
 Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
+Blockly.Msg["OBSOLETE_WARNING"] = "Warning: This block is obsolete. Use a similar new one.";  // untranslated
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "";  // untranslated
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "ステートメントを許可";
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "引数：";

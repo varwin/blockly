@@ -295,6 +295,7 @@ Blockly.Msg["NEW_VARIABLE"] = "변수 만들기...";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "새 변수 이름:";
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "새 변수 유형:";
 Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
+Blockly.Msg["OBSOLETE_WARNING"] = "Warning: This block is obsolete. Use a similar new one.";  // untranslated
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "";
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "서술 허가";
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "사용:";
