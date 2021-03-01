@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Gionté n'imission a la fonsion.
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "imission";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Gionté, gavé o riordiné j'imission ëd sa fonsion.";
 Blockly.Msg["REDO"] = "Fé torna";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Scancelé un coment";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

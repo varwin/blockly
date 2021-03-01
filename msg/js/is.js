@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Bæta inntaki við fallið.";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "inntök";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Bæta við, fjarlægja eða umraða inntökum fyrir þetta fall.";
 Blockly.Msg["REDO"] = "Endurtaka";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Fjarlægja skýringu";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

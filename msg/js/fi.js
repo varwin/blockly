@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Lisää sisääntulon funktioon.
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "syötteet";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Lisää, poista tai järjestele uudelleen tämän toiminnon tulot.";
 Blockly.Msg["REDO"] = "Tee uudelleen";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Poista kommentti";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

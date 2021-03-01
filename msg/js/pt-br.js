@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Adiciona uma entrada para esta f
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "entradas";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Adiciona, remove, ou reordena as entradas para esta função.";
 Blockly.Msg["REDO"] = "Refazer";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Remover comentário";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

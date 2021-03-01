@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Přidat vstupy do funkce.";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "vstupy";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Přidat, odebrat nebo změnit pořadí vstupů této funkce.";
 Blockly.Msg["REDO"] = "Znovu";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Odstranit komentář";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

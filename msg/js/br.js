@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Ouzhpennañ ur moned d'an arc'hw
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "Monedoù";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Ouzhpennañ, lemel, pe adkempenn monedoù an arc'hwel-mañ.";
 Blockly.Msg["REDO"] = "Adober";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Lemel an evezhiadenn kuit";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

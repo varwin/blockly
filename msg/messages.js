@@ -71,6 +71,8 @@ Blockly.Msg.UNNAMED_KEY = 'unnamed';
 Blockly.Msg.TODAY = 'Today';
 /// warning - The block is obsolete.
 Blockly.Msg.OBSOLETE_WARNING = 'Warning: This block is obsolete. Use a similar new one.';
+/// warning - The block is obsolete.
+Blockly.Msg.REMOVED_WARNING = 'Warning: This block is removed. Use a similar new one.';
 
 // Context menus.
 /** @type {string} */

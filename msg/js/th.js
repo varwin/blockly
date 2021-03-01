@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "เพิ่มค่าป้�
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "นำเข้า";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "เพิ่ม, ลบ, หรือจัดเรียง ข้อมูลที่ป้อนเข้าฟังก์ชันนี้";
 Blockly.Msg["REDO"] = "ทำซ้ำ";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "เอาคำอธิบายออก";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "फंगक्शन को इ
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "इनपुट";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "इस फ़ंक्शन में इनपुट जोड़ें, निकालें, या पुन: क्रमित करें।";
 Blockly.Msg["REDO"] = "फिर से करें";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "टिप्पणी हटायें";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

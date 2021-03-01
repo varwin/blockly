@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Aldoni eniron al la funkcio.";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "eniroj";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Aldoni, forigi, aŭ reorganizi enirojn je ĉi tiu funkcio.";
 Blockly.Msg["REDO"] = "Refari";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Forigi komenton";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

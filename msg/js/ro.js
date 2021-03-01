@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Adaugă un parametru de intrare 
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "intrări";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Adăugă, șterge sau reordonează parametrii de intrare ai acestei funcții.";
 Blockly.Msg["REDO"] = "Refă";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Elimină comentariu";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

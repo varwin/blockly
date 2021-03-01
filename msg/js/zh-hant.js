@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "添加一個輸入區塊到函�
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "輸入";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "添加、刪除或重新排列此函式的輸入。";
 Blockly.Msg["REDO"] = "重做";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "移除註解";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Tambah satu input pada fungsi.";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "Input-input";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Tambah, alih keluar atau susun semula input pada fungsi ini.";
 Blockly.Msg["REDO"] = "Redo";  // untranslated
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Padamkan Komen";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

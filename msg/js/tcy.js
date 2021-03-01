@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "ಕಾರ್ಯೊಗು ಒಂ�
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "ಉಲಪರಿಪು";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "ಸೇರಾಲೆ, ದೆತ್ತ್‌ ಬುಡುಲೆ, ಅತ್ತಂಡ ಈ ಕಾರ್ಯೊಗು ಉಲಪರಿಪುಲೆನ್ ಕುಡ ಒತ್ತರೆ ಮಲ್ಪುಲೆ.";
 Blockly.Msg["REDO"] = "ಕುಡ ಮಲ್ಪು";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "ಟಿಪ್ಪಣಿನ್ ದೆತ್ತ್‌ದ್ ಬುಡ್ಲೆ";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Добавить входной 
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "параметры";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Добавить, удалить или изменить порядок входных параметров для этой функции.";
 Blockly.Msg["REDO"] = "Повторить";
+Blockly.Msg["REMOVED_WARNING"] = "Предупреждение: Блок удален. Замените его на аналогичный новый.";
 Blockly.Msg["REMOVE_COMMENT"] = "Удалить комментарий";
 Blockly.Msg["RENAME_MODULE"] = "Переименовать";
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Имя:";

@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Thêm một đầu vào cho hàm
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "các tham số";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Thêm, xóa hoặc sắp xếp lại các đầu vào cho hàm này.";
 Blockly.Msg["REDO"] = "Làm lại";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Xóa Chú Giải";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

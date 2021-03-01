@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Добавяне на парам
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "вход";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Добави, премахни или пренареди входните параметри за тази функция.";
 Blockly.Msg["REDO"] = "Повторение";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Премахни коментар";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

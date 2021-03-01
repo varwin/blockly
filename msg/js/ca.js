@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Afegir una entrada per la funci√
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "entrades";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Afegir, eliminar o canviar l'ordre de les entrades per aquesta funci√≥.";
 Blockly.Msg["REDO"] = "Refer";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Elimina el comentari";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

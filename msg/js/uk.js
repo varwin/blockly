@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Додати до функції
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "входи";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Додайте, вилучіть або змініть порядок вхідних параметрів для цієї функції.";
 Blockly.Msg["REDO"] = "Повторити";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Видалити коментар";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

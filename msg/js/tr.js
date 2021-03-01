@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "İşleve bir giriş ekleyin.";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "girişler";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Bu işleve giriş ekleyin, kaldırın veya yeniden sıralayın.";
 Blockly.Msg["REDO"] = "Yinele";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Yorumu Sil";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

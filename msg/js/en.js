@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Add an input to the function.";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "inputs";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Add, remove, or reorder inputs to this function.";
 Blockly.Msg["REDO"] = "Redo";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";
 Blockly.Msg["REMOVE_COMMENT"] = "Remove Comment";
 Blockly.Msg["RENAME_MODULE"] = "Rename";
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";

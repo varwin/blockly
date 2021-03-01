@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Дадаць уваходны п
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "параметры";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Дадаць, выдаліць або змяніць парадак уваходных параметраў для гэтай функцыі.";
 Blockly.Msg["REDO"] = "Паўтарыць";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Выдаліць каментар";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

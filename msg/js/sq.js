@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Shto një input në këtë funks
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "Informacioni i futur";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Shto, hiq, ose rirendit inputet e këtij funksioni.";
 Blockly.Msg["REDO"] = "Ribëj";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Fshij komentin";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

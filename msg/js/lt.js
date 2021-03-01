@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Pridėti funkcijos parametrą (g
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "gaunami duomenys (parametrai)";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Tvarkyti komandos gaunamus duomenis (parametrus).";
 Blockly.Msg["REDO"] = "Atkurti";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Pašalinti komentarą";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

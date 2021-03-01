@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Tinye ntinye aka na ọrụ ah�
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "ntinye";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Tinye, wepu, ma ọ bụ tugharịa ntinye na ọrụ a.";
 Blockly.Msg["REDO"] = "Megharịa";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Wepu okwu";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "செயல்கூறுக�
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "உள்ளீடுகள்";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "செயல்கூறுகளின் உள்ளீட்டை சேர், நீக்கு, or மீண்டும் வரிசை செய்.";
 Blockly.Msg["REDO"] = "மீண்டும் செய்";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "கருத்தை நீக்கு";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

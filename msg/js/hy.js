@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Ֆունկցիային ավել�
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "մուտքեր";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Ավելացնել, հեռացնել կամ վերադասավորել է այս ֆունկցիայի մուտքերը (պարամետրերը)։";
 Blockly.Msg["REDO"] = "Կրկին անել";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Հեռացնել մեկնաբանությունը";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

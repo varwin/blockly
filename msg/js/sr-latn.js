@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Dodajte ulazna funkcija.";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "ulazi";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Da dodate, uklonite ili pereuporяdočitь ulaza za ovu funkciju.";
 Blockly.Msg["REDO"] = "Ponovi";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Ukloni komentar";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

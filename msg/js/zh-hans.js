@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "添加函数输入。";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "输入";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "添加、移除或重新排此函数的输入。";
 Blockly.Msg["REDO"] = "重做";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "删除注释";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

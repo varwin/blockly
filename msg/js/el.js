@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Πρόσθεσε μια είσο
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "είσοδοι";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Προσθέτει, αφαιρεί ή αναδιατάσσει εισόδους σε αυτήν τη λειτουργία";
 Blockly.Msg["REDO"] = "Ακύρωση αναίρεσης";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Αφαίρεσε Το Σχόλιο";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

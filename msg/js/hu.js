@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Bemenet hozzáadása a függvén
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "paraméterek";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Bemenetek hozzáadása, eltávolítása vagy átrendezése ehhez a függvényhez.";
 Blockly.Msg["REDO"] = "Újra";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Megjegyzés eltávolítása";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

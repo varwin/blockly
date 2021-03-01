@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Tilføj en parameter til funktio
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "parametre";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Tilføje, fjerne eller ændre rækkefølgen af parametre til denne funktion.";
 Blockly.Msg["REDO"] = "Omgør";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Fjern Kommentar";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

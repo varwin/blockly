@@ -324,6 +324,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "Funksiyaya giriş parametrləri 
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "girişlər";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "Bu funksiyanın giriş parametrləri üçün əlavə et, sil, və ya yenilə.";
 Blockly.Msg["REDO"] = "İrəli";
+Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "Şərhi sil";
 Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
 Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated

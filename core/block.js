@@ -68,18 +68,21 @@ Blockly.Block = function(workspace, prototypeName, opt_id, moduleId) {
   this.inputList = [];
   /** @type {boolean|undefined} */
   this.inputsInline = undefined;
-
   /**
    * @type {string}
    * @private
    * */
   this.moduleId_ = moduleId ? moduleId : workspace.getModuleManager().getActiveModule().getId();
-
   /**
    * @type {boolean}
    * @private
    */
   this.obsolete = false;
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this.removed = false;
   /**
    * @type {boolean}
    * @private
@@ -1339,6 +1342,27 @@ Blockly.Block.prototype.setObsolete = function(obsolete) {
 };
 
 /**
+ * Get whether this block is removed or not.
+ * @return {boolean} True if removed.
+ */
+Blockly.Block.prototype.isRemoved = function() {
+  return this.removed;
+};
+
+/**
+ * Set whether the block is removed or not.
+ * @param {boolean} removed True if removed.
+ */
+Blockly.Block.prototype.setRemoved = function(removed) {
+  this.removed = removed;
+  if (removed) {
+    this.setWarningText(Blockly.Msg["REMOVED_WARNING"]);
+  } else {
+    this.setWarningText(null);
+  }
+};
+
+/**
  * Get whether the block is disabled or not due to parents.
  * The block's own disabled property is not considered.
  * @return {boolean} True if disabled.
@@ -1570,6 +1594,9 @@ Blockly.Block.prototype.jsonInit = function(json) {
   }
   if (json['obsolete'] === true) {
     this.setObsolete(true);
+  }
+  if (json['removed'] === true) {
+    this.setRemoved(true);
   }
   if (json['tooltip'] !== undefined) {
     var rawValue = json['tooltip'];
