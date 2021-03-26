@@ -544,10 +544,11 @@ Blockly.Workspace.prototype.getWidth = function() {
  *     type-specific functions for this block.
  * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
  *     create a new ID.
+ * @param {string=} moduleId Optional module ID.  Use this ID if provided, otherwise use active module.
  * @return {!Blockly.Block} The created block.
  */
-Blockly.Workspace.prototype.newBlock = function(prototypeName, opt_id) {
-  return new Blockly.Block(this, prototypeName, opt_id);
+Blockly.Workspace.prototype.newBlock = function(prototypeName, opt_id, moduleId) {
+  return new Blockly.Block(this, prototypeName, opt_id, moduleId);
 };
 
 /**
@@ -638,6 +639,7 @@ Blockly.Workspace.prototype.undo = function(redo) {
     outputStack.push(event);
   }
   events = Blockly.Events.filter(events, redo);
+
   Blockly.Events.recordUndo = false;
   try {
     for (var i = 0, event; (event = events[i]); i++) {

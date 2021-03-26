@@ -129,6 +129,12 @@ Blockly.Events.MODULE_ACTIVATE = 'module_activate';
  */
 Blockly.Events.MODULE_RENAME = 'module_rename';
 
+/**
+ * Name of event that move block to module
+ * @const
+ */
+Blockly.Events.MOVE_BLOCK_TO_MODULE = 'move_block_to_module';
+
 
 /**
  * Name of event that records a UI change.

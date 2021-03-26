@@ -1,13 +1,15 @@
 {
 	"@metadata": {
 		"author": "Ellen Spertus <ellen.spertus@gmail.com>",
-		"lastupdated": "2020-11-20 10:32:14.086000",
+		"lastupdated": "2021-03-01 10:37:52.911000",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
 	"VARIABLES_DEFAULT_NAME": "item",
 	"UNNAMED_KEY": "unnamed",
 	"TODAY": "Today",
+	"OBSOLETE_WARNING": "Warning: This block is obsolete. Use a similar new one.",
+	"REMOVED_WARNING": "Warning: This block is removed. Use a similar new one.",
 	"DUPLICATE_BLOCK": "Duplicate",
 	"ADD_COMMENT": "Add Comment",
 	"REMOVE_COMMENT": "Remove Comment",

@@ -41,11 +41,12 @@ goog.requireType('Blockly.IASTNodeLocation');
  *     type-specific functions for this block.
  * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
  *     create a new ID.
+ * @param {string=} moduleId Optional module ID.  Use this ID if provided, otherwise use active module.
  * @constructor
  * @implements {Blockly.IASTNodeLocation}
  * @throws When block is not valid or block name is not allowed.
  */
-Blockly.Block = function(workspace, prototypeName, opt_id) {
+Blockly.Block = function(workspace, prototypeName, opt_id, moduleId) {
   if (Blockly.Generator &&
       typeof Blockly.Generator.prototype[prototypeName] != 'undefined') {
     // Occluding Generator class members is not allowed.
@@ -67,13 +68,21 @@ Blockly.Block = function(workspace, prototypeName, opt_id) {
   this.inputList = [];
   /** @type {boolean|undefined} */
   this.inputsInline = undefined;
-
   /**
    * @type {string}
    * @private
    * */
-  this.moduleId_ = workspace.getModuleManager().getActiveModule().getId();
-
+  this.moduleId_ = moduleId ? moduleId : workspace.getModuleManager().getActiveModule().getId();
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this.obsolete = false;
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this.removed = false;
   /**
    * @type {boolean}
    * @private
@@ -537,7 +546,7 @@ Blockly.Block.prototype.getModuleId = function() {
  * @package
  */
 Blockly.Block.prototype.getModuleOrder = function() {
-  return this.workspace.getModuleManager().getModuleOrder(this.moduleId_);
+  return this.workspace.getModuleManager().getModuleOrder(this.getModuleId());
 };
 
 /**
@@ -1312,6 +1321,48 @@ Blockly.Block.prototype.setEnabled = function(enabled) {
 };
 
 /**
+ * Get whether this block is obsolete or not.
+ * @return {boolean} True if obsolete.
+ */
+Blockly.Block.prototype.isObsolete = function() {
+  return this.obsolete;
+};
+
+/**
+ * Set whether the block is obsolete or not.
+ * @param {boolean} obsolete True if obsolete.
+ */
+Blockly.Block.prototype.setObsolete = function(obsolete) {
+  this.obsolete = obsolete;
+  if (obsolete) {
+    this.setWarningText(Blockly.Msg["OBSOLETE_WARNING"]);
+  } else {
+    this.setWarningText(null);
+  }
+};
+
+/**
+ * Get whether this block is removed or not.
+ * @return {boolean} True if removed.
+ */
+Blockly.Block.prototype.isRemoved = function() {
+  return this.removed;
+};
+
+/**
+ * Set whether the block is removed or not.
+ * @param {boolean} removed True if removed.
+ */
+Blockly.Block.prototype.setRemoved = function(removed) {
+  this.removed = removed;
+  if (removed) {
+    this.setWarningText(Blockly.Msg["REMOVED_WARNING"]);
+  } else {
+    this.setWarningText(null);
+  }
+};
+
+/**
  * Get whether the block is disabled or not due to parents.
  * The block's own disabled property is not considered.
  * @return {boolean} True if disabled.
@@ -1540,6 +1591,12 @@ Blockly.Block.prototype.jsonInit = function(json) {
   }
   if (json['nextStatement'] !== undefined) {
     this.setNextStatement(true, json['nextStatement']);
+  }
+  if (json['obsolete'] === true) {
+    this.setObsolete(true);
+  }
+  if (json['removed'] === true) {
+    this.setRemoved(true);
   }
   if (json['tooltip'] !== undefined) {
     var rawValue = json['tooltip'];

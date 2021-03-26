@@ -879,11 +879,12 @@ Blockly.WorkspaceSvg.prototype.dispose = function() {
  *     type-specific functions for this block.
  * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
  *     create a new ID.
+ * @param {string=} moduleId Optional module ID.  Use this ID if provided, otherwise use active module.
  * @return {!Blockly.BlockSvg} The created block.
  * @override
  */
-Blockly.WorkspaceSvg.prototype.newBlock = function(prototypeName, opt_id) {
-  return new Blockly.BlockSvg(this, prototypeName, opt_id);
+Blockly.WorkspaceSvg.prototype.newBlock = function(prototypeName, opt_id, moduleId) {
+  return new Blockly.BlockSvg(this, prototypeName, opt_id, moduleId);
 };
 
 /**
@@ -2186,6 +2187,12 @@ Blockly.WorkspaceSvg.prototype.setScale = function(newScale) {
   }
   this.scale = newScale;
 
+  // Record active module scale
+  var activeModule = this.getModuleManager().getActiveModule();
+  if (activeModule) {
+    activeModule.scale = newScale;
+  }
+
   Blockly.hideChaff(false);
   if (this.flyout_) {
     // No toolbox, resize flyout.
@@ -2557,6 +2564,7 @@ Blockly.WorkspaceSvg.prototype.getTopBlocks = function(ordered, inActiveModule) 
  */
 Blockly.WorkspaceSvg.prototype.addTopBlock = function(block) {
   Blockly.WorkspaceSvg.superClass_.addTopBlock.call(this, block);
+
   if (block.workspace.rendered && block.InActiveModule()) {
     this.addTopBoundedElement(/** @type {!Blockly.BlockSvg} */ (block));
   }

@@ -146,11 +146,12 @@ Blockly.ModuleManager.prototype.moveModule = function(module, newOrder) {
  * @param {string} name The name of the module.
  * @param {?string=} opt_id The unique ID of the module. This will default to
  *     a UUID.
-*  @param {?number=} scrollX Current horizontal scrolling offset in pixel units.
-*  @param {?number=} scrollY Current vertical scrolling offset in pixel units.
+*  @param {?number=} scrollX WS horizontal scrolling offset in pixel units.
+*  @param {?number=} scrollY WS vertical scrolling offset in pixel units.
+*  @param {?number=} scale WS scale.
  * @return {!Blockly.ModuleModel} The newly created module.
  */
-Blockly.ModuleManager.prototype.createModule = function(name, opt_id, scrollX, scrollY) {
+Blockly.ModuleManager.prototype.createModule = function(name, opt_id, scrollX, scrollY, scale) {
   if (opt_id && this.getModuleById(opt_id)) {
     return this.getModuleById(opt_id);
   }
@@ -159,6 +160,9 @@ Blockly.ModuleManager.prototype.createModule = function(name, opt_id, scrollX, s
   var module = new Blockly.ModuleModel(this.workspace, name, id);
   module.scrollX = scrollX || 0;
   module.scrollY = scrollY || 0;
+  if (scale) {
+    module.scale = scale
+  }
 
   this.moduleMap_.push(module);
 
@@ -191,6 +195,74 @@ Blockly.ModuleManager.prototype.fireCreateEvent_ = function(module) {
     }
   }
 };
+
+
+/**
+ * Move block to module.
+ * @param {Blockly.BlockSvg} block
+ * @param {Blockly.ModuleModel} module
+ */
+Blockly.ModuleManager.prototype.moveBlockToModule = function (block, module) {
+  var newModuleId = module.getId();
+  var previousModuleId = block.getModuleId();
+
+  if (newModuleId === previousModuleId) {
+    return
+  }
+
+  var existingGroup = Blockly.Events.getGroup();
+  if (!existingGroup) {
+    Blockly.Events.setGroup(true);
+  }
+
+  try {
+    block.getDescendants(false).forEach(function (descendant) {
+      descendant.setModuleId(module.getId())
+    });
+    block.unplug();
+    block.removeRender();
+
+    Blockly.Events.disable();
+    this.activateModule(module);
+    Blockly.Events.enable();
+
+    this.workspace.centerOnBlock(block.id);
+
+    block.select();
+
+    Blockly.Events.fire(new Blockly.Events.MoveBlockToModule(block, newModuleId, previousModuleId));
+  } finally {
+    if (!existingGroup) {
+      Blockly.Events.setGroup(false);
+    }
+  }
+
+}
+
+/**
+ * Fire a delete event for module.
+ * @param {Blockly.Block} block The moved block.
+ *     Null for a blank event.
+ * @param {String} newModuleId The new module id.
+ * @param {String} previousModuleId The previous module id.
+ * @extends {Blockly.Events.ModuleBase}
+ * @private
+ */
+Blockly.ModuleManager.prototype.fireMoveBlockToModule_ = function(block, newModuleId, previousModuleId) {
+  if (Blockly.Events.isEnabled()) {
+    var existingGroup = Blockly.Events.getGroup();
+    if (!existingGroup) {
+      Blockly.Events.setGroup(true);
+    }
+    try {
+      Blockly.Events.fire(new Blockly.Events.MoveBlockToModule(block, newModuleId, previousModuleId));
+    } finally {
+      if (!existingGroup) {
+        Blockly.Events.setGroup(false);
+      }
+    }
+  }
+}
 
 /**
  * Delete a module and all its top blocks.
@@ -265,15 +337,87 @@ Blockly.ModuleManager.prototype.activateModule = function(module) {
   try {
     Blockly.Events.disable();
 
+    // remove render
+    if (this.workspace.rendered) {
+      Blockly.hideChaff(true);
+
+      // Disable workspace resizes as an optimization.
+      if (this.workspace.setResizesEnabled) {
+        this.workspace.setResizesEnabled(false);
+      }
+
+      var topBlocks = this.workspace.getTopBlocks(false, true)
+      for (var i = 0; i < topBlocks.length; i++) {
+        topBlocks[i].removeRender();
+      }
+    }
+
+    // set new active module
     this.setActiveModuleId(module.getId());
-    var xml = Blockly.Xml.workspaceToDom(this.workspace);
-    this.workspace.clear();
-    Blockly.Xml.domToWorkspace(xml, this.workspace);
-    this.workspace.scroll(module.scrollX, module.scrollY);
+
+    if (this.workspace.rendered) {
+      var topBlocks = this.workspace.getTopBlocks(false, true)
+
+      var enableConnectionTracking = function (block) {
+        setTimeout(function () {
+          if (!block.disposed) {
+            block.setConnectionTracking(true);
+          }
+        }, 1);
+      }
+
+      for (var i = 0; i < topBlocks.length; i++) {
+        var topBlock = topBlocks[i]
+        var blocks = topBlock.getDescendants(false);
+
+        // Wait to track connections to speed up assembly.
+        topBlock.setConnectionTracking(false);
+
+        // Render each block.
+        for (var j = blocks.length - 1; j >= 0; j--) {
+          blocks[j].initSvg();
+        }
+        for (var j = blocks.length - 1; j >= 0; j--) {
+          blocks[j].render(false);
+        }
+        for (var j = blocks.length - 1; j >= 0; j--) {
+          blocks[j].render(false);
+        }
+
+        // Populating the connection database may be deferred until after the
+        // blocks have rendered.
+        enableConnectionTracking(topBlock);
+        topBlock.updateDisabled();
+
+        this.workspace.addTopBoundedElement(topBlock);
+      }
+
+      // Re-enable workspace resizing.
+      if (this.workspace.setResizesEnabled) {
+        this.workspace.setResizesEnabled(true);
+      }
+
+      // Allow the scrollbars to resize and move based on the new contents.
+      this.workspace.resizeContents();
+
+      // store scroll positions before scale
+      var scrollX = module.scrollX;
+      var scrollY = module.scrollY;
+      if (this.workspace.scale !== module.scale) {
+        this.workspace.setScale(module.scale);
+      }
+
+      this.workspace.scroll(scrollX, scrollY);
+
+      if (this.workspace.getModuleBar()) {
+        this.workspace.getModuleBar().render();
+      }
+    }
 
     Blockly.Events.enable();
-
     Blockly.Events.fire(new Blockly.Events.ModuleActivate(module, previousActive));
+  } catch (e) {
+    Blockly.Events.enable();
   } finally {
     if (!existingGroup) {
       Blockly.Events.setGroup(false);

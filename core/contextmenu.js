@@ -245,17 +245,7 @@ Blockly.ContextMenu.blockMoveToModuleOption = function(block, module) {
     text: Blockly.Msg['BLOCK_MOVE_TO_MODULE'].replace('%1', module.name),
     enabled: block.isMovable(),
     callback: function() {
-      var workspace = block.workspace;
-      var blockId = block.id;
-
-      block.setModuleId(module.getId());
-      block.getDescendants(false).forEach(function (descendant) {
-        descendant.setModuleId(module.getId())
-      });
-      block.unplug();
-
-      workspace.getModuleManager().activateModule(module);
-      workspace.getBlockById(blockId).select();
+      block.workspace.getModuleManager().moveBlockToModule(block, module);
     }
   };
 };

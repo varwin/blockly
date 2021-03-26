@@ -45,13 +45,14 @@ goog.requireType('Blockly.ICopyable');
  *     type-specific functions for this block.
  * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
  *     create a new ID.
+ * @param {string=} moduleId Optional module ID.  Use this ID if provided, otherwise use active module.
  * @extends {Blockly.Block}
  * @implements {Blockly.IASTNodeLocationSvg}
  * @implements {Blockly.IBoundedElement}
  * @implements {Blockly.ICopyable}
  * @constructor
  */
-Blockly.BlockSvg = function(workspace, prototypeName, opt_id) {
+Blockly.BlockSvg = function(workspace, prototypeName, opt_id, moduleId) {
   // Create core elements for the block.
   /**
    * @type {!SVGGElement}
@@ -109,7 +110,7 @@ Blockly.BlockSvg = function(workspace, prototypeName, opt_id) {
   svgPath.tooltip = this;
   Blockly.Tooltip.bindMouseEvents(svgPath);
   Blockly.BlockSvg.superClass_.constructor.call(this,
-      workspace, prototypeName, opt_id);
+      workspace, prototypeName, opt_id, moduleId);
 
   // Expose this block's ID on its top-level SVG group.
   if (this.svgGroup_.dataset) {
@@ -943,6 +944,60 @@ Blockly.BlockSvg.prototype.setInsertionMarker = function(insertionMarker) {
 Blockly.BlockSvg.prototype.getSvgRoot = function() {
   return this.svgGroup_;
 };
+
+/**
+ * Remove render of this block.
+ * @suppress {checkTypes}
+ */
+Blockly.BlockSvg.prototype.removeRender = function() {
+  if (!this.rendered) {
+    return;
+  }
+
+  Blockly.Tooltip.dispose();
+  Blockly.Tooltip.unbindMouseEvents(this.pathObject.svgPath);
+  Blockly.utils.dom.startTextWidthCache();
+
+  // If this block is being dragged, unlink the mouse events.
+  if (Blockly.selected === this) {
+    this.unselect();
+    this.workspace.cancelCurrentGesture();
+  }
+  // If this block has a context menu open, close it.
+  if (Blockly.ContextMenu.currentBlock === this) {
+    Blockly.ContextMenu.hide();
+  }
+
+  var icons = this.getIcons();
+  for (var i = 0, icon; (icon = icons[i]); i++) {
+    icon.setVisible(false);
+  }
+
+  // Stop rerendering.
+  this.rendered = false;
+
+  // Clear pending warnings.
+  if (this.warningTextDb_) {
+    for (var n in this.warningTextDb_) {
+      clearTimeout(this.warningTextDb_[n]);
+    }
+    this.warningTextDb_ = null;
+  }
+
+  // Disable connections tracking and remove parent node from dom
+  if (!this.getParent()) {
+    this.setConnectionTracking(false);
+    Blockly.utils.dom.removeNode(this.svgGroup_);
+    this.workspace.removeTopBoundedElement(this);
+  }
+
+  Blockly.utils.dom.stopTextWidthCache();
+
+  // Remove render of all my children.
+  for (var i = this.childBlocks_.length - 1; i >= 0; i--) {
+    this.childBlocks_[i].removeRender();
+  }
+}
 
 /**
  * Dispose of this block.

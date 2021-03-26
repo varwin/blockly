@@ -25,6 +25,8 @@ goog.provide('Blockly.Events.ModuleBase');
 goog.provide('Blockly.Events.ModuleCreate');
 goog.provide('Blockly.Events.ModuleDelete');
 goog.provide('Blockly.Events.ModuleRename');
+goog.provide('Blockly.Events.ModuleMove');
+goog.provide('Blockly.Events.MoveBlockToModule');
 
 goog.require('Blockly.Events');
 goog.require('Blockly.Events.Abstract');
@@ -100,6 +102,7 @@ Blockly.Events.ModuleCreate.prototype.toJson = function() {
   json['moduleName'] = this.moduleName;
   json['scrollX'] = this.scrollX;
   json['scrollY'] = this.scrollY;
+  json['scale'] = this.scale;
   return json;
 };
 
@@ -112,6 +115,7 @@ Blockly.Events.ModuleCreate.prototype.fromJson = function(json) {
   this.moduleName = json['moduleName'];
   this.scrollX = json['scrollX'];
   this.scrollY = json['scrollY'];
+  this.scale = json['scale'];
 };
 
 /**
@@ -121,7 +125,7 @@ Blockly.Events.ModuleCreate.prototype.fromJson = function(json) {
 Blockly.Events.ModuleCreate.prototype.run = function(forward) {
   var moduleManager = this.getEventWorkspace_().getModuleManager();
   if (forward) {
-    moduleManager.createModule(this.moduleName, this.moduleId, this.scrollX, this.scrollY);
+    moduleManager.createModule(this.moduleName, this.moduleId, this.scrollX, this.scrollY, this.scale);
   } else {
     moduleManager.deleteModule(moduleManager.getModuleById(this.moduleId));
   }
@@ -142,6 +146,7 @@ Blockly.Events.ModuleDelete = function(module) {
   this.moduleName = module.name;
   this.scrollX = module.scrollX;
   this.scrollY = module.scrollY;
+  this.scale = module.scale;
 };
 Blockly.utils.object.inherits(Blockly.Events.ModuleDelete, Blockly.Events.ModuleBase);
 
@@ -159,7 +164,8 @@ Blockly.Events.ModuleDelete.prototype.toJson = function() {
   var json = Blockly.Events.ModuleDelete.superClass_.toJson.call(this);
   json['moduleName'] = this.moduleName;
   json['scrollX'] = this.scrollX;
-  json['scrollY'] = this.scrollY;
+  json['scrollX'] = this.scrollX;
+  json['scale'] = this.scale;
   return json;
 };
 
@@ -172,6 +178,7 @@ Blockly.Events.ModuleDelete.prototype.fromJson = function(json) {
   this.moduleName = json['moduleName'];
   this.scrollX = json['scrollX'];
   this.scrollY = json['scrollY'];
+  this.scale = json['scale'];
 };
 
 /**
@@ -183,7 +190,7 @@ Blockly.Events.ModuleDelete.prototype.run = function(forward) {
   if (forward) {
     moduleManager.deleteModule(moduleManager.getModuleById(this.moduleId));
   } else {
-    moduleManager.createModule(this.moduleName, this.moduleId, this.scrollX, this.scrollY);
+    moduleManager.createModule(this.moduleName, this.moduleId, this.scrollX, this.scrollY, this.scale);
   }
 };
 
@@ -363,6 +370,79 @@ Blockly.Events.ModuleMove.prototype.run = function(forward) {
     moduleManager.moveModule(module, this.previousOrder);
   }
 };
+
+
+
+/**
+ * Class for a move block to module event.
+ * @param {Blockly.Block} block The moved block.
+ *     Null for a blank event.
+ * @param {String} newModuleId The new module id.
+ * @param {String} previousModuleId The previous module id.
+ * @extends {Blockly.Events.ModuleBase}
+ * @constructor
+ */
+Blockly.Events.MoveBlockToModule = function(block, newModuleId, previousModuleId) {
+  if (!block) {
+    return;  // Blank event to be populated by fromJson.
+  }
+  Blockly.Events.MoveBlockToModule.superClass_.constructor.call(this);
+
+  this.workspaceId = block.workspace.id;
+  this.blockId = block.id
+  this.newModuleId = newModuleId;
+  this.previousModuleId = previousModuleId;
+};
+Blockly.utils.object.inherits(Blockly.Events.MoveBlockToModule, Blockly.Events.Abstract);
+
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+Blockly.Events.MoveBlockToModule.prototype.type = Blockly.Events.MOVE_BLOCK_TO_MODULE;
+
+/**
+ * Encode the event as JSON.
+ * @return {!Object} JSON representation.
+ */
+Blockly.Events.MoveBlockToModule.prototype.toJson = function() {
+  var json = Blockly.Events.MoveBlockToModule.superClass_.toJson.call(this);
+  json['blockId'] = this.blockId;
+  json['newModuleId'] = this.newModuleId;
+  json['previousModuleId'] = this.previousModuleId;
+  return json;
+};
+
+/**
+ * Decode the JSON event.
+ * @param {!Object} json JSON representation.
+ */
+Blockly.Events.MoveBlockToModule.prototype.fromJson = function(json) {
+  Blockly.Events.MoveBlockToModule.superClass_.fromJson.call(this, json);
+  this.blockId = json['blockId'];
+  this.newModuleId = json['newModuleId'];
+  this.previousModuleId = json['previousModuleId'];
+};
+
+/**
+ * Run a module move event.
+ * @param {boolean} forward True if run forward, false if run backward (undo).
+ */
+Blockly.Events.MoveBlockToModule.prototype.run = function(forward) {
+  var moduleManager = this.getEventWorkspace_().getModuleManager();
+  var newModule = moduleManager.getModuleById(this.newModuleId);
+  var previousModule = moduleManager.getModuleById(this.previousModuleId);
+  var block = this.getEventWorkspace_().getBlockById(this.blockId)
+
+  if (forward) {
+    moduleManager.moveBlockToModule(block, newModule);
+  } else {
+    moduleManager.moveBlockToModule(block, previousModule);
+  }
+};
+
+
 
 
 

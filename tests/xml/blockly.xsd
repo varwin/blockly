@@ -82,6 +82,9 @@
         <xs:element ref="module" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="active" type="xs:string"/>
+      <xs:attribute name="scroll-x" type="xs:float"/>
+      <xs:attribute name="scroll-y" type="xs:float"/>
+      <xs:attribute name="scale" type="xs:float"/>
     </xs:complexType>
   </xs:element>
 
