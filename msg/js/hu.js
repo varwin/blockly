@@ -293,7 +293,6 @@ Blockly.Msg["NEW_NUMBER_VARIABLE"] = "Create number variable...";  // untranslat
 Blockly.Msg["NEW_STRING_VARIABLE"] = "Create string variable...";  // untranslated
 Blockly.Msg["NEW_VARIABLE"] = "Változó létrehozása…";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "Az új változó neve:";
-Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "Az új változó típusa:";
 Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
 Blockly.Msg["OBSOLETE_WARNING"] = "Warning: This block is obsolete. Use a similar new one.";  // untranslated
