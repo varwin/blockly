@@ -98,6 +98,27 @@ Blockly.Menu = function() {
    * @private
    */
   this.roleName_ = null;
+
+  /**
+   * The menu parent's DOM element.
+   * @type {Element}
+   * @private
+   */
+  this.parentElement_ = null;
+
+  /**
+   * Text for searching in menu items.
+   * @type {String}
+   * @private
+   */
+  this.searchText_ = '';
+
+  /**
+   * Delayed timer id for search in menu list.
+   * @type {TimeoutId}
+   * @private
+   */
+  this.searchTimeout_ = null;
 };
 
 
@@ -122,6 +143,7 @@ Blockly.Menu.prototype.render = function(container) {
     Blockly.utils.aria.setRole(element, this.roleName_);
   }
   this.element_ = element;
+  this.parentElement_ = container;
 
   // Add menu items.
   for (var i = 0, menuItem; (menuItem = this.menuItems_[i]); i++) {
@@ -265,7 +287,7 @@ Blockly.Menu.prototype.setHighlighted = function(item) {
     this.highlightedItem_ = item;
     // Bring the highlighted item into view. This has no effect if the menu is
     // not scrollable.
-    var el = /** @type {!Element} */ (this.getElement());
+    var el = /** @type {!Element} */ (this.parentElement_);
     Blockly.utils.style.scrollIntoContainerView(
         /** @type {!Element} */ (item.getElement()), el);
 
@@ -308,6 +330,35 @@ Blockly.Menu.prototype.highlightFirst_ = function() {
  */
 Blockly.Menu.prototype.highlightLast_ = function() {
   this.highlightHelper_(this.menuItems_.length, -1);
+};
+
+/**
+ * Highlights the item if it contains user's keyboard input value.
+ * @param {String} searchKey that received from keyboard event.
+ * @private
+ */
+Blockly.Menu.prototype.highlightSuggestedItem_ = function(searchKey) {
+  if (this.searchTimeout_) {
+    this.searchTimeout_ = clearTimeout(this.searchTimeout_);
+  }
+
+  this.searchText_ += searchKey;
+  var that = this;
+  this.searchTimeout_ = setTimeout(function(){
+    that.searchText_ = '';
+  }, 1000);
+
+  var suggestedItem = null;
+  for (var i = 0; i < this.menuItems_.length; i++) {
+    if (this.menuItems_[i].content_.toLowerCase().indexOf(this.searchText_) > -1) {
+      suggestedItem = this.menuItems_[i];
+      break;
+    }
+  }
+
+  if (suggestedItem) {
+    this.setHighlighted(suggestedItem);
+  }
 };
 
 /**
@@ -443,8 +494,11 @@ Blockly.Menu.prototype.handleKeyEvent_ = function(e) {
       break;
 
     default:
-      // Not a key the menu is interested in.
-      return;
+      if (!e.key) {
+        return;
+      }
+
+      this.highlightSuggestedItem_(e.key);
   }
   // The menu used this key, don't let it have secondary effects.
   e.preventDefault();
