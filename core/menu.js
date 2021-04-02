@@ -100,13 +100,6 @@ Blockly.Menu = function() {
   this.roleName_ = null;
 
   /**
-   * The menu parent's DOM element.
-   * @type {Element}
-   * @private
-   */
-  this.parentElement_ = null;
-
-  /**
    * Text for searching in menu items.
    * @type {String}
    * @private
@@ -143,7 +136,6 @@ Blockly.Menu.prototype.render = function(container) {
     Blockly.utils.aria.setRole(element, this.roleName_);
   }
   this.element_ = element;
-  this.parentElement_ = container;
 
   // Add menu items.
   for (var i = 0, menuItem; (menuItem = this.menuItems_[i]); i++) {
@@ -287,7 +279,7 @@ Blockly.Menu.prototype.setHighlighted = function(item) {
     this.highlightedItem_ = item;
     // Bring the highlighted item into view. This has no effect if the menu is
     // not scrollable.
-    var el = /** @type {!Element} */ (this.parentElement_);
+    var el = /** @type {!Element} */ (this.getElement());
     Blockly.utils.style.scrollIntoContainerView(
         /** @type {!Element} */ (item.getElement()), el);
 
