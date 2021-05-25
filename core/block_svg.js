@@ -16,10 +16,12 @@ goog.require('Blockly.ASTNode');
 goog.require('Blockly.Block');
 goog.require('Blockly.blockAnimations');
 goog.require('Blockly.blockRendering.IPathObject');
+goog.require('Blockly.constants');
 goog.require('Blockly.ContextMenu');
+goog.require('Blockly.ContextMenuRegistry');
 goog.require('Blockly.Events');
-goog.require('Blockly.Events.Ui');
 goog.require('Blockly.Events.BlockMove');
+goog.require('Blockly.Events.Selected');
 goog.require('Blockly.Msg');
 goog.require('Blockly.navigation');
 goog.require('Blockly.RenderedConnection');
@@ -27,10 +29,12 @@ goog.require('Blockly.TabNavigateCursor');
 goog.require('Blockly.Tooltip');
 goog.require('Blockly.Touch');
 goog.require('Blockly.utils');
+goog.require('Blockly.utils.deprecation');
 goog.require('Blockly.utils.Coordinate');
 goog.require('Blockly.utils.dom');
 goog.require('Blockly.utils.object');
 goog.require('Blockly.utils.Rect');
+goog.require('Blockly.utils.userAgent');
 
 goog.requireType('Blockly.IASTNodeLocationSvg');
 goog.requireType('Blockly.IBoundedElement');
@@ -58,8 +62,8 @@ Blockly.BlockSvg = function(workspace, prototypeName, opt_id, moduleId) {
    * @type {!SVGGElement}
    * @private
    */
-  this.svgGroup_ = /** @type {!SVGGElement} */ (
-    Blockly.utils.dom.createSvgElement('g', {}, null));
+  this.svgGroup_ = Blockly.utils.dom.createSvgElement(
+      Blockly.utils.Svg.G, {}, null);
   this.svgGroup_.translate_ = '';
 
   /**
@@ -115,6 +119,10 @@ Blockly.BlockSvg = function(workspace, prototypeName, opt_id, moduleId) {
   // Expose this block's ID on its top-level SVG group.
   if (this.svgGroup_.dataset) {
     this.svgGroup_.dataset['id'] = this.id;
+  } else if (Blockly.utils.userAgent.IE) {
+    // SVGElement.dataset is not available on IE11, but data-* properties
+    // can be set with setAttribute().
+    this.svgGroup_.setAttribute('data-id', this.id);
   }
 };
 Blockly.utils.object.inherits(Blockly.BlockSvg, Blockly.Block);
@@ -239,6 +247,11 @@ Blockly.BlockSvg.prototype.getColourTertiary = function() {
  * @deprecated Use style.colourSecondary. (2020 January 21)
  */
 Blockly.BlockSvg.prototype.getColourShadow = function() {
+  Blockly.utils.deprecation.warn(
+      'BlockSvg.prototype.getColourShadow',
+      'January 2020',
+      'January 2021',
+      'style.colourSecondary');
   return this.getColourSecondary();
 };
 
@@ -252,6 +265,11 @@ Blockly.BlockSvg.prototype.getColourShadow = function() {
  * @deprecated Use style.colourTertiary. (2020 January 21)
  */
 Blockly.BlockSvg.prototype.getColourBorder = function() {
+  Blockly.utils.deprecation.warn(
+      'BlockSvg.prototype.getColourBorder',
+      'January 2020',
+      'January 2021',
+      'style.colourTertiary');
   var colourTertiary = this.getColourTertiary();
   return {
     colourBorder: colourTertiary,
@@ -288,8 +306,7 @@ Blockly.BlockSvg.prototype.select = function() {
       Blockly.Events.enable();
     }
   }
-  var event = new Blockly.Events.Ui(null, 'selected', oldId, this.id);
-  event.workspaceId = this.workspace.id;
+  var event = new Blockly.Events.Selected(oldId, this.id, this.workspace.id);
   Blockly.Events.fire(event);
   Blockly.selected = this;
   this.addSelect();
@@ -302,7 +319,7 @@ Blockly.BlockSvg.prototype.unselect = function() {
   if (Blockly.selected != this) {
     return;
   }
-  var event = new Blockly.Events.Ui(null, 'selected', this.id, null);
+  var event = new Blockly.Events.Selected(this.id, null, this.workspace.id);
   event.workspaceId = this.workspace.id;
   Blockly.Events.fire(event);
   Blockly.selected = null;
@@ -673,10 +690,11 @@ Blockly.BlockSvg.prototype.tab = function(start, forward) {
   var tabCursor = new Blockly.TabNavigateCursor();
   tabCursor.setCurNode(Blockly.ASTNode.createFieldNode(start));
   var currentNode = tabCursor.getCurNode();
-  var action = forward ?
-      Blockly.navigation.ACTION_NEXT : Blockly.navigation.ACTION_PREVIOUS;
+  var actionName = forward ?
+      Blockly.navigation.actionNames.NEXT : Blockly.navigation.actionNames.PREVIOUS;
 
-  tabCursor.onBlocklyAction(action);
+  tabCursor.onBlocklyAction(
+      /** @type {!Blockly.ShortcutRegistry.KeyboardShortcut} */ ({name: actionName}));
 
   var nextNode = tabCursor.getCurNode();
   if (nextNode && nextNode !== currentNode) {
@@ -722,95 +740,20 @@ Blockly.BlockSvg.prototype.generateContextMenu = function() {
   if (this.workspace.options.readOnly || !this.contextMenu) {
     return null;
   }
-  // Save the current block in a variable for use in closures.
-  var block = this;
-  var menuOptions = [];
 
-  if (!this.isInFlyout) {
-    if (this.isDeletable() && this.isMovable()) {
-      menuOptions.push(Blockly.ContextMenu.blockDuplicateOption(block));
-    }
+  var menuOptions = Blockly.ContextMenuRegistry.registry.getContextMenuOptions(
+      Blockly.ContextMenuRegistry.ScopeType.BLOCK, {block: this});
 
-    if (this.workspace.options.comments && !this.collapsed_ &&
-        this.isEditable()) {
-      menuOptions.push(Blockly.ContextMenu.blockCommentOption(block));
-    }
-
-    if (this.isMovable()) {
-      if (!this.collapsed_) {
-        // Option to make block inline.
-        for (var i = 1; i < this.inputList.length; i++) {
-          if (this.inputList[i - 1].type != Blockly.NEXT_STATEMENT &&
-              this.inputList[i].type != Blockly.NEXT_STATEMENT) {
-            // Only display this option if there are two value or dummy inputs
-            // next to each other.
-            var inlineOption = {enabled: true};
-            var isInline = this.getInputsInline();
-            inlineOption.text = isInline ?
-                Blockly.Msg['EXTERNAL_INPUTS'] : Blockly.Msg['INLINE_INPUTS'];
-            inlineOption.callback = function() {
-              block.setInputsInline(!isInline);
-            };
-            menuOptions.push(inlineOption);
-            break;
-          }
-        }
-        // Option to collapse block
-        if (this.workspace.options.collapse) {
-          var collapseOption = {enabled: true};
-          collapseOption.text = Blockly.Msg['COLLAPSE_BLOCK'];
-          collapseOption.callback = function() {
-            block.setCollapsed(true);
-          };
-          menuOptions.push(collapseOption);
-        }
-      } else {
-        // Option to expand block.
-        if (this.workspace.options.collapse) {
-          var expandOption = {enabled: true};
-          expandOption.text = Blockly.Msg['EXPAND_BLOCK'];
-          expandOption.callback = function() {
-            block.setCollapsed(false);
-          };
-          menuOptions.push(expandOption);
-        }
+  if (!this.isInFlyout && 
+    this.workspace.options.showModuleBar &&
+    this.isMovable()
+    && this.workspace.getModuleManager().getAllModules().length > 1) {
+    this.workspace.getModuleManager().getAllModules().forEach(function (module) {
+      if (block.getModuleId() !== module.getId()) {
+        menuOptions.push(Blockly.ContextMenu.blockMoveToModuleOption(block, module));
       }
-    }
-
-    if (this.workspace.options.disable && this.isEditable()) {
-      // Option to disable/enable block.
-      var disableOption = {
-        text: this.isEnabled() ?
-            Blockly.Msg['DISABLE_BLOCK'] : Blockly.Msg['ENABLE_BLOCK'],
-        enabled: !this.getInheritedDisabled(),
-        callback: function() {
-          var group = Blockly.Events.getGroup();
-          if (!group) {
-            Blockly.Events.setGroup(true);
-          }
-          block.setEnabled(!block.isEnabled());
-          if (!group) {
-            Blockly.Events.setGroup(false);
-          }
-        }
-      };
-      menuOptions.push(disableOption);
-    }
-
-    if (this.workspace.options.showModuleBar && this.isMovable() && this.workspace.getModuleManager().getAllModules().length > 1) {
-      this.workspace.getModuleManager().getAllModules().forEach(function (module) {
-        if (block.getModuleId() !== module.getId()) {
-          menuOptions.push(Blockly.ContextMenu.blockMoveToModuleOption(block, module));
-        }
-      });
-    }
-
-    if (this.isDeletable()) {
-      menuOptions.push(Blockly.ContextMenu.blockDeleteOption(block));
-    }
+    });
   }
-
-  menuOptions.push(Blockly.ContextMenu.blockHelpOption(block));
 
   // Allow the block to add or modify menuOptions.
   if (this.customContextMenu) {
@@ -1062,11 +1005,16 @@ Blockly.BlockSvg.prototype.dispose = function(healStack, animate) {
 
 /**
  * Encode a block for copying.
- * @return {!Blockly.ICopyable.CopyData} Copy metadata.
+ * @return {?Blockly.ICopyable.CopyData} Copy metadata, or null if the block is
+ *     an insertion marker.
  * @package
  */
 Blockly.BlockSvg.prototype.toCopyData = function() {
-  var xml = Blockly.Xml.blockToDom(this, true, true);
+  if (this.isInsertionMarker_) {
+    return null;
+  }
+
+  var xml = /** @type {!Element} */ (Blockly.Xml.blockToDom(this, true, true));
   // Copy only the selected block and internal blocks.
   Blockly.Xml.deleteNext(xml);
   // Encode start position in XML.
@@ -1105,8 +1053,13 @@ Blockly.BlockSvg.prototype.applyColour = function() {
 Blockly.BlockSvg.prototype.updateDisabled = function() {
   var children = this.getChildren(false);
   this.applyColour();
+  if (this.isCollapsed()) {
+    return;
+  }
   for (var i = 0, child; (child = children[i]); i++) {
-    child.updateDisabled();
+    if (child.rendered) {
+      child.updateDisabled();
+    }
   }
 };
 
@@ -1258,17 +1211,6 @@ Blockly.BlockSvg.prototype.setMutator = function(mutator) {
     // Adding or removing a mutator icon will cause the block to change shape.
     this.bumpNeighbours();
   }
-};
-
-/**
- * Set whether the block is disabled or not.
- * @param {boolean} disabled True if disabled.
- * @deprecated May 2019
- */
-Blockly.BlockSvg.prototype.setDisabled = function(disabled) {
-  console.warn('Deprecated call to Blockly.BlockSvg.prototype.setDisabled, ' +
-  'use Blockly.BlockSvg.prototype.setEnabled instead.');
-  this.setEnabled(!disabled);
 };
 
 /**
