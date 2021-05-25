@@ -744,11 +744,14 @@ Blockly.BlockSvg.prototype.generateContextMenu = function() {
   var menuOptions = Blockly.ContextMenuRegistry.registry.getContextMenuOptions(
       Blockly.ContextMenuRegistry.ScopeType.BLOCK, {block: this});
 
-  if (!this.isInFlyout && 
+  // Save the current block in a variable for use in closures.
+  var block = this;
+
+  if (!this.isInFlyout &&
     this.workspace.options.showModuleBar &&
-    this.isMovable()
-    && this.workspace.getModuleManager().getAllModules().length > 1) {
-    this.workspace.getModuleManager().getAllModules().forEach(function (module) {
+    this.isMovable() &&
+    this.workspace.getModuleManager().getAllModules().length > 1) {
+    this.workspace.getModuleManager().getAllModules().forEach(function(module) {
       if (block.getModuleId() !== module.getId()) {
         menuOptions.push(Blockly.ContextMenu.blockMoveToModuleOption(block, module));
       }
@@ -940,7 +943,7 @@ Blockly.BlockSvg.prototype.removeRender = function() {
   for (var i = this.childBlocks_.length - 1; i >= 0; i--) {
     this.childBlocks_[i].removeRender();
   }
-}
+};
 
 /**
  * Dispose of this block.
