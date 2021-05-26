@@ -554,6 +554,10 @@ Blockly.Css.CONTENT = [
     'position: static;', /* Scroll with the menu. */
   '}',
 
+  '.blocklyMenuItemText {',
+    'margin-left: 5px',
+  '}',
+
   '.blocklyMenuItemRtl .blocklyMenuItemCheckbox {',
     'float: right;',
     'margin-right: -24px;',
