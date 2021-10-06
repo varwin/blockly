@@ -73,7 +73,7 @@
     "pixelmatch": "^4.0.2",
     "pngjs": "^3.4.0",
     "selenium-standalone": "^6.16.0",
-    "rimraf": "^2.6.3",
+    "rimraf": "^3.0.2",
     "through2": "^3.0.1",
     "typescript-closure-tools": "^0.0.7",
     "webdriverio": "^5.11.5",
