@@ -7,6 +7,7 @@
 			"Hiperpobla",
 			"Jaumeortola",
 			"Lluís Batlle",
+			"Mguix",
 			"Micobu",
 			"Quel.soler"
 		]
@@ -304,6 +305,7 @@
 	"LISTS_GET_SUBLIST_END_FROM_END": "fins # des del final",
 	"LISTS_GET_SUBLIST_END_LAST": "fins l'últim",
 	"LISTS_GET_SUBLIST_TOOLTIP": "Crea una còpia de la part especificada d'una llista.",
+	"LISTS_SORT_HELPURL": "https://github.com/google/blockly/wiki/Lists#sorting-a-list",
 	"LISTS_SORT_TITLE": "ordenar %1 %2 %3",
 	"LISTS_SORT_TOOLTIP": "Ordena la còpia d'una llista.",
 	"LISTS_SORT_ORDER_ASCENDING": "ascendent",
@@ -347,5 +349,7 @@
 	"PROCEDURES_IFRETURN_WARNING": "Advertència: Aquest bloc només es pot utilitzar dins de la definició d'una funció.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Digues alguna cosa...",
 	"WORKSPACE_ARIA_LABEL": "Espai de treball Blockly",
-	"COLLAPSED_WARNINGS_WARNING": "Els blocs plegats contenen avisos."
+	"COLLAPSED_WARNINGS_WARNING": "Els blocs plegats contenen avisos.",
+	"DIALOG_OK": "D'acord",
+	"DIALOG_CANCEL": "Cancel·la"
 }

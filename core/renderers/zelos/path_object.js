@@ -14,9 +14,12 @@
 goog.provide('Blockly.zelos.PathObject');
 
 goog.require('Blockly.blockRendering.PathObject');
-goog.require('Blockly.zelos.ConstantProvider');
 goog.require('Blockly.utils.dom');
 goog.require('Blockly.utils.object');
+goog.require('Blockly.utils.Svg');
+goog.require('Blockly.zelos.ConstantProvider');
+
+goog.requireType('Blockly.Theme');
 
 
 /**
@@ -42,24 +45,24 @@ Blockly.zelos.PathObject = function(root, style, constants) {
 
   /**
    * The selected path of the block.
-   * @type {SVGElement}
+   * @type {?SVGElement}
    * @private
    */
   this.svgPathSelected_ = null;
 
   /**
    * The outline paths on the block.
-   * @type {!Object.<string,!SVGElement>}
+   * @type {!Object<string, !SVGElement>}
    * @private
    */
-  this.outlines_ = {};
+  this.outlines_ = Object.create(null);
 
   /**
    * A set used to determine which outlines were used during a draw pass.  The
    * set is initialized with a reference to all the outlines in
    * `this.outlines_`. Every time we use an outline during the draw pass, the
    * reference is removed from this set.
-   * @type {Object.<string, number>}
+   * @type {Object<string, number>}
    * @private
    */
   this.remainingOutlines_ = null;
@@ -95,8 +98,7 @@ Blockly.zelos.PathObject.prototype.applyColour = function(block) {
   }
 
   // Apply colour to outlines.
-  for (var i = 0, keys = Object.keys(this.outlines_),
-    key; (key = keys[i]); i++) {
+  for (var key in this.outlines_) {
     this.outlines_[key].setAttribute('fill', this.style.colourTertiary);
   }
 };
@@ -107,8 +109,7 @@ Blockly.zelos.PathObject.prototype.applyColour = function(block) {
 Blockly.zelos.PathObject.prototype.flipRTL = function() {
   Blockly.zelos.PathObject.superClass_.flipRTL.call(this);
   // Mirror each input outline path.
-  for (var i = 0, keys = Object.keys(this.outlines_),
-    key; (key = keys[i]); i++) {
+  for (var key in this.outlines_) {
     this.outlines_[key].setAttribute('transform', 'scale(-1 1)');
   }
 };
@@ -172,9 +173,8 @@ Blockly.zelos.PathObject.prototype.updateShapeForInputHighlight = function(
  * @package
  */
 Blockly.zelos.PathObject.prototype.beginDrawing = function() {
-  this.remainingOutlines_ = {};
-  for (var i = 0, keys = Object.keys(this.outlines_),
-    key; (key = keys[i]); i++) {
+  this.remainingOutlines_ = Object.create(null);
+  for (var key in this.outlines_) {
     // The value set here isn't used anywhere, we are just using the
     // object as a Set data structure.
     this.remainingOutlines_[key] = 1;
@@ -189,8 +189,7 @@ Blockly.zelos.PathObject.prototype.endDrawing = function() {
   // Go through all remaining outlines that were not used this draw pass, and
   // remove them.
   if (this.remainingOutlines_) {
-    for (var i = 0, keys = Object.keys(this.remainingOutlines_),
-      key; (key = keys[i]); i++) {
+    for (var key in this.remainingOutlines_) {
       this.removeOutlinePath_(key);
     }
   }
@@ -218,12 +217,13 @@ Blockly.zelos.PathObject.prototype.setOutlinePath = function(name, pathString) {
  */
 Blockly.zelos.PathObject.prototype.getOutlinePath_ = function(name) {
   if (!this.outlines_[name]) {
-    this.outlines_[name] = Blockly.utils.dom.createSvgElement('path', {
-      'class': 'blocklyOutlinePath',
-      // IE doesn't like paths without the data definition, set empty default
-      'd': ''
-    },
-    this.svgRoot);
+    this.outlines_[name] = Blockly.utils.dom.createSvgElement(
+        Blockly.utils.Svg.PATH, {
+          'class': 'blocklyOutlinePath',
+          // IE doesn't like paths without the data definition, set empty default
+          'd': ''
+        },
+        this.svgRoot);
   }
   if (this.remainingOutlines_) {
     delete this.remainingOutlines_[name];

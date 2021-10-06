@@ -3,7 +3,6 @@
 'use strict';
 
 Blockly.Msg["ADD_COMMENT"] = "أضف تعليقًا";
-Blockly.Msg["BLOCK_MOVE_TO_MODULE"] = "Move to '%1'";  // untranslated
 Blockly.Msg["CANNOT_DELETE_VARIABLE_PROCEDURE"] = "لايمكن حذف متغير \"%1\" بسبب انه جزء من الدالة \"%2\"";
 Blockly.Msg["CHANGE_VALUE_TITLE"] = "تغيير قيمة:";
 Blockly.Msg["CLEAN_UP"] = "ترتيب القطع";
@@ -50,7 +49,7 @@ Blockly.Msg["CONTROLS_IF_TOOLTIP_1"] = "إذا كانت قيمة ما تساوي
 Blockly.Msg["CONTROLS_IF_TOOLTIP_2"] = "إذا كانت قيمة ما تساوي \"صحيح\"، إذن قم بتنفيذ أول قطعة من الأوامر. والا ،قم بتنفيذ القطعة الثانية من الأوامر.";
 Blockly.Msg["CONTROLS_IF_TOOLTIP_3"] = "إذا كانت القيمة الأولى تساوي \"صحيح\", إذن قم بتنفيذ القطعة الأولى من الأوامر. والا, إذا كانت القيمة الثانية تساوي \"صحيح\", قم بتنفيذ القطعة الثانية من الأوامر.";
 Blockly.Msg["CONTROLS_IF_TOOLTIP_4"] = "إذا كانت القيمة الأولى تساوي \"صحيح\", إذن قم بتنفيذ القطعة الأولى من الأوامر. والا , إذا كانت القيمة الثانية تساوي \"صحيح\", قم بتنفيذ القطعة الثانية من الأوامر. إذا لم تكن هناك أي قيمة تساوي صحيح, قم بتنفيذ آخر قطعة من الأوامر.";
-Blockly.Msg["CONTROLS_REPEAT_HELPURL"] = "https://en.wikipedia.org/wiki/For_loop";
+Blockly.Msg["CONTROLS_REPEAT_HELPURL"] = "https://ar.wikipedia.org/wiki/حلقة_تكرار";
 Blockly.Msg["CONTROLS_REPEAT_INPUT_DO"] = "نفّذ";
 Blockly.Msg["CONTROLS_REPEAT_TITLE"] = "كرر  %1 مرات";
 Blockly.Msg["CONTROLS_REPEAT_TOOLTIP"] = "نفّذ بعض الأوامر عدة مرات.";
@@ -59,13 +58,13 @@ Blockly.Msg["CONTROLS_WHILEUNTIL_OPERATOR_UNTIL"] = "اكرّر حتى";
 Blockly.Msg["CONTROLS_WHILEUNTIL_OPERATOR_WHILE"] = "اكرّر طالما";
 Blockly.Msg["CONTROLS_WHILEUNTIL_TOOLTIP_UNTIL"] = "بما ان القيمة خاطئة, نفّذ بعض الأوامر.";
 Blockly.Msg["CONTROLS_WHILEUNTIL_TOOLTIP_WHILE"] = "بما ان القيمة صحيحة, نفّذ بعض الأوامر.";
-Blockly.Msg["DEFAULT_MODULE_NAME"] = "General";  // untranslated
 Blockly.Msg["DELETE_ALL_BLOCKS"] = "حذف %1 قطعة؟";
 Blockly.Msg["DELETE_BLOCK"] = "احذف القطعة";
-Blockly.Msg["DELETE_MODULE"] = "Delete";  // untranslated
 Blockly.Msg["DELETE_VARIABLE"] = "حذف المتغير %1";
 Blockly.Msg["DELETE_VARIABLE_CONFIRMATION"] = "حذف%1 1 استخدامات المتغير '%2'؟";
 Blockly.Msg["DELETE_X_BLOCKS"] = "احذف %1 قطع";
+Blockly.Msg["DIALOG_CANCEL"] = "إلغاء";
+Blockly.Msg["DIALOG_OK"] = "موافق";
 Blockly.Msg["DISABLE_BLOCK"] = "عطّل القطعة";
 Blockly.Msg["DUPLICATE_BLOCK"] = "مكرر";
 Blockly.Msg["DUPLICATE_COMMENT"] = "تعليق مكرر";
@@ -75,20 +74,6 @@ Blockly.Msg["EXPAND_BLOCK"] = "وسٌّع القطعة";
 Blockly.Msg["EXTERNAL_INPUTS"] = "ادخال خارجي";
 Blockly.Msg["HELP"] = "مساعدة";
 Blockly.Msg["INLINE_INPUTS"] = "ادخال خطي";
-Blockly.Msg["IOS_CANCEL"] = "إلغاء";
-Blockly.Msg["IOS_ERROR"] = "خطأ";
-Blockly.Msg["IOS_OK"] = "أوافق";
-Blockly.Msg["IOS_PROCEDURES_ADD_INPUT"] = "+اضافة ادخال";
-Blockly.Msg["IOS_PROCEDURES_ALLOW_STATEMENTS"] = "العبارات المسموحة";
-Blockly.Msg["IOS_PROCEDURES_DUPLICATE_INPUTS_ERROR"] = "هذه الدالة لها مدخلات مكررة.";
-Blockly.Msg["IOS_PROCEDURES_INPUTS"] = "المدخلات";
-Blockly.Msg["IOS_VARIABLES_ADD_BUTTON"] = "أضف";
-Blockly.Msg["IOS_VARIABLES_ADD_VARIABLE"] = "+اضف متغير";
-Blockly.Msg["IOS_VARIABLES_DELETE_BUTTON"] = "احذف";
-Blockly.Msg["IOS_VARIABLES_EMPTY_NAME_ERROR"] = "لا يمكنك استخدام اسم متغير فارغ.";
-Blockly.Msg["IOS_VARIABLES_RENAME_BUTTON"] = "أعد التسمية";
-Blockly.Msg["IOS_VARIABLES_VARIABLE_NAME"] = "اسم المتغير";
-Blockly.Msg["LAST_MODULE_DELETE_RESTRICTION"] = "Can't delete the last module.";  // untranslated
 Blockly.Msg["LISTS_CREATE_EMPTY_HELPURL"] = "https://github.com/google/blockly/wiki/Lists#create-empty-list";
 Blockly.Msg["LISTS_CREATE_EMPTY_TITLE"] = "إنشئ قائمة فارغة";
 Blockly.Msg["LISTS_CREATE_EMPTY_TOOLTIP"] = "تقوم بإرجاع قائمة، طولها 0, لا تحتوي على أية سجلات البيانات";
@@ -177,7 +162,7 @@ Blockly.Msg["LOGIC_BOOLEAN_FALSE"] = "خاطئ";
 Blockly.Msg["LOGIC_BOOLEAN_HELPURL"] = "https://github.com/google/blockly/wiki/Logic#values";  // untranslated
 Blockly.Msg["LOGIC_BOOLEAN_TOOLTIP"] = "يرجع صحيح أو خاطئ.";
 Blockly.Msg["LOGIC_BOOLEAN_TRUE"] = "صحيح";
-Blockly.Msg["LOGIC_COMPARE_HELPURL"] = "https://en.wikipedia.org/wiki/Inequality_(mathematics)";
+Blockly.Msg["LOGIC_COMPARE_HELPURL"] = "https://ar.wikipedia.org/wiki/متباينة_(جبر)";
 Blockly.Msg["LOGIC_COMPARE_TOOLTIP_EQ"] = "يرجع صحيح إذا كان كلا المدخلات مساوية بعضها البعض.";
 Blockly.Msg["LOGIC_COMPARE_TOOLTIP_GT"] = "يرجع صحيح إذا كان الإدخال الأول أكبر من الإدخال الثاني.";
 Blockly.Msg["LOGIC_COMPARE_TOOLTIP_GTE"] = "يرجع صحيح إذا كان الإدخال الأول أكبر من أو يساوي الإدخال الثاني.";
@@ -196,12 +181,12 @@ Blockly.Msg["LOGIC_OPERATION_OR"] = "أو";
 Blockly.Msg["LOGIC_OPERATION_TOOLTIP_AND"] = "ترجع صحيح إذا كان كلا المٌدخلات صحيح.";
 Blockly.Msg["LOGIC_OPERATION_TOOLTIP_OR"] = "ترجع صحيح إذا كان واحد على الأقل من المدخلات صحيح.";
 Blockly.Msg["LOGIC_TERNARY_CONDITION"] = "اختبار";
-Blockly.Msg["LOGIC_TERNARY_HELPURL"] = "https://en.wikipedia.org/wiki/%3F:";
+Blockly.Msg["LOGIC_TERNARY_HELPURL"] = ":https://ar.wikipedia.org/wiki/%3F";
 Blockly.Msg["LOGIC_TERNARY_IF_FALSE"] = "إذا كانت العبارة خاطئة";
 Blockly.Msg["LOGIC_TERNARY_IF_TRUE"] = "إذا كانت العبارة صحيحة";
 Blockly.Msg["LOGIC_TERNARY_TOOLTIP"] = "تحقق الشرط في 'الاختبار'. إذا كان الشرط صحيح، يقوم بإرجاع قيمة 'اذا كانت العبارة صحيحة'؛ خلاف ذلك يرجع قيمة 'اذا كانت العبارة خاطئة'.";
 Blockly.Msg["MATH_ADDITION_SYMBOL"] = "+";
-Blockly.Msg["MATH_ARITHMETIC_HELPURL"] = "https://en.wikipedia.org/wiki/Arithmetic";
+Blockly.Msg["MATH_ARITHMETIC_HELPURL"] = "https://ar.wikipedia.org/wiki/حسابيات";
 Blockly.Msg["MATH_ARITHMETIC_TOOLTIP_ADD"] = "يرجع مجموع الرقمين.";
 Blockly.Msg["MATH_ARITHMETIC_TOOLTIP_DIVIDE"] = "يرجع حاصل قسمة الرقمين.";
 Blockly.Msg["MATH_ARITHMETIC_TOOLTIP_MINUS"] = "يرجع الفرق بين الرقمين.";
@@ -213,7 +198,7 @@ Blockly.Msg["MATH_ATAN2_TOOLTIP"] = "عودة قوس ظل النقطة (س، ص)
 Blockly.Msg["MATH_CHANGE_HELPURL"] = "https://en.wikipedia.org/wiki/Programming_idiom#Incrementing_a_counter";
 Blockly.Msg["MATH_CHANGE_TITLE"] = "غير %1 بـ %2";
 Blockly.Msg["MATH_CHANGE_TOOLTIP"] = "إضف رقم إلى متغير '%1'.";
-Blockly.Msg["MATH_CONSTANT_HELPURL"] = "https://en.wikipedia.org/wiki/Mathematical_constant";
+Blockly.Msg["MATH_CONSTANT_HELPURL"] = "https://ar.wikipedia.org/wiki/ثابت رياضي";
 Blockly.Msg["MATH_CONSTANT_TOOLTIP"] = "ير جع واحد من الثوابت الشائعة : π (3.141…), e (2.718…), φ (1.618…), sqrt(2) (1.414…), sqrt(½) (0.707…), or ∞ (infinity).";
 Blockly.Msg["MATH_CONSTRAIN_HELPURL"] = "https://en.wikipedia.org/wiki/Clamping_(graphics)";  // untranslated
 Blockly.Msg["MATH_CONSTRAIN_TITLE"] = "تقيد %1 منخفض %2 مرتفع %3";
@@ -227,7 +212,7 @@ Blockly.Msg["MATH_IS_POSITIVE"] = "هو موجب";
 Blockly.Msg["MATH_IS_PRIME"] = "هو أولي";
 Blockly.Msg["MATH_IS_TOOLTIP"] = "تحقق إذا كان عدد ما زوجيا، فرذيا, أوليا، صحيحا،موجبا أو سالبا، أو إذا كان قابلا للقسمة على عدد معين.  يرجع صحيح أو خاطئ.";
 Blockly.Msg["MATH_IS_WHOLE"] = "هو صحيح";
-Blockly.Msg["MATH_MODULO_HELPURL"] = "https://en.wikipedia.org/wiki/Modulo_operation";
+Blockly.Msg["MATH_MODULO_HELPURL"] = "https://tr.wikipedia.org/wiki/عامل_قسمة_مع_باقي";
 Blockly.Msg["MATH_MODULO_TITLE"] = "باقي %1 ÷ %2";
 Blockly.Msg["MATH_MODULO_TOOLTIP"] = "يرجع الباقي من قسمة الرقمين.";
 Blockly.Msg["MATH_MULTIPLICATION_SYMBOL"] = "×";
@@ -251,18 +236,18 @@ Blockly.Msg["MATH_ONLIST_TOOLTIP_RANDOM"] = "يرجع عنصر عشوائي من
 Blockly.Msg["MATH_ONLIST_TOOLTIP_STD_DEV"] = "يرجع الانحراف المعياري للقائمة.";
 Blockly.Msg["MATH_ONLIST_TOOLTIP_SUM"] = "يرجع مجموع كافة الأرقام الموجودة في القائمة.";
 Blockly.Msg["MATH_POWER_SYMBOL"] = "^";
-Blockly.Msg["MATH_RANDOM_FLOAT_HELPURL"] = "https://en.wikipedia.org/wiki/Random_number_generation";
+Blockly.Msg["MATH_RANDOM_FLOAT_HELPURL"] = "https://ar.wikipedia.org/wiki/توليد_الأعداد_العشوائية";
 Blockly.Msg["MATH_RANDOM_FLOAT_TITLE_RANDOM"] = "كسر عشوائي";
 Blockly.Msg["MATH_RANDOM_FLOAT_TOOLTIP"] = "يرجع جزء عشوائي بين 0.0 (ضمنياً) و 1.0 (خارجيا).";
-Blockly.Msg["MATH_RANDOM_INT_HELPURL"] = "https://en.wikipedia.org/wiki/Random_number_generation";
+Blockly.Msg["MATH_RANDOM_INT_HELPURL"] = "https://ar.wikipedia.org/wiki/توليد_الأعداد_العشوائية";
 Blockly.Msg["MATH_RANDOM_INT_TITLE"] = " عدد صحيح عشوائي من %1 إلى %2";
 Blockly.Msg["MATH_RANDOM_INT_TOOLTIP"] = "يرجع عدد صحيح عشوائي بين حدين محددين, ضمنيا.";
-Blockly.Msg["MATH_ROUND_HELPURL"] = "https://en.wikipedia.org/wiki/Rounding";
+Blockly.Msg["MATH_ROUND_HELPURL"] = "https://ar.wikipedia.org/wiki/تقريب_(رياضيات)";
 Blockly.Msg["MATH_ROUND_OPERATOR_ROUND"] = "تقريب";
 Blockly.Msg["MATH_ROUND_OPERATOR_ROUNDDOWN"] = "تقريب إلى اصغر عدد صحيح";
 Blockly.Msg["MATH_ROUND_OPERATOR_ROUNDUP"] = "تقريب الى اكبر عدد صحيح";
 Blockly.Msg["MATH_ROUND_TOOLTIP"] = "تقريب الى اكبر عدد صحيح أو الى اصغر عدد صحيح.";
-Blockly.Msg["MATH_SINGLE_HELPURL"] = "https://en.wikipedia.org/wiki/Square_root";
+Blockly.Msg["MATH_SINGLE_HELPURL"] = "https://ar.wikipedia.org/wiki/جذر_تربيعي";
 Blockly.Msg["MATH_SINGLE_OP_ABSOLUTE"] = "مطلق";
 Blockly.Msg["MATH_SINGLE_OP_ROOT"] = "الجذر التربيعي";
 Blockly.Msg["MATH_SINGLE_TOOLTIP_ABS"] = "يرجع القيمة المطلقة لرقم.";
@@ -277,7 +262,7 @@ Blockly.Msg["MATH_TRIG_ACOS"] = "acos";
 Blockly.Msg["MATH_TRIG_ASIN"] = "asin";
 Blockly.Msg["MATH_TRIG_ATAN"] = "atan";
 Blockly.Msg["MATH_TRIG_COS"] = "جيب تمام";
-Blockly.Msg["MATH_TRIG_HELPURL"] = "https://en.wikipedia.org/wiki/Trigonometric_functions";
+Blockly.Msg["MATH_TRIG_HELPURL"] = "https://ar.wikipedia.org/wiki/دوال_مثلثية";
 Blockly.Msg["MATH_TRIG_SIN"] = "جيب";
 Blockly.Msg["MATH_TRIG_TAN"] = "ظل";
 Blockly.Msg["MATH_TRIG_TOOLTIP_ACOS"] = "يرجع قوس جيب التمام لرقم.";
@@ -287,31 +272,27 @@ Blockly.Msg["MATH_TRIG_TOOLTIP_COS"] = "يرجع جيب التمام لدرجة 
 Blockly.Msg["MATH_TRIG_TOOLTIP_SIN"] = "يرجع جيب التمام لدرجة (لا زواية نصف قطرية).";
 Blockly.Msg["MATH_TRIG_TOOLTIP_TAN"] = "يرجع الظل لدرجة (لا دائرة نصف قطرية).";
 Blockly.Msg["NEW_COLOUR_VARIABLE"] = "انشاء متغير لوني...";
-Blockly.Msg["NEW_MODULE"] = "Create";  // untranslated
-Blockly.Msg["NEW_MODULE_TITLE"] = "Name:";  // untranslated
 Blockly.Msg["NEW_NUMBER_VARIABLE"] = "انشاء متغير رقمي...";
 Blockly.Msg["NEW_STRING_VARIABLE"] = "انشاء متغير نصي...";
 Blockly.Msg["NEW_VARIABLE"] = "إنشاء متغير...";
 Blockly.Msg["NEW_VARIABLE_TITLE"] = "اسم المتغير الجديد:";
 Blockly.Msg["NEW_VARIABLE_TYPE_TITLE"] = "نوع متغير جديد:";
-Blockly.Msg["NOT_EMPTY_MODULE_DELETE_RESTRICTION"] = "Can't delete not empty module. Delete all module blocks first.";  // untranslated
-Blockly.Msg["OBSOLETE_WARNING"] = "Warning: This block is obsolete. Use a similar new one.";  // untranslated
 Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "";  // untranslated
 Blockly.Msg["PROCEDURES_ALLOW_STATEMENTS"] = "اسمح بالبيانات";
 Blockly.Msg["PROCEDURES_BEFORE_PARAMS"] = "مع:";
-Blockly.Msg["PROCEDURES_CALLNORETURN_HELPURL"] = "https://en.wikipedia.org/wiki/Subroutine";
+Blockly.Msg["PROCEDURES_CALLNORETURN_HELPURL"] = "https://ar.wikipedia.org/wiki/دالة_(برمجة)";
 Blockly.Msg["PROCEDURES_CALLNORETURN_TOOLTIP"] = "تشغيل الدالة المعرفة من قبل المستخدم '%1'.";
-Blockly.Msg["PROCEDURES_CALLRETURN_HELPURL"] = "https://en.wikipedia.org/wiki/Subroutine";
+Blockly.Msg["PROCEDURES_CALLRETURN_HELPURL"] = "https://ar.wikipedia.org/wiki/دالة_(برمجة)";
 Blockly.Msg["PROCEDURES_CALLRETURN_TOOLTIP"] = "تشغيل الدالة المعرفة من قبل المستخدم %1 واستخدام  مخرجاتها.";
 Blockly.Msg["PROCEDURES_CALL_BEFORE_PARAMS"] = "مع:";
 Blockly.Msg["PROCEDURES_CREATE_DO"] = "إنشئ '%1'";
 Blockly.Msg["PROCEDURES_DEFNORETURN_COMMENT"] = "صف هذه الوظيفة...";
 Blockly.Msg["PROCEDURES_DEFNORETURN_DO"] = "";  // untranslated
-Blockly.Msg["PROCEDURES_DEFNORETURN_HELPURL"] = "https://en.wikipedia.org/wiki/Subroutine";
+Blockly.Msg["PROCEDURES_DEFNORETURN_HELPURL"] = "https://ar.wikipedia.org/wiki/دالة_(برمجة)";
 Blockly.Msg["PROCEDURES_DEFNORETURN_PROCEDURE"] = "القيام بشيء ما";
 Blockly.Msg["PROCEDURES_DEFNORETURN_TITLE"] = "إلى";
 Blockly.Msg["PROCEDURES_DEFNORETURN_TOOLTIP"] = "انشئ دالة بدون مخرجات .";
-Blockly.Msg["PROCEDURES_DEFRETURN_HELPURL"] = "https://en.wikipedia.org/wiki/Subroutine";
+Blockly.Msg["PROCEDURES_DEFRETURN_HELPURL"] = "https://tr.wikipedia.org/wiki/دالة_(برمجة)";
 Blockly.Msg["PROCEDURES_DEFRETURN_RETURN"] = "يرجع";
 Blockly.Msg["PROCEDURES_DEFRETURN_TOOLTIP"] = "انشئ دالة مع المخرجات.";
 Blockly.Msg["PROCEDURES_DEF_DUPLICATE_WARNING"] = "تحذير: هذه الدالة تحتوي على معلمات مكررة.";
@@ -324,10 +305,7 @@ Blockly.Msg["PROCEDURES_MUTATORARG_TOOLTIP"] = "أضف مدخلا إلى الو�
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TITLE"] = "المدخلات";
 Blockly.Msg["PROCEDURES_MUTATORCONTAINER_TOOLTIP"] = "إضافة أو إزالة أو إعادة ترتيب المدخلات لهذه المهمة.";
 Blockly.Msg["REDO"] = "إعادة";
-Blockly.Msg["REMOVED_WARNING"] = "Warning: This block is removed. Use a similar new one.";  // untranslated
 Blockly.Msg["REMOVE_COMMENT"] = "أزل التعليق";
-Blockly.Msg["RENAME_MODULE"] = "Rename";  // untranslated
-Blockly.Msg["RENAME_MODULE_TITLE"] = "Rename to:";  // untranslated
 Blockly.Msg["RENAME_VARIABLE"] = "إعادة تسمية المتغير...";
 Blockly.Msg["RENAME_VARIABLE_TITLE"] = "إعادة تسمية كافة المتغيرات '%1' إلى:";
 Blockly.Msg["TEXT_APPEND_HELPURL"] = "https://github.com/google/blockly/wiki/Text#text-modification";  // untranslated
@@ -391,7 +369,7 @@ Blockly.Msg["TEXT_REPLACE_TOOLTIP"] = "استبدل جميع حالات حدوث
 Blockly.Msg["TEXT_REVERSE_HELPURL"] = "https://github.com/google/blockly/wiki/Text#reversing-text";  // untranslated
 Blockly.Msg["TEXT_REVERSE_MESSAGE0"] = "عكس %1";
 Blockly.Msg["TEXT_REVERSE_TOOLTIP"] = "يعكس ترتيب حروف النص";
-Blockly.Msg["TEXT_TEXT_HELPURL"] = "https://en.wikipedia.org/wiki/String_(computer_science)";
+Blockly.Msg["TEXT_TEXT_HELPURL"] = "https://ar.wikipedia.org/wiki/سلسلة_(علم_الحاسوب)";
 Blockly.Msg["TEXT_TEXT_TOOLTIP"] = "حرف أو كلمة أو سطر من النص.";
 Blockly.Msg["TEXT_TRIM_HELPURL"] = "https://github.com/google/blockly/wiki/Text#trimming-removing-spaces";  // untranslated
 Blockly.Msg["TEXT_TRIM_OPERATOR_BOTH"] = "إزالة الفراغات من كلا الجانبين";

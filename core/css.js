@@ -28,7 +28,7 @@ Blockly.Css.injected_ = false;
  * Add some CSS to the blob that will be injected later.  Allows optional
  * components such as fields and the toolbox to store separate CSS.
  * The provided array of CSS will be destroyed by this function.
- * @param {!Array.<string>} cssArray Array of CSS strings.
+ * @param {!Array<string>} cssArray Array of CSS strings.
  */
 Blockly.Css.register = function(cssArray) {
   if (Blockly.Css.injected_) {
@@ -73,17 +73,6 @@ Blockly.Css.inject = function(hasCss, pathToMedia) {
 };
 
 /**
- * Set the cursor to be displayed when over something draggable.
- * See https://github.com/google/blockly/issues/981 for context.
- * @param {*} _cursor Enum.
- * @deprecated April 2017.
- */
-Blockly.Css.setCursor = function(_cursor) {
-  console.warn('Deprecated call to Blockly.Css.setCursor. ' +
-      'See issue #981 for context');
-};
-
-/**
  * Array making up the CSS content for Blockly.
  */
 Blockly.Css.CONTENT = [
@@ -99,13 +88,13 @@ Blockly.Css.CONTENT = [
   '.blocklyWidgetDiv {',
     'display: none;',
     'position: absolute;',
-    'z-index: 99999;', /* big value for bootstrap3 compatibility */
+    'z-index: 99999;',  /* big value for bootstrap3 compatibility */
   '}',
 
   '.injectionDiv {',
     'height: 100%;',
     'position: relative;',
-    'overflow: hidden;', /* So blocks in drag surface disappear at edges */
+    'overflow: hidden;',  /* So blocks in drag surface disappear at edges */
     'touch-action: none;',
   '}',
 
@@ -136,7 +125,7 @@ Blockly.Css.CONTENT = [
     'right: 0;',
     'bottom: 0;',
     'overflow: visible !important;',
-    'z-index: 50;', /* Display below toolbox, but above everything else. */
+    'z-index: 50;',  /* Display below toolbox, but above everything else. */
   '}',
 
   '.blocklyBlockCanvas.blocklyCanvasTransitioning,',
@@ -154,7 +143,7 @@ Blockly.Css.CONTENT = [
     'opacity: .9;',
     'padding: 2px;',
     'position: absolute;',
-    'z-index: 100000;', /* big value for bootstrap3 compatibility */
+    'z-index: 100000;',  /* big value for bootstrap3 compatibility */
   '}',
 
   '.blocklyDropDownDiv {',
@@ -176,6 +165,9 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyDropDownContent {',
+    'max-height: 300px;',  // @todo: spec for maximum height.
+    'overflow: auto;',
+    'overflow-x: hidden;',
     'position: relative;',
   '}',
 
@@ -509,9 +501,12 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyDropDownDiv .blocklyMenu {',
+    'background: inherit;',  /* Compatibility with gapi, reset from goog-menu */
+    'border: inherit;',  /* Compatibility with gapi, reset from goog-menu */
     'position: relative;',
     'font: normal 13px "Helvetica Neue", Helvetica, sans-serif;',
     'outline: none;',
+    'position: relative;',  /* Compatibility with gapi, reset from goog-menu */
     'z-index: 20000;',  /* Arbitrary, but some apps depend on it... */
   '}',
 
@@ -551,7 +546,7 @@ Blockly.Css.CONTENT = [
     'background: url(<<<PATH>>>/sprites.png) no-repeat -48px -16px;',
     'float: left;',
     'margin-left: -24px;',
-    'position: static;', /* Scroll with the menu. */
+    'position: static;',  /* Scroll with the menu. */
   '}',
 
   '.blocklyMenuItemText {',

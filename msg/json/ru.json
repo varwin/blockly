@@ -9,10 +9,13 @@
 			"Mouse21",
 			"Movses",
 			"Okras",
+			"Phil Rigovanov",
 			"RedFox",
 			"Redredsonia",
 			"Silovan",
 			"SimondR",
+			"Teretalexev",
+			"Thothsum",
 			"Vlad5250"
 		]
 	},
@@ -24,13 +27,13 @@
 	"DUPLICATE_BLOCK": "Дублировать",
 	"ADD_COMMENT": "Добавить комментарий",
 	"REMOVE_COMMENT": "Удалить комментарий",
-	"DUPLICATE_COMMENT": "Клонировать комментарий",
+	"DUPLICATE_COMMENT": "Дублировать комментарий",
 	"EXTERNAL_INPUTS": "Вставки снаружи",
 	"INLINE_INPUTS": "Вставки внутри",
 	"DELETE_BLOCK": "Удалить блок",
 	"DELETE_X_BLOCKS": "Удалить %1 блоков",
 	"DELETE_ALL_BLOCKS": "Удалить все блоки (%1)?",
-	"CLEAN_UP": "Убрать блоки",
+	"CLEAN_UP": "Очистить блоки",
 	"COLLAPSE_BLOCK": "Свернуть блок",
 	"COLLAPSE_ALL": "Свернуть блоки",
 	"EXPAND_BLOCK": "Развернуть блок",
@@ -104,7 +107,7 @@
 	"CONTROLS_IF_IF_TOOLTIP": "Добавьте, удалите, переставьте фрагменты для переделки блока \"если\".",
 	"CONTROLS_IF_ELSEIF_TOOLTIP": "Добавляет условие к блоку \"если\"",
 	"CONTROLS_IF_ELSE_TOOLTIP": "Добавить заключительный подблок для случая, когда все условия ложны.",
-	"IOS_OK": "ОК",
+	"IOS_OK": "OK",
 	"IOS_CANCEL": "Отмена",
 	"IOS_ERROR": "Ошибка",
 	"IOS_PROCEDURES_INPUTS": "ВХОД",
@@ -373,5 +376,7 @@
 	"PROCEDURES_IFRETURN_WARNING": "Предупреждение: Этот блок может использоваться только внутри определения функции.",
 	"WORKSPACE_COMMENT_DEFAULT_TEXT": "Напишите здесь что-нибудь...",
 	"WORKSPACE_ARIA_LABEL": "Рабочая область Blockly",
-	"COLLAPSED_WARNINGS_WARNING": "Свёрнутые блоки содержат предупреждения."
+	"COLLAPSED_WARNINGS_WARNING": "Свёрнутые блоки содержат предупреждения.",
+	"DIALOG_OK": "OK",
+	"DIALOG_CANCEL": "Отмена"
 }
