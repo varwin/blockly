@@ -90,6 +90,7 @@
     "yargs": "^16.0.3"
   },
   "dependencies": {
+    "google-closure-compiler-js": "^20200719.0.0",
     "jsdom": "15.2.1"
   }
 }

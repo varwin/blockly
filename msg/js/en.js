@@ -78,6 +78,7 @@ Blockly.Msg["EXTERNAL_INPUTS"] = "External Inputs";
 Blockly.Msg["HELP"] = "Help";
 Blockly.Msg["INLINE_INPUTS"] = "Inline Inputs";
 Blockly.Msg["LAST_MODULE_DELETE_RESTRICTION"] = "Can't delete the last module.";
+Blockly.Msg["LISTS_CREATE_EMPTY_HELPURL"] = "https://github.com/google/blockly/wiki/Lists#create-empty-list";
 Blockly.Msg["LISTS_CREATE_EMPTY_TITLE"] = "create empty list";
 Blockly.Msg["LISTS_CREATE_EMPTY_TOOLTIP"] = "Returns a list, of length 0, containing no data records";
 Blockly.Msg["LISTS_CREATE_WITH_CONTAINER_TITLE_ADD"] = "list";
