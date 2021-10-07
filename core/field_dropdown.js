@@ -593,9 +593,14 @@ Blockly.FieldDropdown.prototype.applyColour = function() {
  * @protected
  */
 Blockly.FieldDropdown.prototype.render_ = function() {
+  if (!this.textContent_ || !this.imageElement_) {
+    return
+  }
   // Hide both elements.
+
   this.textContent_.nodeValue = '';
   this.imageElement_.style.display = 'none';
+
 
   // Show correct element.
   var option = this.selectedOption_ && this.selectedOption_[0];
