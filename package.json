@@ -1,20 +1,21 @@
 {
-  "name": "blockly",
-  "version": "6.20210701.1",
-  "description": "Blockly is a library for building visual programming editors.",
+  "name": "varwin-blockly",
+  "version": "6.20210701.3",
+  "description": "Varwin Blockly it is a fork of Google Blockly for Varwin XRMS",
   "keywords": [
-    "blockly"
+    "blockly",
+    "varwin"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/google/blockly.git"
+    "url": "https://github.com/varwin/blockly"
   },
   "bugs": {
-    "url": "https://github.com/google/blockly/issues"
+    "url": "https://github.com/varwin/blockly/issues"
   },
-  "homepage": "https://developers.google.com/blockly/",
+  "homepage": "https://varwin.com/",
   "author": {
-    "name": "Neil Fraser"
+    "name": "Varwin Frontend Team"
   },
   "scripts": {
     "build": "gulp build",
@@ -90,7 +91,6 @@
     "yargs": "^16.0.3"
   },
   "dependencies": {
-    "google-closure-compiler-js": "^20200719.0.0",
     "jsdom": "15.2.1"
   }
 }
