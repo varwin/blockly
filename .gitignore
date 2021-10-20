@@ -4,12 +4,14 @@ build-debug.log
 .DS_Store
 .settings
 .project
+.idea
 *.gz
 *.pyc
 *.komodoproject
 /nbproject/private/
 
 tests/compile/main_compressed.js
+tests/compile/main_compressed.js.map
 tests/compile/*compiler*.jar
 tests/screenshot/outputs/*
 local_build/*compiler*.jar

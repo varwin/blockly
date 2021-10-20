@@ -13,9 +13,13 @@
 goog.provide('Blockly.WorkspaceComment');
 
 goog.require('Blockly.Events');
+/** @suppress {extraRequire} */
 goog.require('Blockly.Events.CommentChange');
+/** @suppress {extraRequire} */
 goog.require('Blockly.Events.CommentCreate');
+/** @suppress {extraRequire} */
 goog.require('Blockly.Events.CommentDelete');
+/** @suppress {extraRequire} */
 goog.require('Blockly.Events.CommentMove');
 goog.require('Blockly.utils');
 goog.require('Blockly.utils.Coordinate');
@@ -122,7 +126,8 @@ Blockly.WorkspaceComment.prototype.dispose = function() {
   }
 
   if (Blockly.Events.isEnabled()) {
-    Blockly.Events.fire(new Blockly.Events.CommentDelete(this));
+    Blockly.Events.fire(
+        new (Blockly.Events.get(Blockly.Events.COMMENT_DELETE))(this));
   }
 
   // Remove from the list of top comments and the comment database.
@@ -186,7 +191,7 @@ Blockly.WorkspaceComment.prototype.getXY = function() {
  * @package
  */
 Blockly.WorkspaceComment.prototype.moveBy = function(dx, dy) {
-  var event = new Blockly.Events.CommentMove(this);
+  var event = new (Blockly.Events.get(Blockly.Events.COMMENT_MOVE))(this);
   this.xy_.translate(dx, dy);
   event.recordNew();
   Blockly.Events.fire(event);
@@ -263,8 +268,8 @@ Blockly.WorkspaceComment.prototype.getContent = function() {
  */
 Blockly.WorkspaceComment.prototype.setContent = function(content) {
   if (this.content_ != content) {
-    Blockly.Events.fire(
-        new Blockly.Events.CommentChange(this, this.content_, content));
+    Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.COMMENT_CHANGE))(
+        this, this.content_, content));
     this.content_ = content;
   }
 };
@@ -352,7 +357,8 @@ Blockly.WorkspaceComment.fireCreateEvent = function(comment) {
       Blockly.Events.setGroup(true);
     }
     try {
-      Blockly.Events.fire(new Blockly.Events.CommentCreate(comment));
+      Blockly.Events.fire(
+          new (Blockly.Events.get(Blockly.Events.COMMENT_CREATE))(comment));
     } finally {
       if (!existingGroup) {
         Blockly.Events.setGroup(false);

@@ -442,7 +442,11 @@ Blockly.Events.MoveBlockToModule.prototype.run = function(forward) {
   }
 };
 
-
-
-
-
+Blockly.registry.register(Blockly.registry.Type.EVENT, Blockly.Events.MODULE_CREATE,
+    Blockly.Events.ModuleCreate);
+Blockly.registry.register(Blockly.registry.Type.EVENT, Blockly.Events.MODULE_DELETE,
+    Blockly.Events.ModuleDelete);
+Blockly.registry.register(Blockly.registry.Type.EVENT, Blockly.Events.MODULE_ACTIVATE,
+    Blockly.Events.ModuleActivate);
+Blockly.registry.register(Blockly.registry.Type.EVENT, Blockly.Events.MODULE_RENAME,
+    Blockly.Events.ModuleRename);

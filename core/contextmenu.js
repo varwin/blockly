@@ -16,17 +16,26 @@
  */
 goog.provide('Blockly.ContextMenu');
 
+goog.require('Blockly.browserEvents');
+/** @suppress {extraRequire} */
+goog.require('Blockly.constants');
 goog.require('Blockly.Events');
+/** @suppress {extraRequire} */
 goog.require('Blockly.Events.BlockCreate');
 goog.require('Blockly.Menu');
 goog.require('Blockly.MenuItem');
 goog.require('Blockly.Msg');
 goog.require('Blockly.utils');
+goog.require('Blockly.utils.aria');
 goog.require('Blockly.utils.Coordinate');
 goog.require('Blockly.utils.dom');
 goog.require('Blockly.utils.Rect');
 goog.require('Blockly.utils.userAgent');
+goog.require('Blockly.WidgetDiv');
 goog.require('Blockly.Xml');
+
+goog.requireType('Blockly.Block');
+goog.requireType('Blockly.WorkspaceSvg');
 
 
 /**
@@ -45,7 +54,7 @@ Blockly.ContextMenu.menu_ = null;
 /**
  * Construct the menu based on the list of options and show the menu.
  * @param {!Event} e Mouse event.
- * @param {!Array.<!Object>} options Array of menu options.
+ * @param {!Array<!Object>} options Array of menu options.
  * @param {boolean} rtl True if RTL, false if LTR.
  */
 Blockly.ContextMenu.show = function(e, options, rtl) {
@@ -66,7 +75,7 @@ Blockly.ContextMenu.show = function(e, options, rtl) {
 
 /**
  * Create the context menu object and populate it with the given options.
- * @param {!Array.<!Object>} options Array of menu options.
+ * @param {!Array<!Object>} options Array of menu options.
  * @param {boolean} rtl True if RTL, false if LTR.
  * @return {!Blockly.Menu} The menu that will be shown on right click.
  * @private
@@ -89,7 +98,7 @@ Blockly.ContextMenu.populate_ = function(options, rtl) {
       var actionHandler = function(_menuItem) {
         var option = this;
         Blockly.ContextMenu.hide();
-        option.callback();
+        option.callback(option.scope);
       };
       menuItem.onAction(actionHandler, option);
     }
@@ -146,8 +155,9 @@ Blockly.ContextMenu.createWidget_ = function(menu) {
   Blockly.utils.dom.addClass(
       /** @type {!Element} */ (menuDom), 'blocklyContextMenu');
   // Prevent system context menu when right-clicking a Blockly context menu.
-  Blockly.bindEventWithChecks_(/** @type {!EventTarget} */ (menuDom),
-      'contextmenu', null, Blockly.utils.noEvent);
+  Blockly.browserEvents.conditionalBind(
+      /** @type {!EventTarget} */ (menuDom), 'contextmenu', null,
+      Blockly.utils.noEvent);
   // Focus only after the initial render to avoid issue #1329.
   menu.focus();
 };
@@ -197,123 +207,14 @@ Blockly.ContextMenu.callbackFactory = function(block, xml) {
       Blockly.Events.enable();
     }
     if (Blockly.Events.isEnabled() && !newBlock.isShadow()) {
-      Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
+      Blockly.Events.fire(
+          new (Blockly.Events.get(Blockly.Events.BLOCK_CREATE))(newBlock));
     }
     newBlock.select();
   };
 };
 
 // Helper functions for creating context menu options.
-
-/**
- * Make a context menu option for deleting the current block.
- * @param {!Blockly.BlockSvg} block The block where the right-click originated.
- * @return {!Object} A menu option, containing text, enabled, and a callback.
- * @package
- */
-Blockly.ContextMenu.blockDeleteOption = function(block) {
-  // Option to delete this block but not blocks lower in the stack.
-  // Count the number of blocks that are nested in this block.
-  var descendantCount = block.getDescendants(false).length;
-  var nextBlock = block.getNextBlock();
-  if (nextBlock) {
-    // Blocks in the current stack would survive this block's deletion.
-    descendantCount -= nextBlock.getDescendants(false).length;
-  }
-  var deleteOption = {
-    text: descendantCount == 1 ? Blockly.Msg['DELETE_BLOCK'] :
-        Blockly.Msg['DELETE_X_BLOCKS'].replace('%1', String(descendantCount)),
-    enabled: true,
-    callback: function() {
-      Blockly.Events.setGroup(true);
-      block.dispose(true, true);
-      Blockly.Events.setGroup(false);
-    }
-  };
-  return deleteOption;
-};
-
-
-/**
- * Make a context menu option for duplicating the current block.
- * @param {!Blockly.BlockSvg} block The block where the right-click originated.
- * @param {!Blockly.ModuleModel} module The module to move block.
- * @package
- */
-Blockly.ContextMenu.blockMoveToModuleOption = function(block, module) {
-  return {
-    text: Blockly.Msg['BLOCK_MOVE_TO_MODULE'].replace('%1', module.name),
-    enabled: block.isMovable(),
-    callback: function() {
-      block.workspace.getModuleManager().moveBlockToModule(block, module);
-    }
-  };
-};
-
-/**
- * Make a context menu option for showing help for the current block.
- * @param {!Blockly.BlockSvg} block The block where the right-click originated.
- * @return {!Object} A menu option, containing text, enabled, and a callback.
- * @package
- */
-Blockly.ContextMenu.blockHelpOption = function(block) {
-  var url = (typeof block.helpUrl == 'function') ?
-      block.helpUrl() : block.helpUrl;
-  var helpOption = {
-    enabled: !!url,
-    text: Blockly.Msg['HELP'],
-    callback: function() {
-      block.showHelp();
-    }
-  };
-  return helpOption;
-};
-
-/**
- * Make a context menu option for duplicating the current block.
- * @param {!Blockly.BlockSvg} block The block where the right-click originated.
- * @return {!Object} A menu option, containing text, enabled, and a callback.
- * @package
- */
-Blockly.ContextMenu.blockDuplicateOption = function(block) {
-  var enabled = block.isDuplicatable();
-  var duplicateOption = {
-    text: Blockly.Msg['DUPLICATE_BLOCK'],
-    enabled: enabled,
-    callback: function() {
-      Blockly.duplicate(block);
-    }
-  };
-  return duplicateOption;
-};
-
-
-/**
- * Make a context menu option for adding or removing comments on the current
- * block.
- * @param {!Blockly.BlockSvg} block The block where the right-click originated.
- * @return {!Object} A menu option, containing text, enabled, and a callback.
- * @package
- */
-Blockly.ContextMenu.blockCommentOption = function(block) {
-  var commentOption = {
-    enabled: !Blockly.utils.userAgent.IE
-  };
-  // If there's already a comment, add an option to delete it.
-  if (block.getCommentIcon()) {
-    commentOption.text = Blockly.Msg['REMOVE_COMMENT'];
-    commentOption.callback = function() {
-      block.setCommentText(null);
-    };
-  } else {
-    // If there's no comment, add an option to create a comment.
-    commentOption.text = Blockly.Msg['ADD_COMMENT'];
-    commentOption.callback = function() {
-      block.setCommentText('');
-    };
-  }
-  return commentOption;
-};
 
 /**
  * Make a context menu option for deleting the current workspace comment.
@@ -333,6 +234,22 @@ Blockly.ContextMenu.commentDeleteOption = function(comment) {
     }
   };
   return deleteOption;
+};
+
+/**
+ * Make a context menu option for duplicating the current block.
+ * @param {!Blockly.BlockSvg} block The block where the right-click originated.
+ * @param {!Blockly.ModuleModel} module The module to move block.
+ * @package
+ */
+Blockly.ContextMenu.blockMoveToModuleOption = function(block, module) {
+  return {
+    text: Blockly.Msg['BLOCK_MOVE_TO_MODULE'].replace('%1', module.name),
+    enabled: block.isMovable(),
+    callback: function() {
+      block.workspace.getModuleManager().moveBlockToModule(block, module);
+    }
+  };
 };
 
 /**

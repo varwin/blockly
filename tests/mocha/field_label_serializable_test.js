@@ -5,6 +5,12 @@
  */
 
 suite('Label Serializable Fields', function() {
+  setup(function() {
+    sharedTestSetup.call(this);
+  });
+  teardown(function() {
+    sharedTestTeardown.call(this);
+  });
   /**
    * Configuration for field tests with invalid values.
    * @type {!Array<!FieldCreationTestCase>}
@@ -39,14 +45,14 @@ suite('Label Serializable Fields', function() {
   var defaultFieldValue = '';
   /**
    * Asserts that the field property values are set to default.
-   * @param {!Blockly.FieldNumber} field The field to check.
+   * @param {!Blockly.FieldLabelSerializable} field The field to check.
    */
   var assertFieldDefault = function(field) {
     testHelpers.assertFieldValue(field, defaultFieldValue);
   };
   /**
    * Asserts that the field properties are correct based on the test case.
-   * @param {!Blockly.FieldNumber} field The field to check.
+   * @param {!Blockly.FieldLabelSerializable} field The field to check.
    * @param {!FieldValueTestCase} testCase The test case.
    */
   var validTestCaseAssertField = function(field, testCase) {
@@ -91,7 +97,8 @@ suite('Label Serializable Fields', function() {
 
   suite('Customizations', function() {
     function assertHasClass(labelField, cssClass) {
-      labelField.fieldGroup_ = Blockly.utils.dom.createSvgElement('g', {}, null);
+      labelField.fieldGroup_ = Blockly.utils.dom.createSvgElement(
+          Blockly.utils.Svg.G, {}, null);
       labelField.constants_ = {
         FIELD_TEXT_BASELINE_Y: 13
       };
@@ -100,7 +107,8 @@ suite('Label Serializable Fields', function() {
           labelField.textElement_, cssClass));
     }
     function assertDoesNotHaveClass(labelField, cssClass) {
-      labelField.fieldGroup_ = Blockly.utils.dom.createSvgElement('g', {}, null);
+      labelField.fieldGroup_ = Blockly.utils.dom.createSvgElement(
+          Blockly.utils.Svg.G, {}, null);
       labelField.constants_ = {
         FIELD_TEXT_BASELINE_Y: 13
       };
@@ -146,7 +154,8 @@ suite('Label Serializable Fields', function() {
     suite('setClass', function() {
       test('setClass', function() {
         var field = new Blockly.FieldLabelSerializable();
-        field.fieldGroup_ = Blockly.utils.dom.createSvgElement('g', {}, null);
+        field.fieldGroup_ = Blockly.utils.dom.createSvgElement(
+            Blockly.utils.Svg.G, {}, null);
         field.constants_ = {
           FIELD_TEXT_BASELINE_Y: 13
         };
