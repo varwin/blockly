@@ -50,7 +50,7 @@ const workspaceToDom = function(workspace, opt_noId) {
 
   const modulesElement = modulesToDom(workspace);
   if (modulesElement.hasChildNodes()) {
-    xml.appendChild(modulesElement);
+    treeXml.appendChild(modulesElement);
   }
 
   const variablesElement = variablesToDom(

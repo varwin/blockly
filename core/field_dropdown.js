@@ -254,7 +254,7 @@ FieldDropdown.prototype.initView = function() {
 
     return;
   }
-  
+
   if (this.shouldAddBorderRect_()) {
     this.createBorderRect_();
   } else {
@@ -374,7 +374,7 @@ FieldDropdown.prototype.dropdownCreate_ = function() {
 
   const options = this.getOptions(false);
   this.selectedMenuItem_ = null;
-  
+
   for (let i = 0; i < options.length; i++) {
     let content = options[i][0];  // Human-readable text or image.
     const value = options[i][1];  // Language-neutral value.
@@ -410,7 +410,7 @@ FieldDropdown.prototype.dropdownCreate_ = function() {
 
       content = container;
     }
-    
+
     const menuItem = new MenuItem(content, value);
     menuItem.setRole(aria.Role.OPTION);
     menuItem.setRightToLeft(this.sourceBlock_.RTL);
@@ -492,7 +492,7 @@ FieldDropdown.prototype.trimOptions_ = function() {
   if (this.opt_config_ && this.opt_config_['disableOutAffix']) {
     return;
   }
-  
+
   const shortest = utilsString.shortestStringLength(strings);
   const prefixLength = utilsString.commonWordPrefix(strings, shortest);
   const suffixLength = utilsString.commonWordSuffix(strings, shortest);
@@ -578,6 +578,7 @@ FieldDropdown.prototype.doClassValidation_ = function(opt_newValue) {
       break;
     }
   }
+
   if (!isValueValid) {
     if (this.sourceBlock_) {
       console.warn(
@@ -639,7 +640,7 @@ FieldDropdown.prototype.render_ = function() {
   if (!this.textContent_ || !this.imageElement_) {
     return;
   }
-  
+
   // Hide both elements.
   this.textContent_.nodeValue = '';
   this.imageElement_.style.display = 'none';
