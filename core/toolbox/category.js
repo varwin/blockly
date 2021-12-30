@@ -716,7 +716,7 @@ Css.register(`
   .blocklyTreeSelected .blocklyTreeLabel {
     color: #fff;
   }
-`);
+`, 'toolbox_category');
 
 registry.register(
     registry.Type.TOOLBOX_ITEM, ToolboxCategory.registrationName,

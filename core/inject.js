@@ -57,11 +57,12 @@ const inject = function(container, opt_options) {
   if (!container || !dom.containsNode(document, container)) {
     throw Error('Error: container is not in current document.');
   }
-  const options =
-      new Options(opt_options || (/** @type {!BlocklyOptions} */ ({})));
+  const options = new Options(opt_options || (/** @type {!BlocklyOptions} */ ({})));
   const subContainer = document.createElement('div');
+
   subContainer.className = 'injectionDiv';
   subContainer.tabIndex = 0;
+
   aria.setState(subContainer, aria.State.LABEL, Msg['WORKSPACE_ARIA_LABEL']);
 
   container.appendChild(subContainer);
@@ -73,15 +74,13 @@ const inject = function(container, opt_options) {
 
   const workspaceDragSurface = new WorkspaceDragSurfaceSvg(subContainer);
 
-  const workspace =
-      createMainWorkspace(svg, options, blockDragSurface, workspaceDragSurface);
+  const workspace = createMainWorkspace(svg, options, blockDragSurface, workspaceDragSurface);
 
   init(workspace);
 
   // Keep focus on the first workspace so entering keyboard navigation looks
   // correct.
   common.setMainWorkspace(workspace);
-
   common.svgResize(workspace);
 
   subContainer.addEventListener('focusin', function() {

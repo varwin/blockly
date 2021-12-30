@@ -26,13 +26,28 @@ const deprecation = goog.require('Blockly.utils.deprecation');
 let injected = false;
 
 /**
+ * CSS chunks
+ * @type {Array<string>>}
+ * @private
+ */
+let chunks = [];
+
+/**
+ * CSS chunks names
+ * @type {Array<string>>}
+ * @private
+ */
+let chunksNames = [];
+
+/**
  * Add some CSS to the blob that will be injected later.  Allows optional
  * components such as fields and the toolbox to store separate CSS.
  * @param {string|!Array<string>} cssContent Multiline CSS string or an array of
  *    single lines of CSS.
+ * @param {string} moduleName Name of css chunk
  * @alias Blockly.Css.register
  */
-const register = function(cssContent) {
+const register = function(cssContent, moduleName) {
   if (injected) {
     throw Error('CSS already injected');
   }
@@ -41,11 +56,13 @@ const register = function(cssContent) {
     deprecation.warn(
         'Registering CSS by passing an array of strings', 'September 2021',
         'September 2022', 'css.register passing a multiline string');
-    content += ('\n' + cssContent.join('\n'));
+    chunks.push(cssContent.join('\n'));
   } else {
     // Add new cssContent in the global content.
-    content += ('\n' + cssContent);
+    chunks.push(cssContent);
   }
+
+  chunksNames.push(moduleName)
 };
 exports.register = register;
 
@@ -72,15 +89,27 @@ const inject = function(hasCss, pathToMedia) {
   // Strip off any trailing slash (either Unix or Windows).
   const mediaPath = pathToMedia.replace(/[\\/]$/, '');
   const cssContent = content.replace(/<<<PATH>>>/g, mediaPath);
+  chunks.map(chunk => chunk.replace(/<<<PATH>>>/g, mediaPath));
   // Cleanup the collected css content after injecting it to the DOM.
   content = '';
 
-  // Inject CSS tag at start of head.
+  // Inject common styles at start of head.
   const cssNode = document.createElement('style');
   cssNode.id = 'blockly-common-style';
+  cssNode.setAttribute('type', 'text/css')
   const cssTextNode = document.createTextNode(cssContent);
   cssNode.appendChild(cssTextNode);
   document.head.insertBefore(cssNode, document.head.firstChild);
+
+  // Append css chunks to head.
+  chunks.forEach((chunk, index) => {
+    const cssNode = document.createElement('style');
+    cssNode.id = `blockly-style-chunk-${chunksNames[index] || index}`;
+    cssNode.setAttribute('type', 'text/css')
+    const cssTextNode = document.createTextNode(chunk);
+    cssNode.appendChild(cssTextNode);
+    document.head.appendChild(cssNode);
+  })
 };
 exports.inject = inject;
 

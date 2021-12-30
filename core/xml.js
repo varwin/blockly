@@ -459,6 +459,7 @@ exports.clearWorkspaceAndLoadFromXml = clearWorkspaceAndLoadFromXml;
  */
 const domToWorkspace = function(xml, workspace) {
   const {Workspace} = goog.module.get('Blockly.Workspace');
+
   if (xml instanceof Workspace) {
     const swap = xml;
     // Closure Compiler complains here because the arguments are reversed.
@@ -474,8 +475,11 @@ const domToWorkspace = function(xml, workspace) {
   if (workspace.RTL) {
     width = workspace.getWidth();
   }
+
   const newBlockIds = [];  // A list of block IDs added by this call.
+
   dom.startTextWidthCache();
+
   const existingGroup = eventUtils.getGroup();
   if (!existingGroup) {
     eventUtils.setGroup(true);
@@ -485,7 +489,9 @@ const domToWorkspace = function(xml, workspace) {
   if (workspace.setResizesEnabled) {
     workspace.setResizesEnabled(false);
   }
+
   let variablesFirst = true;
+
   try {
     // first load modules
     for (let i = 0, xmlChild; (xmlChild = xml.childNodes[i]); i++) {
@@ -493,7 +499,7 @@ const domToWorkspace = function(xml, workspace) {
         domToModules(xmlChild, workspace);
       }
     }
-    
+
     workspace.getModuleManager().createDefaultModuleIfNeed();
 
     for (let i = 0, xmlChild; (xmlChild = xml.childNodes[i]); i++) {
@@ -514,19 +520,16 @@ const domToWorkspace = function(xml, workspace) {
           const name = xmlChild.nodeName.toLowerCase();
           xmlChildElement = /** @type {!Element} */ (xmlChild);
 
-          if (name === 'block' ||
-            (name === 'shadow' && !Blockly.Events.recordUndo)) {
+          if (name === 'block' || (name === 'shadow' && !Blockly.Events.recordUndo)) {
             // Allow top-level shadow blocks if recordUndo is disabled since
             // that means an undo is in progress.  Such a block is expected
             // to be moved to a nested destination in the next operation.
             const block = domToBlock(xmlChildElement, workspace);
             newBlockIds.push(block.id);
-            const blockX = xmlChildElement.hasAttribute('x') ?
-              parseInt(xmlChildElement.getAttribute('x'), 10) :
-              10;
-            const blockY = xmlChildElement.hasAttribute('y') ?
-              parseInt(xmlChildElement.getAttribute('y'), 10) :
-              10;
+
+            const blockX = xmlChildElement.hasAttribute('x') ? parseInt(xmlChildElement.getAttribute('x'), 10) : 10;
+            const blockY = xmlChildElement.hasAttribute('y') ? parseInt(xmlChildElement.getAttribute('y'), 10) : 10;
+
             if (!isNaN(blockX) && !isNaN(blockY)) {
               block.moveBy(workspace.RTL ? width - blockX : blockX, blockY);
             }
@@ -536,16 +539,12 @@ const domToWorkspace = function(xml, workspace) {
             throw TypeError('Shadow block cannot be a top-level block.');
           } else if (name === 'comment') {
             if (workspace.rendered) {
-              const {WorkspaceCommentSvg} =
-                goog.module.get('Blockly.WorkspaceCommentSvg');
+              const {WorkspaceCommentSvg} = goog.module.get('Blockly.WorkspaceCommentSvg');
+
               if (!WorkspaceCommentSvg) {
-                console.warn(
-                  'Missing require for Blockly.WorkspaceCommentSvg, ' +
-                  'ignoring workspace comment.');
+                console.warn( 'Missing require for Blockly.WorkspaceCommentSvg, ignoring workspace comment.');
               } else {
-                WorkspaceCommentSvg.fromXml(
-                  xmlChildElement,
-                  /** @type {!WorkspaceSvg} */ (workspace), width);
+                WorkspaceCommentSvg.fromXml(xmlChildElement, /** @type {!WorkspaceSvg} */ (workspace), width);
               }
             } else {
               const {WorkspaceComment} =
@@ -567,6 +566,7 @@ const domToWorkspace = function(xml, workspace) {
                 'shadow tag elements in the workspace XML, but it was found in ' +
                 'another location.');
             }
+            
             variablesFirst = false;
           }
         }
@@ -583,6 +583,7 @@ const domToWorkspace = function(xml, workspace) {
     if (workspace.getModuleBar()) {
       workspace.getModuleBar().render();
     }
+
     var activeModule = workspace.getModuleManager().getActiveModule();
     if (activeModule) {
       // store scroll positions before scale
@@ -600,6 +601,7 @@ const domToWorkspace = function(xml, workspace) {
   if (workspace.setResizesEnabled) {
     workspace.setResizesEnabled(true);
   }
+
   eventUtils.fire(new (eventUtils.get(eventUtils.FINISHED_LOADING))(workspace));
   return newBlockIds;
 };
@@ -666,6 +668,7 @@ exports.appendDomToWorkspace = appendDomToWorkspace;
  */
 const domToBlock = function(xmlBlock, workspace) {
   const {Workspace} = goog.module.get('Blockly.Workspace');
+
   if (xmlBlock instanceof Workspace) {
     const swap = xmlBlock;
     // Closure Compiler complains here because the arguments are reversed.
@@ -676,14 +679,18 @@ const domToBlock = function(xmlBlock, workspace) {
         'Deprecated call to domToBlock, ' +
         'swap the arguments.');
   }
+
   // Create top-level block.
   eventUtils.disable();
+
   const variablesBeforeCreation = workspace.getAllVariables();
   let topBlock;
+
   try {
     topBlock = domToBlockHeadless(xmlBlock, workspace);
     // Generate list of all blocks.
     const blocks = topBlock.getDescendants(false);
+
     if (workspace.rendered && topBlock.InActiveModule() && (!workspace.isFlyout || (!topBlock.isObsolete() && !topBlock.isRemoved()))) {
       // Wait to track connections to speed up assembly.
       topBlock.setConnectionTracking(false);
@@ -691,6 +698,7 @@ const domToBlock = function(xmlBlock, workspace) {
       for (let i = blocks.length - 1; i >= 0; i--) {
         blocks[i].initSvg();
       }
+
       for (let i = blocks.length - 1; i >= 0; i--) {
         blocks[i].render(false);
       }
@@ -713,20 +721,20 @@ const domToBlock = function(xmlBlock, workspace) {
   } finally {
     eventUtils.enable();
   }
+
   if (eventUtils.isEnabled()) {
-    const newVariables =
-        goog.module.get('Blockly.Variables')
-            .getAddedVariables(workspace, variablesBeforeCreation);
+    const newVariables = goog.module.get('Blockly.Variables').getAddedVariables(workspace, variablesBeforeCreation);
     // Fire a VarCreate event for each (if any) new variable created.
     for (let i = 0; i < newVariables.length; i++) {
       const thisVariable = newVariables[i];
-      eventUtils.fire(
-          new (eventUtils.get(eventUtils.VAR_CREATE))(thisVariable));
+
+      eventUtils.fire(new (eventUtils.get(eventUtils.VAR_CREATE))(thisVariable));
     }
     // Block events come after var events, in case they refer to newly created
     // variables.
     eventUtils.fire(new (eventUtils.get(eventUtils.CREATE))(topBlock));
   }
+
   return topBlock;
 };
 exports.domToBlock = domToBlock;

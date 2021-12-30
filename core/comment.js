@@ -422,6 +422,6 @@ Css.register(`
     resize: none;
     text-overflow: hidden;
   }
-`);
+`, 'comment');
 
 exports.Comment = Comment;

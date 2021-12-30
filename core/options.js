@@ -46,25 +46,31 @@ const Options = function(options) {
   let hasDisable = false;
   let hasSounds = false;
   const readOnly = !!options['readOnly'];
+
   if (!readOnly) {
     toolboxJsonDef = toolbox.convertToolboxDefToJson(options['toolbox']);
     hasCategories = toolbox.hasCategories(toolboxJsonDef);
+
     hasTrashcan = options['trashcan'];
     if (hasTrashcan === undefined) {
       hasTrashcan = hasCategories;
     }
+
     hasCollapse = options['collapse'];
     if (hasCollapse === undefined) {
       hasCollapse = hasCategories;
     }
+
     hasComments = options['comments'];
     if (hasComments === undefined) {
       hasComments = hasCategories;
     }
+
     hasDisable = options['disable'];
     if (hasDisable === undefined) {
       hasDisable = hasCategories;
     }
+
     hasSounds = options['sounds'];
     if (hasSounds === undefined) {
       hasSounds = true;
@@ -79,28 +85,31 @@ const Options = function(options) {
   } else {
     maxTrashcanContents = 0;
   }
+
   const rtl = !!options['rtl'];
+
   let horizontalLayout = options['horizontalLayout'];
   if (horizontalLayout === undefined) {
     horizontalLayout = false;
   }
+
   let toolboxAtStart = options['toolboxPosition'];
   toolboxAtStart = toolboxAtStart !== 'end';
 
   /** @type {!toolbox.Position} */
   let toolboxPosition;
+
   if (horizontalLayout) {
-    toolboxPosition =
-        toolboxAtStart ? toolbox.Position.TOP : toolbox.Position.BOTTOM;
+    toolboxPosition = toolboxAtStart ? toolbox.Position.TOP : toolbox.Position.BOTTOM;
   } else {
-    toolboxPosition = (toolboxAtStart === rtl) ? toolbox.Position.RIGHT :
-                                                 toolbox.Position.LEFT;
+    toolboxPosition = (toolboxAtStart === rtl) ? toolbox.Position.RIGHT : toolbox.Position.LEFT;
   }
 
   let hasCss = options['css'];
   if (hasCss === undefined) {
     hasCss = true;
   }
+
   let pathToMedia = 'https://blockly-demo.appspot.com/static/media/';
   if (options['media']) {
     pathToMedia = options['media'];
@@ -108,14 +117,15 @@ const Options = function(options) {
     // 'path' is a deprecated option which has been replaced by 'media'.
     pathToMedia = options['path'] + 'media/';
   }
+
   let oneBasedIndex;
   if (options['oneBasedIndex'] === undefined) {
     oneBasedIndex = true;
   } else {
     oneBasedIndex = !!options['oneBasedIndex'];
   }
-  const renderer = options['renderer'] || 'geras';
 
+  const renderer = options['renderer'] || 'geras';
   const plugins = options['plugins'] || {};
 
   /** @type {boolean} */

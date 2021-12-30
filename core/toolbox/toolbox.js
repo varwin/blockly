@@ -1146,7 +1146,7 @@ Css.register(`
   .blocklyToolboxContents:focus {
     outline: none;
   }
-`);
+`, 'toolbox');
 
 registry.register(registry.Type.TOOLBOX, registry.DEFAULT, Toolbox);
 
