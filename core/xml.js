@@ -516,60 +516,51 @@ const domToWorkspace = function(xml, workspace) {
 
         workspace.getModuleManager().createDefaultModuleIfNeed();
 
-        for (let i = 0, xmlChild; (xmlChild = xml.childNodes[i]); i++) {
-          const name = xmlChild.nodeName.toLowerCase();
-          xmlChildElement = /** @type {!Element} */ (xmlChild);
+        // Allow top-level shadow blocks if recordUndo is disabled since
+        // that means an undo is in progress.  Such a block is expected
+        // to be moved to a nested destination in the next operation.
+        const block = domToBlock(xmlChildElement, workspace);
+        newBlockIds.push(block.id);
 
-          if (name === 'block' || (name === 'shadow' && !Blockly.Events.recordUndo)) {
-            // Allow top-level shadow blocks if recordUndo is disabled since
-            // that means an undo is in progress.  Such a block is expected
-            // to be moved to a nested destination in the next operation.
-            const block = domToBlock(xmlChildElement, workspace);
-            newBlockIds.push(block.id);
+        const blockX = xmlChildElement.hasAttribute('x') ? parseInt(xmlChildElement.getAttribute('x'), 10) : 10;
+        const blockY = xmlChildElement.hasAttribute('y') ? parseInt(xmlChildElement.getAttribute('y'), 10) : 10;
 
-            const blockX = xmlChildElement.hasAttribute('x') ? parseInt(xmlChildElement.getAttribute('x'), 10) : 10;
-            const blockY = xmlChildElement.hasAttribute('y') ? parseInt(xmlChildElement.getAttribute('y'), 10) : 10;
+        if (!isNaN(blockX) && !isNaN(blockY)) {
+          block.moveBy(workspace.RTL ? width - blockX : blockX, blockY);
+        }
 
-            if (!isNaN(blockX) && !isNaN(blockY)) {
-              block.moveBy(workspace.RTL ? width - blockX : blockX, blockY);
-            }
+        variablesFirst = false;
+      } else if (name === 'shadow') {
+        throw TypeError('Shadow block cannot be a top-level block.');
+      } else if (name === 'comment') {
+        if (workspace.rendered) {
+          const {WorkspaceCommentSvg} = goog.module.get('Blockly.WorkspaceCommentSvg');
 
-            variablesFirst = false;
-          } else if (name === 'shadow') {
-            throw TypeError('Shadow block cannot be a top-level block.');
-          } else if (name === 'comment') {
-            if (workspace.rendered) {
-              const {WorkspaceCommentSvg} = goog.module.get('Blockly.WorkspaceCommentSvg');
-
-              if (!WorkspaceCommentSvg) {
-                console.warn( 'Missing require for Blockly.WorkspaceCommentSvg, ignoring workspace comment.');
-              } else {
-                WorkspaceCommentSvg.fromXml(xmlChildElement, /** @type {!WorkspaceSvg} */ (workspace), width);
-              }
-            } else {
-              const {WorkspaceComment} =
-                goog.module.get('Blockly.WorkspaceComment');
-              if (!WorkspaceComment) {
-                console.warn(
-                  'Missing require for Blockly.WorkspaceComment, ' +
-                  'ignoring workspace comment.');
-              } else {
-                WorkspaceComment.fromXml(xmlChildElement, workspace);
-              }
-            }
-          } else if (name === 'variables') {
-            if (variablesFirst) {
-              domToVariables(xmlChildElement, workspace);
-            } else {
-              throw Error(
-                '\'variables\' tag must exist once before block and ' +
-                'shadow tag elements in the workspace XML, but it was found in ' +
-                'another location.');
-            }
-            
-            variablesFirst = false;
+          if (!WorkspaceCommentSvg) {
+            console.warn('Missing require for Blockly.WorkspaceCommentSvg, ignoring workspace comment.');
+          } else {
+            WorkspaceCommentSvg.fromXml(xmlChildElement, /** @type {!WorkspaceSvg} */ (workspace), width);
+          }
+        } else {
+          const {WorkspaceComment} =
+            goog.module.get('Blockly.WorkspaceComment');
+          if (!WorkspaceComment) {
+            console.warn('Missing require for Blockly.WorkspaceComment, ignoring workspace comment.');
+          } else {
+            WorkspaceComment.fromXml(xmlChildElement, workspace);
           }
         }
+      } else if (name === 'variables') {
+        if (variablesFirst) {
+          domToVariables(xmlChildElement, workspace);
+        } else {
+          throw Error(
+            '\'variables\' tag must exist once before block and ' +
+            'shadow tag elements in the workspace XML, but it was found in ' +
+            'another location.');
+        }
+
+        variablesFirst = false;
       }
     }
   } finally {
@@ -603,6 +594,7 @@ const domToWorkspace = function(xml, workspace) {
   }
 
   eventUtils.fire(new (eventUtils.get(eventUtils.FINISHED_LOADING))(workspace));
+  
   return newBlockIds;
 };
 exports.domToWorkspace = domToWorkspace;
