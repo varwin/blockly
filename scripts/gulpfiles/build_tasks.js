@@ -236,13 +236,13 @@ function buildDeps(done) {
     'tests/mocha'
   ];
 
-  const args = roots.map(root => `--root '${root}' `).join('');
-  execSync(`closure-make-deps ${args} > tests/deps.js`, {stdio: 'inherit'});
-
-  // Use grep to filter out the entries that are already in deps.js.
-  const testArgs = testRoots.map(root => `--root '${root}' `).join('');
-  execSync(`closure-make-deps ${testArgs} | grep 'tests/mocha'` +
-      ' > tests/deps.mocha.js', {stdio: 'inherit'});
+  // const args = roots.map(root => `--root '${root}' `).join('');
+  // execSync(`closure-make-deps ${args} > tests/deps.js`, {stdio: 'inherit'});
+  //
+  // // Use grep to filter out the entries that are already in deps.js.
+  // const testArgs = testRoots.map(root => `--root '${root}' `).join('');
+  // execSync(`closure-make-deps ${testArgs} | grep 'tests/mocha'` +
+  //     ' > tests/deps.mocha.js', {stdio: 'inherit'});
   done();
 };
 
