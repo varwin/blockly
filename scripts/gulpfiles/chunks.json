@@ -1,6 +1,6 @@
 {
   "chunk": [
-    "blockly:269",
+    "blockly:270",
     "all:10:blockly",
     "all1:11:blockly",
     "all2:11:blockly",
@@ -86,6 +86,7 @@
     ".\\core\\events\\events_flyout_hide.js",
     ".\\core\\events\\events_flyout_show.js",
     ".\\core\\events\\workspace_events.js",
+    ".\\core\\events\\events_ctrl_click.js",
     ".\\core\\events\\events.js",
     ".\\core\\module_model.js",
     ".\\core\\module_manager.js",
