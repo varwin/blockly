@@ -129,8 +129,7 @@ goog.require('Blockly.Msg');
  * @constructor
  * @alias Blockly.WorkspaceSvg
  */
-const WorkspaceSvg = function(
-    options, opt_blockDragSurface, opt_wsDragSurface) {
+const WorkspaceSvg = function(options, opt_blockDragSurface, opt_wsDragSurface) {
   WorkspaceSvg.superClass_.constructor.call(this, options);
 
   const MetricsManagerClass = registry.getClassFromOptions(
@@ -302,10 +301,6 @@ const WorkspaceSvg = function(
    * @private
    */
   this.cachedParentSvgSize_ = new Size(0, 0);
-
-  if (!this.isFlyout) {
-    this.massOperationsHandler_ = new MassOperationsHandler(this)
-  }
 };
 object.inherits(WorkspaceSvg, Workspace);
 
@@ -1797,11 +1792,17 @@ WorkspaceSvg.prototype.onMouseDown_ = function(e) {
   }
 };
 
+WorkspaceSvg.prototype.massOperationsHandler_ = null;
+
 WorkspaceSvg.prototype.cleanUpMassOperations = function () {
   if (this.massOperationsHandler_) this.massOperationsHandler_.cleanUp()
 }
 
 WorkspaceSvg.prototype.addMassOperationEvent = function (e, block) {
+  if (!this.isFlyout && !this.massOperationsHandler_) {
+    this.massOperationsHandler_ = new MassOperationsHandler(this)
+  }
+
   this.massOperationsHandler_.addEvent(e, block)
 }
 

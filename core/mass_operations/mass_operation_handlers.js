@@ -38,6 +38,16 @@ MassOperationsHandler.prototype.addEvent = function (e, block) {
   this.selectedBlocks_.push(block)
   block.addSelectAsMassSelection()
   console.log('MassOperationsHandler -> Add new block to this.selectedBlocks_', block)
+
+  if (!this.keyDownHandlerSet) {
+    document.addEventListener('keydown', this.keyDownHadler_.bind(this))
+  }
+}
+
+MassOperationsHandler.prototype.keyDownHadler_ = function (e) {
+  if (e.key === 'd' && e.ctrlKey) {
+    this.deleteAll();
+  }
 }
 
 MassOperationsHandler.prototype.cleanUp = function () {
@@ -45,6 +55,15 @@ MassOperationsHandler.prototype.cleanUp = function () {
   if (this.selectedBlocks_.length) {
     this.selectedBlocks_.forEach(block => typeof block.removeSelect === 'function' && block.removeSelectAsMassSelection());
     this.selectedBlocks_ = [];
+  }
+}
+
+MassOperationsHandler.prototype.deleteAll = function () {
+  console.log('MassOperationsHandler.prototype.deleteAll')
+  if (this.selectedBlocks_.length) {
+    this.selectedBlocks_.forEach(block => !block.disposed && typeof block.dispose === 'function' && block.dispose());
+    this.selectedBlocks_ = [];
+    document.removeEventListener('keydown', this.keyDownHadler_)
   }
 }
 
