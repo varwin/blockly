@@ -1,6 +1,6 @@
 {
   "chunk": [
-    "blockly:270",
+    "blockly:271",
     "all:10:blockly",
     "all1:11:blockly",
     "all2:11:blockly",
@@ -115,6 +115,7 @@
     ".\\core\\events\\events_viewport.js",
     ".\\core\\events\\events_theme_change.js",
     ".\\core\\events\\events_block_create.js",
+    ".\\core\\mass_operations\\mass_operation_handlers.js",
     ".\\core\\modulebar.js",
     ".\\core\\events\\events_click.js",
     ".\\core\\zoom_controls.js",

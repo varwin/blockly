@@ -503,11 +503,7 @@ Gesture.prototype.doStart = function (e) {
   Tooltip.block();
 
   if (!browserEvents.isMiddleButton(e) && this.targetBlock_) {
-    if (e.ctrlKey) {
-      console.log('Gesture.prototype.doStart -> CTRL_CLICK!')
-    } else {
-      this.targetBlock_.select();
-    }
+    this.targetBlock_.select();
   }
 
   if (browserEvents.isRightButton(e)) {
@@ -768,8 +764,8 @@ Gesture.prototype.doBlockClick_ = function (e) {
 
     let event
 
-    if (e.ctrlKey && !this.startWorkspace_.isInFlyout()) {
-      console.log('Gesture.prototype.doBlockClick_ -> fire event CTRL_CLICK')
+    if (e.ctrlKey && !this.startWorkspace_.isFlyout) {
+      console.log('Gesture.prototype.doBlockClick_ -> fire event CTRL_CLICK') // Here
       event = new (eventUtils.get(eventUtils.CTRL_CLICK))(this.startBlock_, this.startWorkspace_.id, 'block');
     } else {
       event = new (eventUtils.get(eventUtils.CLICK))(this.startBlock_, this.startWorkspace_.id, 'block');

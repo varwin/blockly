@@ -102,6 +102,7 @@ const {Workspace} = goog.require('Blockly.Workspace');
 /* eslint-disable-next-line no-unused-vars */
 const {ZoomControls} = goog.requireType('Blockly.ZoomControls');
 const {ModuleBar} = goog.require('Blockly.ModuleBar');
+const {MassOperationsHandler} = goog.require('Blockly.MassOperations.Handler');
 
 /** @suppress {extraRequire} */
 goog.require('Blockly.Events.BlockCreate');
@@ -301,6 +302,10 @@ const WorkspaceSvg = function(
    * @private
    */
   this.cachedParentSvgSize_ = new Size(0, 0);
+
+  if (!this.isFlyout) {
+    this.massOperationsHandler_ = new MassOperationsHandler(this)
+  }
 };
 object.inherits(WorkspaceSvg, Workspace);
 
@@ -1778,15 +1783,27 @@ WorkspaceSvg.prototype.getDragTarget = function(e) {
 
 /**
  * Handle a mouse-down on SVG drawing surface.
- * @param {!Event} e Mouse down event.
+ * @param {!MouseEvent} e Mouse down event.
  * @private
  */
 WorkspaceSvg.prototype.onMouseDown_ = function(e) {
+  if (!this.isFlyout && e.ctrlKey) return
+
+  this.cleanUpMassOperations()
+
   const gesture = this.getGesture(e);
   if (gesture) {
     gesture.handleWsStart(e, this);
   }
 };
+
+WorkspaceSvg.prototype.cleanUpMassOperations = function () {
+  if (this.massOperationsHandler_) this.massOperationsHandler_.cleanUp()
+}
+
+WorkspaceSvg.prototype.addMassOperationEvent = function (e, block) {
+  this.massOperationsHandler_.addEvent(e, block)
+}
 
 /**
  * Start tracking a drag of an object on this workspace.

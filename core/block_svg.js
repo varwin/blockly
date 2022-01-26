@@ -306,6 +306,9 @@ BlockSvg.prototype.initSvg = function() {
   if (!this.workspace.options.readOnly && !this.eventsInit_ && svg) {
     browserEvents.conditionalBind(svg, 'mouseup', this, this.onMouseUp_);
   }
+  if (!this.workspace.options.readOnly && !this.workspace.isFlyout && !this.eventsInit_ && svg) {
+    browserEvents.conditionalBind(svg, 'click', this, this.onClick_);
+  }
   this.eventsInit_ = true;
 
   if (!svg.parentNode) {
@@ -339,28 +342,27 @@ BlockSvg.prototype.select = function() {
     this.getParent().select();
     return;
   }
-  if (common.getSelected() === this) {
-    return;
-  }
 
-  if (!this.InActiveModule()) {
-    return;
-  }
+  if (common.getSelected() === this) return;
+
+  if (!this.InActiveModule()) return;
 
   let oldId = null;
   if (common.getSelected()) {
     oldId = common.getSelected().id;
     // Unselect any previously selected block.
     eventUtils.disable();
+
     try {
       common.getSelected().unselect();
     } finally {
       eventUtils.enable();
     }
   }
-  const event = new (eventUtils.get(eventUtils.SELECTED))(
-      oldId, this.id, this.workspace.id);
+
+  const event = new (eventUtils.get(eventUtils.SELECTED))(oldId, this.id, this.workspace.id);
   eventUtils.fire(event);
+
   common.setSelected(this);
   this.addSelect();
 };
@@ -370,7 +372,7 @@ BlockSvg.prototype.select = function() {
  * if the block is currently selected.
  */
 BlockSvg.prototype.unselect = function() {
-  if (common.getSelected() !== this) {
+  if (common.getSelected() !== this) { // TODO common should know how to work with mass selection
     return;
   }
   const event = new (eventUtils.get(eventUtils.SELECTED))(
@@ -768,10 +770,16 @@ BlockSvg.prototype.tab = function(start, forward) {
 
 /**
  * Handle a mouse-down on an SVG block.
- * @param {!Event} e Mouse down event or touch start event.
+ * @param {!MouseEvent} e Mouse down event or touch start event.
  * @private
  */
 BlockSvg.prototype.onMouseDown_ = function(e) {
+  if (!this.workspace.isFlyout && e.ctrlKey) {
+    e.stopPropagation();
+    e.preventDefault();
+    return;
+  }
+
   if (this.isInFrontOfWorkspace) {
     this.disableMovingToFront = true
     this.previousParent.insertBefore(this.getSvgRoot(), this.previousNextSibling)
@@ -786,8 +794,29 @@ BlockSvg.prototype.onMouseDown_ = function(e) {
   }
 };
 
-BlockSvg.prototype.onMouseUp_ = function() {
+/**
+ * Handle a mouse-up on an SVG block.
+ * @param {!MouseEvent} e Mouse up event or touch end event.
+ * @private
+ */
+BlockSvg.prototype.onMouseUp_ = function(e) {
+  if (!this.workspace.isFlyout && e.ctrlClick) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
   if (this.disableMovingToFront) this.disableMovingToFront = false
+}
+
+/**
+ * Handle a click on an SVG block.
+ * @param {!MouseEvent} e Click event.
+ * @private
+ */
+BlockSvg.prototype.onClick_ = function(e) {
+  if (e.ctrlKey) {
+    this.workspace.addMassOperationEvent(e, this)
+  }
 }
 
 /**
