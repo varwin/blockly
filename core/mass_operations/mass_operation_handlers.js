@@ -36,14 +36,14 @@ MassOperationsHandler.prototype.addEvent = function (e, block) {
   if (this.selectedBlocks_.find(b => b.id === block.id)) return
 
   this.selectedBlocks_.push(block)
-  block.addSelect()
+  block.addSelectAsMassSelection()
   console.log('MassOperationsHandler -> Add new block to this.selectedBlocks_', block)
 }
 
 MassOperationsHandler.prototype.cleanUp = function () {
   console.log('MassOperationsHandler -> Clean up')
   if (this.selectedBlocks_.length) {
-    this.selectedBlocks_.forEach(block => typeof block.removeSelect === 'function' && block.removeSelect());
+    this.selectedBlocks_.forEach(block => typeof block.removeSelect === 'function' && block.removeSelectAsMassSelection());
     this.selectedBlocks_ = [];
   }
 }

@@ -1367,6 +1367,11 @@ BlockSvg.prototype.addSelect = function() {
   }
 };
 
+BlockSvg.prototype.addSelectAsMassSelection = function() {
+  this.pathObject.updateMassSelected(true);
+  this.selected_ = true
+};
+
 /**
  * Create a temporary div and move the svg of the block in front of
  * the entire flyout to display the block in its entirety
@@ -1439,6 +1444,11 @@ BlockSvg.prototype.removeSelect = function() {
   if (this.isInFrontOfWorkspace) return
 
   this.pathObject.updateSelected(false);
+  this.selected_ = false
+};
+
+BlockSvg.prototype.removeSelectAsMassSelection = function() {
+  this.pathObject.updateMassSelected(false);
   this.selected_ = false
 };
 
