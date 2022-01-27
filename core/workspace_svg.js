@@ -1802,8 +1802,12 @@ WorkspaceSvg.prototype.cleanUpMassOperations = function () {
   if (this.massOperationsHandler_) this.massOperationsHandler_.cleanUp()
 }
 
-WorkspaceSvg.prototype.addMassOperationEvent = function (e, block) {
-  this.massOperationsHandler_.addEvent(e, block)
+WorkspaceSvg.prototype.getMassOperations = function () {
+  if (this.massOperationsHandler_) {
+    return this.massOperationsHandler_
+  } else if (this.svgGroup_) {
+    return new MassOperationsHandler(this)
+  }
 }
 
 /**

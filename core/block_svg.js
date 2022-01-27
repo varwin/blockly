@@ -300,14 +300,10 @@ BlockSvg.prototype.initSvg = function() {
   this.applyColour();
   this.pathObject.updateMovable(this.isMovable());
   const svg = this.getSvgRoot();
+
   if (!this.workspace.options.readOnly && !this.eventsInit_ && svg) {
     browserEvents.conditionalBind(svg, 'mousedown', this, this.onMouseDown_);
-  }
-  if (!this.workspace.options.readOnly && !this.eventsInit_ && svg) {
     browserEvents.conditionalBind(svg, 'mouseup', this, this.onMouseUp_);
-  }
-  if (!this.workspace.options.readOnly && !this.workspace.isFlyout && !this.eventsInit_ && svg) {
-    browserEvents.conditionalBind(svg, 'click', this, this.onClick_);
   }
   this.eventsInit_ = true;
 
@@ -777,6 +773,10 @@ BlockSvg.prototype.onMouseDown_ = function(e) {
   if (!this.workspace.isFlyout && e.ctrlKey) {
     e.stopPropagation();
     e.preventDefault();
+
+    const massOperations = this.workspace.getMassOperations()
+    if (massOperations) massOperations.blockMouseDown(this)
+
     return;
   }
 
@@ -800,23 +800,15 @@ BlockSvg.prototype.onMouseDown_ = function(e) {
  * @private
  */
 BlockSvg.prototype.onMouseUp_ = function(e) {
-  if (!this.workspace.isFlyout && e.ctrlClick) {
+  if (!this.workspace.isFlyout && e.ctrlKey) {
     e.stopPropagation();
     e.preventDefault();
+
+    const massOperations = this.workspace.getMassOperations()
+    if (massOperations) massOperations.blockMouseUp(this)
   }
 
   if (this.disableMovingToFront) this.disableMovingToFront = false
-}
-
-/**
- * Handle a click on an SVG block.
- * @param {!MouseEvent} e Click event.
- * @private
- */
-BlockSvg.prototype.onClick_ = function(e) {
-  if (e.ctrlKey) {
-    this.workspace.addMassOperationEvent(e, this)
-  }
 }
 
 /**
