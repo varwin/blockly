@@ -900,8 +900,7 @@ WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
    * </g>
    * @type {SVGElement}
    */
-  this.svgGroup_ =
-      dom.createSvgElement(Svg.G, {'class': 'blocklyWorkspace'}, null);
+  this.svgGroup_ = dom.createSvgElement(Svg.G, {'class': 'blocklyWorkspace'}, null);
 
   // Note that a <g> alone does not receive mouse events--it must have a
   // valid target inside it.  If no background class is specified, as in the
@@ -922,28 +921,23 @@ WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
     }
   }
   /** @type {SVGElement} */
-  this.svgBlockCanvas_ = dom.createSvgElement(
-      Svg.G, {'class': 'blocklyBlockCanvas'}, this.svgGroup_);
+  this.svgBlockCanvas_ = dom.createSvgElement(Svg.G, {'class': 'blocklyBlockCanvas'}, this.svgGroup_);
   /** @type {SVGElement} */
-  this.svgBubbleCanvas_ = dom.createSvgElement(
-      Svg.G, {'class': 'blocklyBubbleCanvas'}, this.svgGroup_);
+  this.svgBubbleCanvas_ = dom.createSvgElement(Svg.G, {'class': 'blocklyBubbleCanvas'}, this.svgGroup_);
 
   if (!this.isFlyout) {
-    browserEvents.conditionalBind(
-        this.svgGroup_, 'mousedown', this, this.onMouseDown_, false, true);
+    browserEvents.conditionalBind(this.svgGroup_, 'mousedown', this, this.onMouseDown_, false, true);
     // This no-op works around https://bugs.webkit.org/show_bug.cgi?id=226683,
     // which otherwise prevents zoom/scroll events from being observed in
     // Safari. Once that bug is fixed it should be removed.
     document.body.addEventListener('wheel', function() {});
-    browserEvents.conditionalBind(
-        this.svgGroup_, 'wheel', this, this.onMouseWheel_);
+    browserEvents.conditionalBind(this.svgGroup_, 'wheel', this, this.onMouseWheel_);
   }
 
   // Determine if there needs to be a category tree, or a simple list of
   // blocks.  This cannot be changed later, since the UI is very different.
   if (this.options.hasCategories) {
-    const ToolboxClass =
-        registry.getClassFromOptions(registry.Type.TOOLBOX, this.options, true);
+    const ToolboxClass = registry.getClassFromOptions(registry.Type.TOOLBOX, this.options, true);
     this.toolbox_ = new ToolboxClass(this);
   }
 
@@ -955,14 +949,24 @@ WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
     this.grid_.update(this.scale);
   }
   this.recordDragTargets();
-  const CursorClass =
-      registry.getClassFromOptions(registry.Type.CURSOR, this.options);
+  const CursorClass = registry.getClassFromOptions(registry.Type.CURSOR, this.options);
 
   CursorClass && this.markerManager_.setCursor(new CursorClass());
 
   this.renderer_.createDom(this.svgGroup_, this.getTheme());
+
   return this.svgGroup_;
 };
+
+/**
+ * Actions after the workspace appened to DOM el
+ */
+WorkspaceSvg.prototype.initAfterAppendDOM = function() {
+  if (!this.massOperationsHandler_) {
+    this.massOperationsHandler_ = new MassOperationsHandler(this)
+  }
+}
+
 
 /**
  * Dispose of this workspace.
@@ -1799,10 +1803,6 @@ WorkspaceSvg.prototype.cleanUpMassOperations = function () {
 }
 
 WorkspaceSvg.prototype.addMassOperationEvent = function (e, block) {
-  if (!this.isFlyout && !this.massOperationsHandler_) {
-    this.massOperationsHandler_ = new MassOperationsHandler(this)
-  }
-
   this.massOperationsHandler_.addEvent(e, block)
 }
 

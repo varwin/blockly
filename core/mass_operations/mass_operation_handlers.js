@@ -24,9 +24,10 @@ const { WorkspaceSvg } = goog.requireType('Blockly.WorkspaceSvg');
  * @alias Blockly.MassOperations.Handler
  */
 const MassOperationsHandler = function (workspace) {
-  console.log('MassOperationsHandler -> created')
   this.workspace_ = workspace;
   this.selectedBlocks_ = [];
+
+  this.workspace_.getParentSvg().addEventListener('keydown', this.keyDownHadler_.bind(this))
 }
 
 MassOperationsHandler.prototype.addEvent = function (e, block) {
@@ -37,21 +38,23 @@ MassOperationsHandler.prototype.addEvent = function (e, block) {
 
   this.selectedBlocks_.push(block)
   block.addSelectAsMassSelection()
-  console.log('MassOperationsHandler -> Add new block to this.selectedBlocks_', block)
-
-  if (!this.keyDownHandlerSet) {
-    document.addEventListener('keydown', this.keyDownHadler_.bind(this))
-  }
 }
 
 MassOperationsHandler.prototype.keyDownHadler_ = function (e) {
-  if (e.key === 'd' && e.ctrlKey) {
+  if (e.key === 'KeyD' && e.ctrlKey) {
+    e.stopPropagation()
+    e.preventDefault()
     this.deleteAll();
+  }
+
+  if (e.code === 'KeyA' && e.ctrlKey) {
+    e.stopPropagation()
+    e.preventDefault()
+    this.selectAll();
   }
 }
 
 MassOperationsHandler.prototype.cleanUp = function () {
-  console.log('MassOperationsHandler -> Clean up')
   if (this.selectedBlocks_.length) {
     this.selectedBlocks_.forEach(block => typeof block.removeSelect === 'function' && block.removeSelectAsMassSelection());
     this.selectedBlocks_ = [];
@@ -59,12 +62,17 @@ MassOperationsHandler.prototype.cleanUp = function () {
 }
 
 MassOperationsHandler.prototype.deleteAll = function () {
-  console.log('MassOperationsHandler.prototype.deleteAll')
   if (this.selectedBlocks_.length) {
     this.selectedBlocks_.forEach(block => !block.disposed && typeof block.dispose === 'function' && block.dispose());
     this.selectedBlocks_ = [];
-    document.removeEventListener('keydown', this.keyDownHadler_)
   }
+}
+
+MassOperationsHandler.prototype.selectAll = function () {
+  this.workspace_.getAllBlocks().forEach(block => {
+    this.selectedBlocks_.push(block)
+    block.addSelectAsMassSelection()
+  })
 }
 
 exports.MassOperationsHandler = MassOperationsHandler;
