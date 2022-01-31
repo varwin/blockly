@@ -25,6 +25,7 @@ const eventUtils = goog.require('Blockly.Events.utils');
 const object = goog.require('Blockly.utils.object');
 const registry = goog.require('Blockly.registry');
 const toolbox = goog.require('Blockly.utils.toolbox');
+const Events = goog.require('Blockly.Events');
 const {BlockSvg} = goog.require('Blockly.BlockSvg');
 /* eslint-disable-next-line no-unused-vars */
 const {BlocklyOptions} = goog.requireType('Blockly.BlocklyOptions');
@@ -158,6 +159,12 @@ const Toolbox = function(workspace) {
   this.flyout_ = null;
 
   /**
+   * Listener fire event's on flyout.
+   * @private
+   */
+  this.listenerWrapper_ = null;
+
+  /**
    * A map from toolbox item IDs to toolbox items.
    * @type {!Object<string, !IToolboxItem>}
    * @protected
@@ -231,7 +238,6 @@ Toolbox.prototype.init = function() {
     weight: 1,
     capabilities: [
       ComponentManager.Capability.AUTOHIDEABLE,
-      ComponentManager.Capability.DELETE_AREA,
       ComponentManager.Capability.DRAG_TARGET,
     ],
   });
@@ -410,7 +416,26 @@ Toolbox.prototype.createFlyout_ = function() {
     FlyoutClass = registry.getClassFromOptions(
         registry.Type.FLYOUTS_VERTICAL_TOOLBOX, workspace.options, true);
   }
-  return new FlyoutClass(workspaceOptions);
+
+  const flyoutInstance = new FlyoutClass(workspaceOptions);
+
+  if (!this.listenerWrapper_) {
+    this.listenerWrapper_ = this.flyoutEventsListener_.bind(this);
+    flyoutInstance.workspace_.addChangeListener(this.listenerWrapper_);
+  }
+
+  return flyoutInstance;
+};
+
+/**
+ * Function listener event on flyout workspace.
+ * @param {*} event
+ * @private
+ */
+Toolbox.prototype.flyoutEventsListener_ = function(event) {
+  if (event.type === Events.FLYOUT_HIDE && event.isButtonClose) {
+    this.clearSelection();
+  }
 };
 
 /**

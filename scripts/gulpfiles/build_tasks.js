@@ -113,22 +113,6 @@ const chunks = [
     name: 'javascript',
     entry: 'generators/javascript/all.js',
     exports: 'Blockly.JavaScript',
-  }, {
-    name: 'python',
-    entry: 'generators/python/all.js',
-    exports: 'Blockly.Python',
-  }, {
-    name: 'php',
-    entry: 'generators/php/all.js',
-    exports: 'Blockly.PHP',
-  }, {
-    name: 'lua',
-    entry: 'generators/lua/all.js',
-    exports: 'Blockly.Lua',
-  }, {
-    name: 'dart',
-    entry: 'generators/dart/all.js',
-    exports: 'Blockly.Dart',
   }
 ];
 
@@ -574,8 +558,8 @@ function buildAdvancedCompilationTest() {
  *     test/deps*.js
  */
 const build = gulp.parallel(
-  buildCompiled,
-  buildLangfiles,
+    buildCompiled,
+    buildLangfiles,
 );
 
 /**

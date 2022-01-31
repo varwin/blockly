@@ -162,6 +162,27 @@ const Flyout = function(workspaceOptions) {
   this.targetWorkspace = null;
 
   /**
+   * The SVG group containt close flyout button.
+   * @type {?SVGElement}
+   * @private
+   */
+  this.closeButtonSVG_ = null;
+
+  /**
+   * Width SVG group closeButtonSVG_.
+   * @type {number}
+   * @const
+   */
+  this.WIDTH_CLOSE_BUTTON = 40;
+
+   /**
+   * Mouse down on closeButtonSVG_ event data.
+   * @type {?browserEvents.Data}
+   * @private
+   */
+  this.onMouseDownCloseWrapper_ = null;
+
+  /**
    * A list of blocks that can be reused.
    * @type {!Array<!BlockSvg>}
    * @private
@@ -174,7 +195,7 @@ object.inherits(Flyout, DeleteArea);
  * Does the flyout automatically close when a block is created?
  * @type {boolean}
  */
-Flyout.prototype.autoClose = true;
+Flyout.prototype.autoClose = false;
 
 /**
  * Whether the flyout is visible.
@@ -195,14 +216,14 @@ Flyout.prototype.containerVisible_ = true;
  * @type {number}
  * @const
  */
-Flyout.prototype.CORNER_RADIUS = 8;
+Flyout.prototype.CORNER_RADIUS = 0;
 
 /**
  * Margin around the edges of the blocks in the flyout.
  * @type {number}
  * @const
  */
-Flyout.prototype.MARGIN = Flyout.prototype.CORNER_RADIUS;
+Flyout.prototype.MARGIN = 8;
 
 // TODO: Move GAP_X and GAP_Y to their appropriate files.
 
@@ -312,7 +333,7 @@ Flyout.prototype.init = function(targetWorkspace) {
 
   this.hide();
 
-  const wheelEvent = browserEvents.conditionalBind(this.svgGroup_, 'wheel', this, this.wheel_)
+  const wheelEvent = browserEvents.conditionalBind(this.svgGroup_, 'wheel', this, this.wheel_);
   Array.prototype.push.apply(this.eventWrappers_, wheelEvent);
 
   if (!this.autoClose) {
@@ -339,7 +360,6 @@ Flyout.prototype.init = function(targetWorkspace) {
     component: this,
     weight: 1,
     capabilities: [
-      ComponentManager.Capability.DELETE_AREA,
       ComponentManager.Capability.DRAG_TARGET,
     ],
   });
@@ -455,6 +475,114 @@ Flyout.prototype.updateDisplay_ = function() {
 };
 
 /**
+ * The function to be called when close button is clicked.
+ * @type {?function(!FieldImage)}
+ * @private
+ */
+Flyout.prototype.onCloseHandler_ = function() {
+   this.hide(true);
+};
+
+/**
+ * Create close button for flyout.
+ * @protected
+ */
+Flyout.prototype.createCloseButton_ = function() {
+  this.removeCloseButton_();
+
+  this.closeButtonSVG_ = dom.createSvgElement(Svg.SVG, {
+    'stroke': 'grey',
+    'stroke-width': '2',
+    'stroke-linecap': 'round',
+  });
+  this.closeButtonSVG_.classList.add('blocklyFlyoutCloseButton');
+
+  const flyoutSVG = this.workspace_.getParentSvg();
+  const flyoutParentEl = flyoutSVG.parentElement;
+
+  const flyoutClientRect = flyoutSVG.getBoundingClientRect();
+  const flyoutParentClientRect = flyoutParentEl.getBoundingClientRect();
+
+  const top = flyoutClientRect.top - flyoutParentClientRect.top;
+  const left = flyoutClientRect.right - flyoutParentClientRect.left;
+
+  this.closeButtonSVG_.style.top = `${top}px`;
+  this.closeButtonSVG_.style.left = `${left}px`;
+
+  // insert close button after the flyout svg
+  flyoutParentEl.insertBefore(this.closeButtonSVG_, flyoutSVG.nextSibling);
+
+  this.onMouseDownCloseWrapper_ = browserEvents.conditionalBind(this.closeButtonSVG_, 'click', this, this.onCloseHandler_);
+
+  dom.createSvgElement(
+    Svg.PATH, {
+      'class': 'blocklyFlyoutBackground',
+      'd': 'M 0 0 h 22 a 8 8 0 0 1 8 8 v 24 a 8 8 0 0 1 -8 8 h -22 z',
+      'stroke': 'none',
+    }, this.closeButtonSVG_);
+
+  // Create left arrow
+  dom.createSvgElement(Svg.LINE, {
+    'x1': 10,
+    'y1': 20,
+    'x2': 16,
+    'y2': 15,
+  }, this.closeButtonSVG_);
+
+  dom.createSvgElement(Svg.LINE, {
+    'x1': 10,
+    'y1': 20,
+    'x2': 16,
+    'y2': 25,
+  }, this.closeButtonSVG_);
+};
+
+Flyout.prototype.removeCloseButton_ = function() {
+  if (this.onMouseDownCloseWrapper_) {
+    browserEvents.unbind(this.onMouseDownCloseWrapper_);
+    this.onMouseDownCloseWrapper_ = null;
+  }
+
+  if (this.closeButtonSVG_) {
+    dom.removeNode(this.closeButtonSVG_);
+    this.closeButtonSVG_ = null;
+  }
+};
+
+Flyout.prototype.createFlyoutEndShadow_ = function() {
+  this.removeFlyoutEndShadow_();
+
+  this.flyoutEndShadowDiw_ = document.createElement('div');
+  this.flyoutEndShadowDiw_.classList.add('blocklyFlyoutEndShadow');
+
+  const flyoutSVG = this.workspace_.getParentSvg();
+  const flyoutParentEl = flyoutSVG.parentElement;
+
+  const flyoutClientRect = flyoutSVG.getBoundingClientRect();
+  const flyoutParentClientRect = flyoutParentEl.getBoundingClientRect();
+
+  const top = flyoutClientRect.top - flyoutParentClientRect.top;
+  const left = flyoutClientRect.right - flyoutParentClientRect.left - 10; // 10px width of shadow, see css.js
+
+  const diffFlyoutAndParentBottom = flyoutClientRect.bottom - flyoutParentClientRect.bottom;
+  const height = diffFlyoutAndParentBottom === 0 ? flyoutSVG.getBBox().height : diffFlyoutAndParentBottom;
+
+  this.flyoutEndShadowDiw_.style.top = `${top}px`;
+  this.flyoutEndShadowDiw_.style.left = `${left}px`;
+  this.flyoutEndShadowDiw_.style.height = `${height}px`;
+
+  // insert close button after the flyout svg
+  flyoutParentEl.insertBefore(this.flyoutEndShadowDiw_, flyoutSVG.nextSibling);
+};
+
+Flyout.prototype.removeFlyoutEndShadow_ = function() {
+  if (this.flyoutEndShadowDiw_) {
+    this.flyoutEndShadowDiw_.remove();
+  }
+};
+
+
+/**
  * Update the view based on coordinates calculated in position().
  * @param {number} width The computed width of the flyout's SVG group
  * @param {number} height The computed height of the flyout's SVG group.
@@ -463,7 +591,7 @@ Flyout.prototype.updateDisplay_ = function() {
  * @protected
  */
 Flyout.prototype.positionAt_ = function(width, height, x, y) {
-  this.svgGroup_.setAttribute('width', width);
+  this.svgGroup_.setAttribute('width', (width + this.WIDTH_CLOSE_BUTTON));
   this.svgGroup_.setAttribute('height', height);
   this.workspace_.setCachedParentSvgSize(width, height);
 
@@ -476,6 +604,9 @@ Flyout.prototype.positionAt_ = function(width, height, x, y) {
     const transform = 'translate(' + x + ',' + y + ')';
     this.svgGroup_.setAttribute('transform', transform);
   }
+
+  this.createCloseButton_();
+  this.createFlyoutEndShadow_();
 
   // Update the scrollbar (if one exists).
   const scrollbar = this.workspace_.scrollbar;
@@ -499,18 +630,22 @@ Flyout.prototype.positionAt_ = function(width, height, x, y) {
 /**
  * Hide and empty the flyout.
  */
-Flyout.prototype.hide = function() {
-  if (!this.isVisible()) {
-    return;
-  }
+Flyout.prototype.hide = function(isButton = false) {
+  if (!this.isVisible()) return;
+
   this.setVisible(false);
 
-  eventUtils.fire(new (eventUtils.get(eventUtils.FLYOUT_HIDE))(this.getWorkspace().id));
+  this.removeCloseButton_();
+  this.removeFlyoutEndShadow_();
+
+  eventUtils.fire(new (eventUtils.get(eventUtils.FLYOUT_HIDE))(this.getWorkspace().id, isButton));
   // Delete all the event listeners.
   for (let i = 0, listen; (listen = this.listeners_[i]); i++) {
     browserEvents.unbind(listen);
   }
+
   this.listeners_.length = 0;
+
   if (this.reflowWrapper_) {
     this.workspace_.removeChangeListener(this.reflowWrapper_);
     this.reflowWrapper_ = null;
@@ -525,7 +660,7 @@ Flyout.prototype.hide = function() {
  *     in the flyout. This is either an array of Nodes, a NodeList, a
  *     toolbox definition, or a string with the name of the dynamic category.
  */
-Flyout.prototype.show = function(flyoutDef, { dontFireShowEvent }) {
+Flyout.prototype.show = function(flyoutDef, {dontFireShowEvent}) {
   this.workspace_.setResizesEnabled(false);
   this.hide();
   this.clearOldBlocks_();
