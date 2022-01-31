@@ -775,7 +775,7 @@ BlockSvg.prototype.onMouseDown_ = function(e) {
     e.preventDefault();
 
     const massOperations = this.workspace.getMassOperations()
-    if (massOperations) massOperations.blockMouseDown(this)
+    if (massOperations) massOperations.blockMouseDown(this, e)
 
     return;
   }
@@ -805,7 +805,7 @@ BlockSvg.prototype.onMouseUp_ = function(e) {
     e.preventDefault();
 
     const massOperations = this.workspace.getMassOperations()
-    if (massOperations) massOperations.blockMouseUp(this)
+    if (massOperations) massOperations.blockMouseUp(this, e)
   }
 
   if (this.disableMovingToFront) this.disableMovingToFront = false
