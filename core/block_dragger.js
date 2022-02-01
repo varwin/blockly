@@ -201,8 +201,7 @@ BlockDragger.prototype.shouldDisconnect_ = function(healStack) {
  *     moved from the position at mouse down, in pixel units.
  * @protected
  */
-BlockDragger.prototype.disconnectBlock_ = function(
-    healStack, currentDragDeltaXY) {
+BlockDragger.prototype.disconnectBlock_ = function(healStack, currentDragDeltaXY) {
   this.draggingBlock_.unplug(healStack);
   const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
   const newLoc = Coordinate.sum(this.startXY_, delta);

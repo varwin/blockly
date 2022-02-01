@@ -121,7 +121,7 @@ MassOperationsHandler.prototype.handleMove_ = function (e) {
   const BlockDraggerClass = registry.getClassFromOptions(registry.Type.BLOCK_DRAGGER, this.workspace_.options, true);
 
   this.blockDraggers_ = this.selectedBlocks_.map(block => new BlockDraggerClass(block, this.workspace_));
-  this.blockDraggers_.forEach(dragger => dragger.startDrag(this.currentDragDeltaXY_, this.healStack_));
+  this.blockDraggers_.forEach(dragger => dragger.startDrag(this.currentDragDeltaXY_, true));
   this.blockDraggers_.forEach(dragger => dragger.drag(e, this.currentDragDeltaXY_));
 }
 
@@ -170,28 +170,130 @@ MassOperationsHandler.prototype.isBlockInSelectedGroup = function (block) {
 }
 
 MassOperationsHandler.prototype.addBlockToSelected = function (block) {
-  if (this.selectedBlocks_.find(b => b.id === block.id)) return
-
-  this.selectedBlocks_.push(block)
-  block.addSelectAsMassSelection()
-
   const gesture = this.workspace && this.workspace.getGesture(e);
   if (gesture) gesture.dispose();
 
   const selected = common.getSelected();
   if (selected) selected.unselect();
+
+  if (this.selectedBlocks_.find(b => b.id === block.id)) return
+
+  if (!block.getParent()) {
+    this.selectedBlocks_.forEach((b, i) => {
+      const root = this.getRootBlock_(b)
+
+      if (root.id === block.id) {
+        this.selectedBlocks_.splice(i, 1)
+        b.removeSelectAsMassSelection()
+      }
+    })
+
+    this.selectedBlocks_.push(block)
+    block.addSelectAsMassSelection()
+    return
+  }
+
+  const rootBlock = this.getRootBlock_(block)
+  const blockWithSameRootParentIndex = this.selectedBlocks_.findIndex(b => this.getRootBlock_(b).id === rootBlock.id)
+  const blockWithSameRootParent = this.selectedBlocks_[blockWithSameRootParentIndex]
+
+  if (blockWithSameRootParent) {
+    const parentOfSameBlock = blockWithSameRootParent.getParent()
+
+    if (parentOfSameBlock.id === block.id) {
+      this.selectedBlocks_.push(block)
+      block.addSelectAsMassSelection()
+
+      this.selectedBlocks_.splice(blockWithSameRootParentIndex, 1)
+      blockWithSameRootParent.removeSelectAsMassSelection()
+      return
+    }
+
+    const isBlockOnTop = this.findParentBlock_(blockWithSameRootParent, block.id)
+
+    if (isBlockOnTop) {
+      this.selectedBlocks_.push(block)
+      block.addSelectAsMassSelection()
+
+      this.selectedBlocks_.splice(blockWithSameRootParentIndex, 1)
+      blockWithSameRootParent.removeSelectAsMassSelection()
+      return
+    }
+
+    const sameBlockOnTop = this.findParentBlock_(block, blockWithSameRootParent.id)
+
+    if (sameBlockOnTop) return
+
+    const commonParent = this.findCommonParentBlock_(block, blockWithSameRootParent)
+
+    if (commonParent) {
+      this.selectedBlocks_.push(commonParent)
+      commonParent.addSelectAsMassSelection()
+
+      this.selectedBlocks_.splice(blockWithSameRootParentIndex, 1)
+      blockWithSameRootParent.removeSelectAsMassSelection()
+      return
+    }
+  } else {
+    this.selectedBlocks_.push(block)
+    block.addSelectAsMassSelection()
+  }
+}
+
+MassOperationsHandler.prototype.getRootBlock_ = function (block) {
+  const parent = block.getParent()
+
+  return parent ? this.getRootBlock_(parent) : block
+}
+
+MassOperationsHandler.prototype.findParentBlock_ = function (block, targetBlockId) {
+  const parent = block.getParent()
+
+  if (!parent) return false
+
+  if (parent.id === targetBlockId) return true
+
+  return this.findParentBlock_(parent, targetBlockId)
+}
+
+MassOperationsHandler.prototype.findCommonParentBlock_ = function (blockA, blockB) {
+  const parentsA = this.getBlockParentsIds_(blockA, [])
+
+  return this.getFirstParentByIds_(blockB, [], parentsA)
+}
+
+MassOperationsHandler.prototype.getBlockParentsIds_ = function (block, ids) {
+  const parent = block.getParent()
+
+  if (!parent) return ids
+
+  ids.push(parent.id)
+
+  return this.getBlockParentsIds_(parent, ids)
+}
+
+MassOperationsHandler.prototype.getFirstParentByIds_ = function (block, ids, targetIds = []) {
+  const parent = block.getParent()
+
+  if (!parent) return false
+
+  if (targetIds.includes(parent.id)) return parent
+
+  ids.push(parent.id)
+
+  return this.getFirstParentByIds_(parent, ids, targetIds)
 }
 
 MassOperationsHandler.prototype.cleanUp = function () {
   if (this.selectedBlocks_.length) {
-    this.selectedBlocks_.forEach(block => typeof block.removeSelect === 'function' && block.removeSelectAsMassSelection());
+    this.selectedBlocks_.forEach(block => block.removeSelectAsMassSelection());
     this.selectedBlocks_ = [];
   }
 }
 
 MassOperationsHandler.prototype.deleteAll = function () {
   if (this.selectedBlocks_.length) {
-    this.selectedBlocks_.forEach(block => !block.disposed && typeof block.dispose === 'function' && block.dispose());
+    this.selectedBlocks_.forEach(block => !block.disposed && block.dispose());
     this.selectedBlocks_ = [];
   }
 }
