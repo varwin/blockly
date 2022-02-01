@@ -198,6 +198,8 @@ MassOperationsHandler.prototype.addBlockToSelected = function (block) {
   const blockWithSameRootParent = this.selectedBlocks_[blockWithSameRootParentIndex]
 
   if (blockWithSameRootParent) {
+    if (blockWithSameRootParent.id === rootBlock.id) return
+
     const parentOfSameBlock = blockWithSameRootParent.getParent()
 
     if (parentOfSameBlock.id === block.id) {
