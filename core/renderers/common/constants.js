@@ -1292,9 +1292,8 @@ ConstantProvider.prototype.getCSS_ = function(selector) {
     '}',
 
     // Mass selection highlight.
-    selector + ' .blocklyMassSelected>.blocklyPath {',
-    'stroke: #3ff;',
-    'stroke-width: 3px;',
+    selector + ' .blocklyMassSelected {',
+    'outline: dashed 2px #3cf;',
     '}',
 
     // Connection highlight.
