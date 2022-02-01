@@ -121,7 +121,7 @@ MassOperationsHandler.prototype.handleMove_ = function (e) {
   const BlockDraggerClass = registry.getClassFromOptions(registry.Type.BLOCK_DRAGGER, this.workspace_.options, true);
 
   this.blockDraggers_ = this.selectedBlocks_.map(block => new BlockDraggerClass(block, this.workspace_));
-  this.blockDraggers_.forEach(dragger => dragger.startDrag(this.currentDragDeltaXY_, true));
+  this.blockDraggers_.forEach(dragger => dragger.startDrag(this.currentDragDeltaXY_));
   this.blockDraggers_.forEach(dragger => dragger.drag(e, this.currentDragDeltaXY_));
 }
 
