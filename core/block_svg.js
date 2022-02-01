@@ -476,29 +476,26 @@ BlockSvg.prototype.getRelativeToSurfaceXY = function() {
   let x = 0;
   let y = 0;
 
-  const dragSurfaceGroup = this.useDragSurface_ ?
-      this.workspace.getBlockDragSurface().getGroup() :
-      null;
+  const dragSurfaceGroup = this.useDragSurface_ ? this.workspace.getBlockDragSurface().getGroup() : null;
 
   let element = this.getSvgRoot();
   if (element) {
     do {
       // Loop through this block and every parent.
       const xy = svgMath.getRelativeXY(element);
+
       x += xy.x;
       y += xy.y;
       // If this element is the current element on the drag surface, include
       // the translation of the drag surface itself.
-      if (this.useDragSurface_ &&
-          this.workspace.getBlockDragSurface().getCurrentBlock() === element) {
-        const surfaceTranslation =
-            this.workspace.getBlockDragSurface().getSurfaceTranslation();
+      if (this.useDragSurface_ && this.workspace.getBlockDragSurface().getCurrentBlock() === element) {
+        const surfaceTranslation = this.workspace.getBlockDragSurface().getSurfaceTranslation();
+
         x += surfaceTranslation.x;
         y += surfaceTranslation.y;
       }
       element = /** @type {!SVGElement} */ (element.parentNode);
-    } while (element && element !== this.workspace.getCanvas() &&
-             element !== dragSurfaceGroup);
+    } while (element && element !== this.workspace.getCanvas() && element !== dragSurfaceGroup);
   }
   return new Coordinate(x, y);
 };
@@ -541,9 +538,10 @@ BlockSvg.prototype.translate = function(x, y) {
  * Move this block to its workspace's drag surface, accounting for positioning.
  * Generally should be called at the same time as setDragging_(true).
  * Does nothing if useDragSurface_ is false.
+ * @param {Coordinate} positionOnDragSurface Offset on drag surface.
  * @package
  */
-BlockSvg.prototype.moveToDragSurface = function() {
+BlockSvg.prototype.moveToDragSurface = function(positionOnDragSurface) {
   if (!this.useDragSurface_) {
     return;
   }
@@ -551,9 +549,15 @@ BlockSvg.prototype.moveToDragSurface = function() {
   // is equal to the current relative-to-surface position,
   // to keep the position in sync as it move on/off the surface.
   // This is in workspace coordinates.
-  const xy = this.getRelativeToSurfaceXY();
-  this.clearTransformAttributes_();
-  this.workspace.getBlockDragSurface().translateSurface(xy.x, xy.y);
+  let xy = this.getRelativeToSurfaceXY();
+
+  if (positionOnDragSurface) {
+    this.replaceTransformAttributes_(positionOnDragSurface);
+  } else {
+    this.clearTransformAttributes_();
+  }
+
+  this.workspace.getBlockDragSurface().translateSurface(xy.x, xy.y, true);
   // Execute the move on the top-level SVG component
   const svg = this.getSvgRoot();
   if (svg) {
@@ -612,6 +616,15 @@ BlockSvg.prototype.moveDuringDrag = function(newLoc) {
  */
 BlockSvg.prototype.clearTransformAttributes_ = function() {
   this.getSvgRoot().removeAttribute('transform');
+};
+
+/**
+ * Replace the block of transform="..." attributes.
+ * Used when the block is switching from 3d to 2d transform or vice versa.
+ * @private
+ */
+BlockSvg.prototype.replaceTransformAttributes_ = function(position) {
+  this.getSvgRoot().setAttribute('transform', `translate(${position.x}, ${position.y})`);
 };
 
 /**

@@ -118,10 +118,19 @@ MassOperationsHandler.prototype.handleMove_ = function (e) {
 
   if (!this.hasExceededDragRadius_) return
 
+  const initBlockCoordinates = this.lastMouseDownBlock_.getRelativeToSurfaceXY()
   const BlockDraggerClass = registry.getClassFromOptions(registry.Type.BLOCK_DRAGGER, this.workspace_.options, true);
 
   this.blockDraggers_ = this.selectedBlocks_.map(block => new BlockDraggerClass(block, this.workspace_));
-  this.blockDraggers_.forEach(dragger => dragger.startDrag(this.currentDragDeltaXY_));
+
+  this.blockDraggers_.forEach((dragger, index) => {
+    const cordinates = this.selectedBlocks_[index].getRelativeToSurfaceXY()
+    let diff = Coordinate.difference(cordinates, initBlockCoordinates)
+
+    if (diff.x === 0 && diff.y === 0) diff = null
+
+    dragger.startDrag(this.currentDragDeltaXY_, false, diff)
+  });
   this.blockDraggers_.forEach(dragger => dragger.drag(e, this.currentDragDeltaXY_));
 }
 

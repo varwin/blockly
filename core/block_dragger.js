@@ -147,9 +147,10 @@ const initIconData = function(block) {
  *     moved from the position at mouse down, in pixel units.
  * @param {boolean} healStack Whether or not to heal the stack after
  *     disconnecting.
+ * @param {Coordinate} positionOnDragSurface Offset on drag surface.
  * @public
  */
-BlockDragger.prototype.startDrag = function(currentDragDeltaXY, healStack) {
+BlockDragger.prototype.startDrag = function(currentDragDeltaXY, healStack, positionOnDragSurface) {
   if (!eventUtils.getGroup()) {
     eventUtils.setGroup(true);
   }
@@ -176,7 +177,7 @@ BlockDragger.prototype.startDrag = function(currentDragDeltaXY, healStack) {
   // For future consideration: we may be able to put moveToDragSurface inside
   // the block dragger, which would also let the block not track the block drag
   // surface.
-  this.draggingBlock_.moveToDragSurface();
+  this.draggingBlock_.moveToDragSurface(positionOnDragSurface);
 };
 
 /**
