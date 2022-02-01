@@ -121,7 +121,7 @@ MassOperationsHandler.prototype.handleMove_ = function (e) {
   const initBlockCoordinates = this.lastMouseDownBlock_.getRelativeToSurfaceXY()
   const BlockDraggerClass = registry.getClassFromOptions(registry.Type.BLOCK_DRAGGER, this.workspace_.options, true);
 
-  this.blockDraggers_ = this.selectedBlocks_.map(block => new BlockDraggerClass(block, this.workspace_));
+  this.blockDraggers_ = this.selectedBlocks_.map(block => new BlockDraggerClass(block, this.workspace_, true));
 
   this.blockDraggers_.forEach((dragger, index) => {
     const cordinates = this.selectedBlocks_[index].getRelativeToSurfaceXY()

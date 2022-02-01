@@ -46,7 +46,7 @@ goog.require('Blockly.Events.BlockMove');
  * @implements {IBlockDragger}
  * @alias Blockly.BlockDragger
  */
-const BlockDragger = function(block, workspace) {
+const BlockDragger = function(block, workspace, offConnectionManager = false) {
   /**
    * The top block in the stack that is being dragged.
    * @type {!BlockSvg}
@@ -66,8 +66,11 @@ const BlockDragger = function(block, workspace) {
    * @type {!InsertionMarkerManager}
    * @protected
    */
-  this.draggedConnectionManager_ =
-      new InsertionMarkerManager(this.draggingBlock_);
+  this.draggedConnectionManager_ = null
+
+  if (!offConnectionManager) {
+    this.draggedConnectionManager_ = new InsertionMarkerManager(this.draggingBlock_);
+  }
 
   /**
    * Which drag area the mouse pointer is over, if any.
@@ -173,6 +176,7 @@ BlockDragger.prototype.startDrag = function(currentDragDeltaXY, healStack, posit
   if (this.shouldDisconnect_(healStack)) {
     this.disconnectBlock_(healStack, currentDragDeltaXY);
   }
+
   this.draggingBlock_.setDragging(true);
   // For future consideration: we may be able to put moveToDragSurface inside
   // the block dragger, which would also let the block not track the block drag
@@ -209,7 +213,7 @@ BlockDragger.prototype.disconnectBlock_ = function(healStack, currentDragDeltaXY
 
   this.draggingBlock_.translate(newLoc.x, newLoc.y);
   blockAnimation.disconnectUiEffect(this.draggingBlock_);
-  this.draggedConnectionManager_.updateAvailableConnections();
+  if (this.draggedConnectionManager_) this.draggedConnectionManager_.updateAvailableConnections();
 };
 
 /**
@@ -236,12 +240,16 @@ BlockDragger.prototype.drag = function(e, currentDragDeltaXY) {
   this.draggingBlock_.moveDuringDrag(newLoc);
   this.dragIcons_(delta);
 
+  if (!this.draggedConnectionManager_) return
+
   const oldDragTarget = this.dragTarget_;
   this.dragTarget_ = this.workspace_.getDragTarget(e);
 
   this.draggedConnectionManager_.update(delta, this.dragTarget_);
+
   const oldWouldDeleteBlock = this.wouldDeleteBlock_;
   this.wouldDeleteBlock_ = this.draggedConnectionManager_.wouldDeleteBlock();
+
   if (oldWouldDeleteBlock !== this.wouldDeleteBlock_) {
     // Prevent unnecessary add/remove class calls.
     this.updateCursorDuringBlockDrag_();
@@ -356,7 +364,7 @@ BlockDragger.prototype.maybeDeleteBlock_ = function() {
 BlockDragger.prototype.updateBlockAfterMove_ = function(delta) {
   this.draggingBlock_.moveConnections(delta.x, delta.y);
   this.fireMoveEvent_();
-  if (this.draggedConnectionManager_.wouldConnectBlock()) {
+  if (this.draggedConnectionManager_ && this.draggedConnectionManager_.wouldConnectBlock()) {
     // Applying connections also rerenders the relevant blocks.
     this.draggedConnectionManager_.applyConnections();
   } else {
