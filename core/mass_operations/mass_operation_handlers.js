@@ -16,7 +16,6 @@
 goog.module('Blockly.MassOperations.Handler');
 
 const { WorkspaceSvg } = goog.requireType('Blockly.WorkspaceSvg');
-const { Gesture } = goog.require('Blockly.Gesture');
 const { ShortcutRegistry } = goog.require('Blockly.ShortcutRegistry');
 const { KeyCodes } = goog.require('Blockly.utils.KeyCodes');
 const { Coordinate } = goog.require('Blockly.utils.Coordinate');
@@ -25,8 +24,6 @@ const registry = goog.require('Blockly.registry');
 const browserEvents = goog.require('Blockly.browserEvents');
 const common = goog.require('Blockly.common');
 
-/* eslint-disable-next-line no-unused-vars */
-const { BlockSvg } = goog.requireType('Blockly.BlockSvg');
 /** @suppress {extraRequire} */
 goog.require('Blockly.BlockDragger');
 
@@ -40,6 +37,8 @@ const MassOperationsHandler = function (workspace) {
   this.workspace_ = workspace;
   this.selectedBlocks_ = [];
   this.lastMouseDownBlock_ = null;
+  this.onMoveBlockWrapper_ = null;
+  this.onMouseUpBlockWrapper_ = null;
 
   // Add "deleteAll" method to shortcut registry with ctrl+D key
   const deleteAllShortcut = {
@@ -47,8 +46,10 @@ const MassOperationsHandler = function (workspace) {
     preconditionFn: (workspace) => {
       return !workspace.options.readOnly && !workspace.isFlyout && this.selectedBlocks_.length;
     },
-    callback: (workspace) => {
+    callback: (e) => {
       this.deleteAll()
+      e.preventDefault()
+      e.stopPropagation()
       return true;
     },
   };
@@ -88,6 +89,7 @@ MassOperationsHandler.prototype.blockMouseDown = function (block, e) {
   this.lastMouseDownBlock_ = block
   this.mouseDownXY_ = new Coordinate(e.clientX, e.clientY);
   this.onMoveBlockWrapper_ = browserEvents.conditionalBind(document, 'mousemove', null, this.handleMove_.bind(this));
+  this.onMouseUpBlockWrapper_ = browserEvents.conditionalBind(document, 'mouseup', null, this.handleUp_.bind(this));
 }
 
 MassOperationsHandler.prototype.handleMove_ = function (e) {
@@ -129,6 +131,8 @@ MassOperationsHandler.prototype.blockMouseUp = function (block, e) {
   }
 
   this.lastMouseDownBlock_ = null
+  browserEvents.unbind(this.onMoveBlockWrapper_)
+  this.onMoveBlockWrapper_ = null
 
   if (this.blockDraggers_) {
     this.blockDraggers_.forEach(dragger => dragger.endDrag(e, this.currentDragDeltaXY_));
@@ -136,10 +140,29 @@ MassOperationsHandler.prototype.blockMouseUp = function (block, e) {
     this.currentDragDeltaXY_ = null
   }
 
+  if (this.onMouseUpBlockWrapper_) {
+    browserEvents.unbind(this.onMouseUpBlockWrapper_)
+    this.onMouseUpBlockWrapper_ = null
+  }
+}
+
+MassOperationsHandler.prototype.handleUp_ = function (e) {
+  browserEvents.unbind(this.onMouseUpBlockWrapper_)
+  this.onMouseUpBlockWrapper_ = null
+
+  if (!this.blockDraggers_) return
+
+  this.blockDraggers_.forEach(dragger => dragger.endDrag(e, this.currentDragDeltaXY_));
+  this.blockDraggers_ = null
+  this.currentDragDeltaXY_ = null
+
   if (this.onMoveBlockWrapper_) {
     browserEvents.unbind(this.onMoveBlockWrapper_)
     this.onMoveBlockWrapper_ = null
   }
+
+  this.lastMouseDownBlock_ = null
+  this.cleanUp()
 }
 
 MassOperationsHandler.prototype.isBlockInSelectedGroup = function (block) {
@@ -151,6 +174,12 @@ MassOperationsHandler.prototype.addBlockToSelected = function (block) {
 
   this.selectedBlocks_.push(block)
   block.addSelectAsMassSelection()
+
+  const gesture = this.workspace && this.workspace.getGesture(e);
+  if (gesture) gesture.dispose();
+
+  const selected = common.getSelected();
+  if (selected) selected.unselect();
 }
 
 MassOperationsHandler.prototype.cleanUp = function () {
