@@ -50,7 +50,7 @@ const MassOperationsHandler = function (workspace) {
     preconditionFn: (workspace) => {
       return !workspace.options.readOnly && !workspace.isFlyout && this.selectedBlocks_.length;
     },
-    callback: (e) => {
+    callback: (workspace, e) => {
       this.deleteAll()
       e.preventDefault()
       e.stopPropagation()
@@ -61,6 +61,8 @@ const MassOperationsHandler = function (workspace) {
 
   const ctrlD = ShortcutRegistry.registry.createSerializedKey(KeyCodes.D, [KeyCodes.CTRL]);
   ShortcutRegistry.registry.addKeyMapping(ctrlD, deleteAllShortcut.name, true);
+  ShortcutRegistry.registry.addKeyMapping(KeyCodes.DELETE, deleteAllShortcut.name, true);
+  ShortcutRegistry.registry.addKeyMapping(KeyCodes.BACKSPACE, deleteAllShortcut.name, true);
 
   // Add "selectAll" method to shortcut registry with ctrl+A key
   const selectAllShortcut = {
