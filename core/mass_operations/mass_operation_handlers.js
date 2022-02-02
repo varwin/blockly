@@ -18,6 +18,7 @@ goog.module('Blockly.MassOperations.Handler');
 const { WorkspaceSvg } = goog.requireType('Blockly.WorkspaceSvg');
 const { ShortcutRegistry } = goog.require('Blockly.ShortcutRegistry');
 const { KeyCodes } = goog.require('Blockly.utils.KeyCodes');
+const { Msg } = goog.require('Blockly.Msg');
 const { Coordinate } = goog.require('Blockly.utils.Coordinate');
 const { ContextMenuRegistry } = goog.require('Blockly.ContextMenuRegistry');
 const ContextMenu = goog.require('Blockly.ContextMenu');
@@ -363,24 +364,31 @@ MassOperationsHandler.prototype.generateContextMenu = function() {
   if (this.workspace_.options.readOnly) return null;
 
   const menuOptions = ContextMenuRegistry.registry.getContextMenuOptions(
-    ContextMenuRegistry.ScopeType.GROUP
+    ContextMenuRegistry.ScopeType.GROUP, { blocks: this.selectedBlocks_ }
   );
 
   menuOptions.push({
-    text: 'test',
-    enabled: true,
-    callback: () => console.log('Fuck yeah1!')
+    text: Msg['DELETE_ALL_SELECTED'],
+    callback: () => {
+      this.deleteAll()
+    },
+    enabled: true
   });
 
   if (this.workspace_.options.showModuleBar && this.workspace_.getModuleManager().getAllModules().length > 1) {
     const aBlock = this.selectedBlocks_[0]
 
-    this.workspace_.getModuleManager().getAllModules().forEach((module) => {
+    const moduleManager = this.workspace_.getModuleManager()
+
+    moduleManager.getAllModules().forEach((module) => {
       if (aBlock.getModuleId() !== module.getId()) {
         menuOptions.push({
-          text: 'test',
+          text: Msg['MOVE_SELECTED_BLOCKS_TO_MODULE'].replace('%1', module.name),
           enabled: true,
-          callback: () => console.log('Fuck yeah!')
+          callback: () => {
+            moduleManager.moveBlocksToModule(this.selectedBlocks_, module)
+            this.cleanUp()
+          }
         });
       }
     });

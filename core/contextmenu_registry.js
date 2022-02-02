@@ -42,9 +42,16 @@ const ContextMenuRegistry = function() {
 };
 
 /**
- * Where this menu item should be rendered. If the menu item should be rendered
- * in multiple scopes, e.g. on both a block and a workspace, it should be
- * registered for each scope.
+ * Condition of menu item
+ * @enum {string}
+ */
+ContextMenuRegistry.ItemCondition = {
+  ENABLED: 'enabled',
+  HIDDEN: 'hidden',
+  DISABLED: 'disabled',
+};
+
+/**
  * @enum {string}
  */
 ContextMenuRegistry.ScopeType = {
