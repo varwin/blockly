@@ -41,7 +41,8 @@ goog.require('Blockly.Events.BlockMove');
  * Class for a block dragger.  It moves blocks around the workspace when they
  * are being dragged by a mouse or touch.
  * @param {!BlockSvg} block The block to drag.
- * @param {!WorkspaceSvg} workspace The workspace to drag on.
+ * @param {!WorkspaceSvg} workspace The workspace to drag
+ * @param {Boolean} offConnectionManager need for avoid checking connection when dragging block
  * @constructor
  * @implements {IBlockDragger}
  * @alias Blockly.BlockDragger
@@ -232,11 +233,13 @@ BlockDragger.prototype.fireDragStartEvent_ = function() {
  * @param {!Event} e The most recent move event.
  * @param {!Coordinate} currentDragDeltaXY How far the pointer has
  *     moved from the position at the start of the drag, in pixel units.
+ * @param {Coordinate} customStartXY Custom startXY when you want change dragging position
  * @public
  */
-BlockDragger.prototype.drag = function(e, currentDragDeltaXY) {
+BlockDragger.prototype.drag = function(e, currentDragDeltaXY, customStartXY) {
   const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
-  const newLoc = Coordinate.sum(this.startXY_, delta);
+  const newLoc = Coordinate.sum(customStartXY || this.startXY_, delta);
+
   this.draggingBlock_.moveDuringDrag(newLoc);
   this.dragIcons_(delta);
 

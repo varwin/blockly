@@ -40,6 +40,7 @@ const MassOperationsHandler = function (workspace) {
   this.workspace_ = workspace;
   this.selectedBlocks_ = [];
   this.lastMouseDownBlock_ = null;
+  this.initBlockStartCoordinates = null;
   this.onMoveBlockWrapper_ = null;
   this.onMouseUpBlockWrapper_ = null;
 
@@ -105,12 +106,15 @@ MassOperationsHandler.prototype.handleMove_ = function (e) {
 
   const currentXY = new Coordinate(e.clientX, e.clientY);
 
+  const initBlockCoordinates = this.lastMouseDownBlock_.getRelativeToSurfaceXY()
   this.currentDragDeltaXY_ = Coordinate.difference(currentXY, this.mouseDownXY_);
 
   if (this.blockDraggers_) {
-    this.blockDraggers_.forEach(dragger => dragger.drag(e, this.currentDragDeltaXY_));
+    this.blockDraggers_.forEach(dragger => dragger.drag(e, this.currentDragDeltaXY_, this.initBlockStartCoordinates));
     return
   }
+
+  this.initBlockStartCoordinates = initBlockCoordinates
 
   if (!this.hasExceededDragRadius_) {
     const currentDragDelta = Coordinate.magnitude(this.currentDragDeltaXY_);
@@ -121,7 +125,6 @@ MassOperationsHandler.prototype.handleMove_ = function (e) {
 
   if (!this.hasExceededDragRadius_) return
 
-  const initBlockCoordinates = this.lastMouseDownBlock_.getRelativeToSurfaceXY()
   const BlockDraggerClass = registry.getClassFromOptions(registry.Type.BLOCK_DRAGGER, this.workspace_.options, true);
 
   this.blockDraggers_ = this.selectedBlocks_.map(block => new BlockDraggerClass(block, this.workspace_, true));
@@ -134,7 +137,7 @@ MassOperationsHandler.prototype.handleMove_ = function (e) {
 
     dragger.startDrag(this.currentDragDeltaXY_, false, diff)
   });
-  this.blockDraggers_.forEach(dragger => dragger.drag(e, this.currentDragDeltaXY_));
+  this.blockDraggers_.forEach(dragger => dragger.drag(e, this.currentDragDeltaXY_, initBlockCoordinates));
 }
 
 MassOperationsHandler.prototype.blockMouseUp = function (block, e) {
@@ -320,6 +323,11 @@ MassOperationsHandler.prototype.cleanUp = function () {
     this.selectedBlocks_.forEach(block => block.removeSelectAsMassSelection());
     this.selectedBlocks_ = [];
   }
+
+  this.lastMouseDownBlock_ = null;
+  this.initBlockStartCoordinates = null;
+  this.onMoveBlockWrapper_ = null;
+  this.onMouseUpBlockWrapper_ = null;
 }
 
 MassOperationsHandler.prototype.deleteAll = function () {
