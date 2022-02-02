@@ -25,6 +25,7 @@ const ContextMenu = goog.require('Blockly.ContextMenu');
 const internalConstants = goog.require('Blockly.internalConstants');
 const registry = goog.require('Blockly.registry');
 const browserEvents = goog.require('Blockly.browserEvents');
+const eventUtils = goog.require('Blockly.Events.utils');
 const common = goog.require('Blockly.common');
 
 /** @suppress {extraRequire} */
@@ -43,6 +44,7 @@ const MassOperationsHandler = function (workspace) {
   this.initBlockStartCoordinates = null;
   this.onMoveBlockWrapper_ = null;
   this.onMouseUpBlockWrapper_ = null;
+  this.blocksCopyData_ = null
 
   // Add "deleteAll" method to shortcut registry with ctrl+D key
   const deleteAllShortcut = {
@@ -81,6 +83,56 @@ const MassOperationsHandler = function (workspace) {
 
   const ctrlA = ShortcutRegistry.registry.createSerializedKey(KeyCodes.A, [KeyCodes.CTRL]);
   ShortcutRegistry.registry.addKeyMapping(ctrlA, selectAllShortcut.name, true);
+
+  // Add "copy" method to shortcut registry with ctrl+C key
+  const copyShortcut = {
+    name: 'massOperationCopy',
+    preconditionFn: (workspace) => {
+      return this.selectedBlocks_.length && !workspace.options.readOnly && !workspace.isFlyout;
+    },
+    callback: (workspace, e) => {
+      this.blocksCopyData_ = this.selectedBlocks_.map(block => block.toCopyData(true))
+
+      e.preventDefault()
+      e.stopPropagation()
+      return true;
+    },
+  };
+  ShortcutRegistry.registry.register(copyShortcut, true);
+
+  const ctrlC = ShortcutRegistry.registry.createSerializedKey(KeyCodes.C, [KeyCodes.CTRL]);
+  ShortcutRegistry.registry.addKeyMapping(ctrlC, copyShortcut.name, true);
+
+  // Add "pasteShortcut" method to shortcut registry with ctrl+C key
+  const pasteShortcut = {
+    name: 'massOperationPaste',
+    preconditionFn: (workspace) => {
+      return this.blocksCopyData_ && !workspace.options.readOnly && !workspace.isFlyout;
+    },
+    callback: (workspace, e) => {
+      this.cleanUp()
+      e.preventDefault()
+      e.stopPropagation()
+
+      eventUtils.setGroup(true);
+
+      const pastedBlocks = []
+      this.blocksCopyData_.forEach((copyData) => {
+        const block = workspace.paste(copyData.saveInfo, { dontSelectNewBLock: true })
+        if (block) pastedBlocks.push(block)
+      });
+
+      pastedBlocks.forEach((block) => this.addBlockToSelected(block))
+
+      eventUtils.setGroup(false);
+      this.blocksCopyData_ = null;
+      return true;
+    },
+  };
+  ShortcutRegistry.registry.register(pasteShortcut, true);
+
+  const ctrlV = ShortcutRegistry.registry.createSerializedKey(KeyCodes.V, [KeyCodes.CTRL]);
+  ShortcutRegistry.registry.addKeyMapping(ctrlV, pasteShortcut.name, true);
 }
 
 /**
@@ -121,20 +173,18 @@ MassOperationsHandler.prototype.handleMove_ = function (e) {
   if (!this.hasExceededDragRadius_) {
     const currentDragDelta = Coordinate.magnitude(this.currentDragDeltaXY_);
     const limitRadius = internalConstants.DRAG_RADIUS;
-
     this.hasExceededDragRadius_ = currentDragDelta > limitRadius;
   }
 
   if (!this.hasExceededDragRadius_) return
 
   const BlockDraggerClass = registry.getClassFromOptions(registry.Type.BLOCK_DRAGGER, this.workspace_.options, true);
-
   this.blockDraggers_ = this.selectedBlocks_.map(block => new BlockDraggerClass(block, this.workspace_, true));
 
   this.blockDraggers_.forEach((dragger, index) => {
     const cordinates = this.selectedBlocks_[index].getRelativeToSurfaceXY()
-    let diff = Coordinate.difference(cordinates, initBlockCoordinates)
 
+    let diff = Coordinate.difference(cordinates, initBlockCoordinates)
     if (diff.x === 0 && diff.y === 0) diff = null
 
     dragger.startDrag(this.currentDragDeltaXY_, false, diff)
@@ -334,7 +384,9 @@ MassOperationsHandler.prototype.cleanUp = function () {
 
 MassOperationsHandler.prototype.deleteAll = function () {
   if (this.selectedBlocks_.length) {
+    eventUtils.setGroup(true)
     this.selectedBlocks_.forEach(block => !block.disposed && block.dispose());
+    eventUtils.setGroup(false)
     this.selectedBlocks_ = [];
   }
 }

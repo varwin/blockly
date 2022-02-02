@@ -1556,7 +1556,7 @@ WorkspaceSvg.prototype.highlightBlock = function(id, opt_state) {
  * @param {!Object|!Element|!DocumentFragment} state The representation of the
  *     thing to paste.
  */
-WorkspaceSvg.prototype.paste = function(state) {
+WorkspaceSvg.prototype.paste = function(state, options = {}) {
   if (!this.rendered || !state['type'] && !state.tagName) {
     return;
   }
@@ -1564,17 +1564,21 @@ WorkspaceSvg.prototype.paste = function(state) {
     this.currentGesture_.cancel();  // Dragging while pasting?  No.
   }
 
+  let block
+
   // Checks if this is JSON. JSON has a type property, while elements don't.
   if (state['type']) {
-    this.pasteBlock_(null, /** @type {!blocks.State} */ (state));
+    block = this.pasteBlock_(null, /** @type {!blocks.State} */ (state), options);
   } else {
     const xmlBlock = /** @type {!Element} */ (state);
     if (xmlBlock.tagName.toLowerCase() === 'comment') {
       this.pasteWorkspaceComment_(xmlBlock);
     } else {
-      this.pasteBlock_(xmlBlock, null);
+      block = this.pasteBlock_(xmlBlock, null);
     }
   }
+
+  return block
 };
 
 /**
@@ -1584,8 +1588,9 @@ WorkspaceSvg.prototype.paste = function(state) {
  *     representation.
  * @private
  */
-WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock, jsonBlock) {
+WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock, jsonBlock, { dontSelectNewBLock } = {}) {
   eventUtils.disable();
+
   let block;
   try {
     let blockX = 0;
@@ -1645,7 +1650,10 @@ WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock, jsonBlock) {
   if (eventUtils.isEnabled() && !block.isShadow()) {
     eventUtils.fire(new (eventUtils.get(eventUtils.BLOCK_CREATE))(block));
   }
-  block.select();
+
+  if (!dontSelectNewBLock) block.select();
+
+  return block
 };
 
 /**

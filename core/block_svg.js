@@ -1149,19 +1149,19 @@ BlockSvg.prototype.checkAndDelete = function() {
 };
 
 /**
- * Encode a block for copying.
+ * Encode a block for
+ * @param {Boolean} addNextBlocks
  * @return {?ICopyable.CopyData} Copy metadata, or null if the block is
  *     an insertion marker.
  * @package
  */
-BlockSvg.prototype.toCopyData = function() {
+BlockSvg.prototype.toCopyData = function(addNextBlocks = false) {
   if (this.isInsertionMarker_) {
     return null;
   }
 
   return {
-    saveInfo: /** @type {!blocks.State} */ (
-        blocks.save(this, {addCoordinates: true, addNextBlocks: false})),
+    saveInfo: /** @type {!blocks.State} */ (blocks.save(this, {addCoordinates: true, addNextBlocks})),
     source: this.workspace,
     typeCounts: common.getBlockTypeCounts(this, true),
   };
