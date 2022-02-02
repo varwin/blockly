@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2022 OMV LLC (Varwin)
+ * Copyright 2022 Varwin
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -41,10 +41,12 @@ const MassOperationsHandler = function (workspace) {
   this.workspace_ = workspace;
   this.selectedBlocks_ = [];
   this.lastMouseDownBlock_ = null;
+  this.mouseDownXY_ = null
   this.initBlockStartCoordinates = null;
   this.onMoveBlockWrapper_ = null;
   this.onMouseUpBlockWrapper_ = null;
   this.blocksCopyData_ = null
+  this.currentDragDeltaXY_ = new Coordinate(0, 0);
 
   // Add "deleteAll" method to shortcut registry with ctrl+D key
   const deleteAllShortcut = {
@@ -61,8 +63,6 @@ const MassOperationsHandler = function (workspace) {
   };
   ShortcutRegistry.registry.register(deleteAllShortcut, true);
 
-  const ctrlD = ShortcutRegistry.registry.createSerializedKey(KeyCodes.D, [KeyCodes.CTRL]);
-  ShortcutRegistry.registry.addKeyMapping(ctrlD, deleteAllShortcut.name, true);
   ShortcutRegistry.registry.addKeyMapping(KeyCodes.DELETE, deleteAllShortcut.name, true);
   ShortcutRegistry.registry.addKeyMapping(KeyCodes.BACKSPACE, deleteAllShortcut.name, true);
 
@@ -90,8 +90,8 @@ const MassOperationsHandler = function (workspace) {
     preconditionFn: (workspace) => {
       return this.selectedBlocks_.length && !workspace.options.readOnly && !workspace.isFlyout;
     },
-    callback: (workspace, e) => {
-      this.blocksCopyData_ = this.selectedBlocks_.map(block => block.toCopyData(true))
+    callback: (_, e) => {
+      this.copySelected_()
 
       e.preventDefault()
       e.stopPropagation()
@@ -114,18 +114,7 @@ const MassOperationsHandler = function (workspace) {
       e.preventDefault()
       e.stopPropagation()
 
-      eventUtils.setGroup(true);
-
-      const pastedBlocks = []
-      this.blocksCopyData_.forEach((copyData) => {
-        const block = workspace.paste(copyData.saveInfo, { dontSelectNewBLock: true })
-        if (block) pastedBlocks.push(block)
-      });
-
-      pastedBlocks.forEach((block) => this.addBlockToSelected(block))
-
-      eventUtils.setGroup(false);
-      this.blocksCopyData_ = null;
+      this.pasteCopiedBlocks_()
       return true;
     },
   };
@@ -133,15 +122,30 @@ const MassOperationsHandler = function (workspace) {
 
   const ctrlV = ShortcutRegistry.registry.createSerializedKey(KeyCodes.V, [KeyCodes.CTRL]);
   ShortcutRegistry.registry.addKeyMapping(ctrlV, pasteShortcut.name, true);
+
+  // Add "duplicateShortcut" method to shortcut registry with ctrl+D key
+  const duplicateShortcut = {
+    name: 'massOperationDuplicate',
+    preconditionFn: (workspace) => {
+      return this.selectedBlocks_.length && !workspace.options.readOnly && !workspace.isFlyout;
+    },
+    callback: (workspace, e) => {
+      this.copySelected_()
+
+      e.preventDefault()
+      e.stopPropagation()
+      this.cleanUp()
+      this.pasteCopiedBlocks_()
+      return true;
+    },
+  };
+  ShortcutRegistry.registry.register(duplicateShortcut, true);
+
+  const ctrlD = ShortcutRegistry.registry.createSerializedKey(KeyCodes.D, [KeyCodes.CTRL]);
+  ShortcutRegistry.registry.addKeyMapping(ctrlD, duplicateShortcut.name, true);
 }
 
-/**
- * How far the mouse has moved during this drag, in pixel units.
- * (0, 0) is at this.mouseDownXY_.
- * @type {!Coordinate}
- * @private
- */
-MassOperationsHandler.prototype.currentDragDeltaXY_ = new Coordinate(0, 0);
+/** Methods */
 
 MassOperationsHandler.prototype.blockMouseDown = function (block, e) {
   this.lastMouseDownBlock_ = block
@@ -189,11 +193,13 @@ MassOperationsHandler.prototype.handleMove_ = function (e) {
 
     dragger.startDrag(this.currentDragDeltaXY_, false, diff)
   });
+
   this.blockDraggers_.forEach(dragger => dragger.drag(e, this.currentDragDeltaXY_, initBlockCoordinates));
 }
 
 MassOperationsHandler.prototype.blockMouseUp = function (block, e) {
   if (this.lastMouseDownBlock_ && this.lastMouseDownBlock_.id === block.id) {
+    // Full "Click" event closed on the block -> add this block to selected
     this.addBlockToSelected(block)
   }
 
@@ -216,26 +222,7 @@ MassOperationsHandler.prototype.blockMouseUp = function (block, e) {
 MassOperationsHandler.prototype.handleUp_ = function (e) {
   if (!browserEvents.isLeftButton(e)) return
 
-  browserEvents.unbind(this.onMouseUpBlockWrapper_)
-  this.onMouseUpBlockWrapper_ = null
-
-  if (!this.blockDraggers_) return
-
-  this.blockDraggers_.forEach(dragger => dragger.endDrag(e, this.currentDragDeltaXY_));
-  this.blockDraggers_ = null
-  this.currentDragDeltaXY_ = null
-
-  if (this.onMoveBlockWrapper_) {
-    browserEvents.unbind(this.onMoveBlockWrapper_)
-    this.onMoveBlockWrapper_ = null
-  }
-
-  this.lastMouseDownBlock_ = null
   this.cleanUp()
-}
-
-MassOperationsHandler.prototype.isBlockInSelectedGroup = function (block) {
-  return !!this.selectedBlocks_.find(b => b.id === block.id)
 }
 
 MassOperationsHandler.prototype.addBlockToSelected = function (block) {
@@ -316,12 +303,28 @@ MassOperationsHandler.prototype.addBlockToSelected = function (block) {
   }
 }
 
+/**
+ * Simple finding block in selected list
+ * */
+MassOperationsHandler.prototype.isBlockInSelectedGroup = function (block) {
+  return !!this.selectedBlocks_.find(b => b.id === block.id)
+}
+
+/**
+ * Recursive finding locale root block (last parent in chain)
+ * @private
+ * */
 MassOperationsHandler.prototype.getRootBlock_ = function (block) {
   const parent = block.getParent()
 
   return parent ? this.getRootBlock_(parent) : block
 }
 
+/**
+ * Recursive search for the parent block by id.
+ * This is necessary to check that a block is a deep child of another block.
+ * @private
+ * */
 MassOperationsHandler.prototype.findParentBlock_ = function (block, targetBlockId) {
   const parent = block.getParent()
 
@@ -332,12 +335,20 @@ MassOperationsHandler.prototype.findParentBlock_ = function (block, targetBlockI
   return this.findParentBlock_(parent, targetBlockId)
 }
 
+/**
+ * Recursive finding a common parent block by id.
+ * @private
+ * */
 MassOperationsHandler.prototype.findCommonParentBlock_ = function (blockA, blockB) {
   const parentsA = this.getBlockParentsIds_(blockA, [])
 
   return this.getFirstParentByIds_(blockB, [], parentsA)
 }
 
+/**
+ * Collect the IDs of all block parents
+ * @private
+ */
 MassOperationsHandler.prototype.getBlockParentsIds_ = function (block, ids) {
   const parent = block.getParent()
 
@@ -348,6 +359,11 @@ MassOperationsHandler.prototype.getBlockParentsIds_ = function (block, ids) {
   return this.getBlockParentsIds_(parent, ids)
 }
 
+/**
+ * Once we have a list of block parent IDs,
+ * we can check if the block has one of those parents at one of its levels.
+ * @private
+ */
 MassOperationsHandler.prototype.getFirstParentByIds_ = function (block, ids, targetIds = []) {
   const parent = block.getParent()
 
@@ -360,12 +376,16 @@ MassOperationsHandler.prototype.getFirstParentByIds_ = function (block, ids, tar
   return this.getFirstParentByIds_(parent, ids, targetIds)
 }
 
-MassOperationsHandler.prototype.checkBlockSelectedInGroup = function (block) {
+/**
+ *
+ * @returns {boolean|*}
+ */
+MassOperationsHandler.prototype.checkBlockInSelectGroup = function (block) {
   if (!this.selectedBlocks_.length) return false;
   if (this.selectedBlocks_.find(b => b.id === block.id)) return true
 
   const blockParent = block.getParent()
-  if (blockParent) return this.checkBlockSelectedInGroup(blockParent)
+  if (blockParent) return this.checkBlockInSelectGroup(blockParent)
 
   return false
 }
@@ -376,10 +396,25 @@ MassOperationsHandler.prototype.cleanUp = function () {
     this.selectedBlocks_ = [];
   }
 
+  if (this.blockDraggers_) {
+    this.blockDraggers_.forEach(dragger => dragger.endDrag(e, this.currentDragDeltaXY_));
+    this.blockDraggers_ = null
+  }
+
   this.lastMouseDownBlock_ = null;
+  this.mouseDownXY_ = null;
+  this.currentDragDeltaXY_ = null
   this.initBlockStartCoordinates = null;
-  this.onMoveBlockWrapper_ = null;
-  this.onMouseUpBlockWrapper_ = null;
+
+  if (this.onMoveBlockWrapper_) {
+    browserEvents.unbind(this.onMoveBlockWrapper_)
+    this.onMoveBlockWrapper_ = null
+  }
+
+  if (this.onMouseUpBlockWrapper_) {
+    browserEvents.unbind(this.onMouseUpBlockWrapper_)
+    this.onMouseUpBlockWrapper_ = null
+  }
 }
 
 MassOperationsHandler.prototype.deleteAll = function () {
@@ -401,6 +436,34 @@ MassOperationsHandler.prototype.selectAll = function () {
   this.workspace_.getAllBlocks().forEach(block => {
     this.addBlockToSelected(block)
   })
+}
+
+MassOperationsHandler.prototype.copySelected_ = function () {
+  this.blocksCopyData_ = this.selectedBlocks_.map(block => block.toCopyData(true))
+
+  const firstBlockCoordinates = this.selectedBlocks_[0].getRelativeToSurfaceXY()
+
+  this.selectedBlocks_.slice(1).forEach((block, i) => {
+    const diff = Coordinate.difference(block.getRelativeToSurfaceXY(), firstBlockCoordinates)
+    this.blocksCopyData_[i + 1].saveInfo.pasteOffset = diff
+  })
+
+}
+
+MassOperationsHandler.prototype.pasteCopiedBlocks_ = function () {
+  eventUtils.setGroup(true);
+
+  const pastedBlocks = []
+
+  this.blocksCopyData_.forEach((copyData) => {
+    const block = this.workspace_.paste(copyData.saveInfo, { dontSelectNewBLock: true })
+    if (block) pastedBlocks.push(block)
+  });
+
+  pastedBlocks.forEach((block) => this.addBlockToSelected(block))
+
+  eventUtils.setGroup(false);
+  this.blocksCopyData_ = null;
 }
 
 /**
@@ -453,8 +516,7 @@ MassOperationsHandler.prototype.generateContextMenu = function() {
           text: Msg['MOVE_SELECTED_BLOCKS_TO_MODULE'].replace('%1', module.name),
           enabled: true,
           callback: () => {
-            moduleManager.moveBlocksToModule(this.selectedBlocks_, module)
-            this.cleanUp()
+            moduleManager.moveBlocksToModule(this.selectedBlocks_, module, this)
           }
         });
       }

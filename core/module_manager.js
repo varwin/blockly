@@ -292,7 +292,6 @@ ModuleManager.prototype.moveBlocksToModule = function (blocks, module, massOpera
       Blockly.Events.setGroup(false);
     }
   }
-
 }
 
 /**

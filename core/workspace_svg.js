@@ -1593,17 +1593,20 @@ WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock, jsonBlock, { dontSelectN
 
   let block;
   try {
-    let blockX = 0;
-    let blockY = 0;
+    const metrics = this.getMetrics();
+    let blockX = metrics.viewWidth / 2 + metrics.viewLeft;
+    let blockY = metrics.viewHeight / 2 + metrics.viewTop;
+
     if (xmlBlock) {
       block = Xml.domToBlock(xmlBlock, this);
     } else if (jsonBlock) {
+      if (jsonBlock.pasteOffset) {
+        blockX += jsonBlock.pasteOffset.x
+        blockY += jsonBlock.pasteOffset.y
+        delete jsonBlock.pasteOffset
+      }
       block = blocks.append(jsonBlock, this);
     }
-
-    const metrics = this.getMetrics();
-    blockX = metrics.viewWidth / 2 + metrics.viewLeft;
-    blockY = metrics.viewHeight / 2 + metrics.viewTop;
 
     // Move the duplicate to original position.
     if (!isNaN(blockX) && !isNaN(blockY)) {
@@ -1642,11 +1645,13 @@ WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock, jsonBlock, { dontSelectN
           blockY += internalConstants.SNAP_RADIUS * 2;
         }
       } while (collide);
+
       block.moveTo(new Coordinate(blockX, blockY));
     }
   } finally {
     eventUtils.enable();
   }
+
   if (eventUtils.isEnabled() && !block.isShadow()) {
     eventUtils.fire(new (eventUtils.get(eventUtils.BLOCK_CREATE))(block));
   }

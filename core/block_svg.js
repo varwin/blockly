@@ -898,7 +898,7 @@ BlockSvg.prototype.checkInGroupSelection = function () {
   if (this.selectedAsGroup_) return true
 
   const massOperations = this.workspace.getMassOperations()
-  if (massOperations) return massOperations.checkBlockSelectedInGroup(this)
+  if (massOperations) return massOperations.checkBlockInSelectGroup(this)
 
   return false
 }
