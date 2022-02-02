@@ -19,6 +19,8 @@ const { WorkspaceSvg } = goog.requireType('Blockly.WorkspaceSvg');
 const { ShortcutRegistry } = goog.require('Blockly.ShortcutRegistry');
 const { KeyCodes } = goog.require('Blockly.utils.KeyCodes');
 const { Coordinate } = goog.require('Blockly.utils.Coordinate');
+const { ContextMenuRegistry } = goog.require('Blockly.ContextMenuRegistry');
+const ContextMenu = goog.require('Blockly.ContextMenu');
 const internalConstants = goog.require('Blockly.internalConstants');
 const registry = goog.require('Blockly.registry');
 const browserEvents = goog.require('Blockly.browserEvents');
@@ -156,6 +158,8 @@ MassOperationsHandler.prototype.blockMouseUp = function (block, e) {
 }
 
 MassOperationsHandler.prototype.handleUp_ = function (e) {
+  if (!browserEvents.isLeftButton(e)) return
+
   browserEvents.unbind(this.onMouseUpBlockWrapper_)
   this.onMouseUpBlockWrapper_ = null
 
@@ -295,6 +299,16 @@ MassOperationsHandler.prototype.getFirstParentByIds_ = function (block, ids, tar
   return this.getFirstParentByIds_(parent, ids, targetIds)
 }
 
+MassOperationsHandler.prototype.checkBlockSelectedInGroup = function (block) {
+  if (!this.selectedBlocks_.length) return false;
+  if (this.selectedBlocks_.find(b => b.id === block.id)) return true
+
+  const blockParent = block.getParent()
+  if (blockParent) return this.checkBlockSelectedInGroup(blockParent)
+
+  return false
+}
+
 MassOperationsHandler.prototype.cleanUp = function () {
   if (this.selectedBlocks_.length) {
     this.selectedBlocks_.forEach(block => block.removeSelectAsMassSelection());
@@ -320,5 +334,59 @@ MassOperationsHandler.prototype.selectAll = function () {
     this.addBlockToSelected(block)
   })
 }
+
+/**
+ * Show the context menu for selected group.
+ * @param {!Event} e Mouse event.
+ * @package
+ */
+MassOperationsHandler.prototype.showContextMenu = function(e) {
+  e.preventDefault()
+  e.stopPropagation()
+
+  if (!this.selectedBlocks_.length) return
+
+  const menuOptions = this.generateContextMenu();
+
+  if (menuOptions && menuOptions.length) {
+    ContextMenu.show(e, menuOptions, this.RTL);
+    ContextMenu.setCurrentBlock(this);
+  }
+};
+
+/**
+ * Generate the context menu for the selected blocks.
+ * @return {?Array<!Object>} Context menu options or null if no menu.
+ * @protected
+ */
+MassOperationsHandler.prototype.generateContextMenu = function() {
+  if (this.workspace_.options.readOnly) return null;
+
+  const menuOptions = ContextMenuRegistry.registry.getContextMenuOptions(
+    ContextMenuRegistry.ScopeType.GROUP
+  );
+
+  menuOptions.push({
+    text: 'test',
+    enabled: true,
+    callback: () => console.log('Fuck yeah1!')
+  });
+
+  if (this.workspace_.options.showModuleBar && this.workspace_.getModuleManager().getAllModules().length > 1) {
+    const aBlock = this.selectedBlocks_[0]
+
+    this.workspace_.getModuleManager().getAllModules().forEach((module) => {
+      if (aBlock.getModuleId() !== module.getId()) {
+        menuOptions.push({
+          text: 'test',
+          enabled: true,
+          callback: () => console.log('Fuck yeah!')
+        });
+      }
+    });
+  }
+
+  return menuOptions;
+};
 
 exports.MassOperationsHandler = MassOperationsHandler;

@@ -210,6 +210,12 @@ const BlockSvg = function(workspace, prototypeName, opt_id, moduleId) {
    * @private
    */
   this.selected_ = false
+
+  /**
+   * @type {Boolean}
+   * @private
+   */
+  this.selectedAsGroup_ = false
 };
 object.inherits(BlockSvg, Block);
 
@@ -509,6 +515,7 @@ BlockSvg.prototype.moveBy = function(dx, dy) {
   if (this.parentBlock_) {
     throw Error('Block has parent.');
   }
+
   const eventsEnabled = eventUtils.isEnabled();
   let event;
   if (eventsEnabled) {
@@ -517,10 +524,12 @@ BlockSvg.prototype.moveBy = function(dx, dy) {
   const xy = this.getRelativeToSurfaceXY();
   this.translate(xy.x + dx, xy.y + dy);
   this.moveConnections(dx, dy);
+
   if (eventsEnabled) {
     event.recordNew();
     eventUtils.fire(event);
   }
+
   this.workspace.resizeContents();
 };
 
@@ -872,6 +881,11 @@ BlockSvg.prototype.generateContextMenu = function() {
  * @package
  */
 BlockSvg.prototype.showContextMenu = function(e) {
+  if (this.checkInGroupSelection()) {
+    this.workspace.getMassOperations().showContextMenu(e, this)
+    return
+  }
+
   const menuOptions = this.generateContextMenu();
 
   if (menuOptions && menuOptions.length) {
@@ -879,6 +893,15 @@ BlockSvg.prototype.showContextMenu = function(e) {
     ContextMenu.setCurrentBlock(this);
   }
 };
+
+BlockSvg.prototype.checkInGroupSelection = function () {
+  if (this.selectedAsGroup_) return true
+
+  const massOperations = this.workspace.getMassOperations()
+  if (massOperations) return massOperations.checkBlockSelectedInGroup(this)
+
+  return false
+}
 
 /**
  * Move the connections for this block and all blocks attached under it.
@@ -1366,6 +1389,7 @@ BlockSvg.prototype.setHighlighted = function(highlighted) {
 BlockSvg.prototype.addSelect = function() {
   this.pathObject.updateSelected(true);
   this.selected_ = true
+  this.selectedAsGroup_ = false
 
   if (this.isInFlyout) {
     this.placeToFront()
@@ -1375,6 +1399,7 @@ BlockSvg.prototype.addSelect = function() {
 BlockSvg.prototype.addSelectAsMassSelection = function() {
   this.pathObject.updateMassSelected(true);
   this.selected_ = true
+  this.selectedAsGroup_ = true
 };
 
 /**
@@ -1448,12 +1473,14 @@ BlockSvg.prototype.placeToFront = function () {
 BlockSvg.prototype.removeSelect = function() {
   if (this.isInFrontOfWorkspace) return
 
-  this.pathObject.updateSelected(false);
+  this.pathObject.updateSelected(false)
+  this.selectedAsGroup_ = false
   this.selected_ = false
 };
 
 BlockSvg.prototype.removeSelectAsMassSelection = function() {
   this.pathObject.updateMassSelected(false);
+  this.selectedAsGroup_ = false
   this.selected_ = false
 };
 

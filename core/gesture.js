@@ -479,6 +479,12 @@ Gesture.prototype.startDraggingBubble_ = function () {
  * @package
  */
 Gesture.prototype.doStart = function (e) {
+  if (e.button === 0 && e.ctrlKey && this.targetBlock_ && !this.startWorkspace_.isFlyout) {
+    // Click + CtrlKey is group selection
+    this.dispose()
+    return
+  }
+
   if (browserEvents.isTargetInput(e)) {
     this.cancel();
     return;
@@ -502,11 +508,22 @@ Gesture.prototype.doStart = function (e) {
 
   Tooltip.block();
 
-  if (!browserEvents.isMiddleButton(e) && this.targetBlock_) {
+  const targetExist = !!this.targetBlock_
+
+  const isRightButton = browserEvents.isRightButton(e)
+
+  if (isRightButton && targetExist && this.targetBlock_.checkInGroupSelection()) {
+    this.handleRightClick(e);
+    return;
+  }
+
+  this.startWorkspace_.cleanUpMassOperations()
+
+  if (!browserEvents.isMiddleButton(e) && targetExist) {
     this.targetBlock_.select();
   }
 
-  if (browserEvents.isRightButton(e)) {
+  if (isRightButton) {
     this.handleRightClick(e);
     return;
   }
@@ -654,10 +671,9 @@ Gesture.prototype.handleRightClick = function (e) {
  */
 Gesture.prototype.handleWsStart = function (e, ws) {
   if (this.hasStarted_) {
-    throw Error(
-      'Tried to call gesture.handleWsStart, ' +
-      'but the gesture had already been started.');
+    throw Error('Tried to call gesture.handleWsStart, but the gesture had already been started.');
   }
+
   this.setStartWorkspace_(ws);
   this.mostRecentEvent_ = e;
   this.doStart(e);

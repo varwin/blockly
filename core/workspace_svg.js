@@ -1786,10 +1786,6 @@ WorkspaceSvg.prototype.getDragTarget = function(e) {
  * @private
  */
 WorkspaceSvg.prototype.onMouseDown_ = function(e) {
-  if (!this.isFlyout && e.ctrlKey) return
-
-  this.cleanUpMassOperations()
-
   const gesture = this.getGesture(e);
   if (gesture) {
     gesture.handleWsStart(e, this);
