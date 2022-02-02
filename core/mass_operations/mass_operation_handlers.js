@@ -192,6 +192,11 @@ MassOperationsHandler.prototype.addBlockToSelected = function (block) {
 
   if (this.selectedBlocks_.find(b => b.id === block.id)) return
 
+  if (block.isShadow() && block.getParent()) {
+    this.addBlockToSelected(block.getParent())
+    return
+  }
+
   if (!block.getParent()) {
     this.selectedBlocks_.forEach((b, i) => {
       const root = this.getRootBlock_(b)
