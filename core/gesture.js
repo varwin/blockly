@@ -781,7 +781,6 @@ Gesture.prototype.doBlockClick_ = function (e) {
     let event
 
     if (e.ctrlKey && !this.startWorkspace_.isFlyout) {
-      console.log('Gesture.prototype.doBlockClick_ -> fire event CTRL_CLICK') // Here
       event = new (eventUtils.get(eventUtils.CTRL_CLICK))(this.startBlock_, this.startWorkspace_.id, 'block');
     } else {
       event = new (eventUtils.get(eventUtils.CLICK))(this.startBlock_, this.startWorkspace_.id, 'block');
