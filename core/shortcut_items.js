@@ -153,15 +153,15 @@ const registerCopy = function() {
 
   const ctrlC = ShortcutRegistry.registry.createSerializedKey(
       KeyCodes.C, [KeyCodes.CTRL]);
-  ShortcutRegistry.registry.addKeyMapping(ctrlC, copyShortcut.name);
+  ShortcutRegistry.registry.addKeyMapping(ctrlC, copyShortcut.name, true);
 
   const altC =
       ShortcutRegistry.registry.createSerializedKey(KeyCodes.C, [KeyCodes.ALT]);
-  ShortcutRegistry.registry.addKeyMapping(altC, copyShortcut.name);
+  ShortcutRegistry.registry.addKeyMapping(altC, copyShortcut.name, true);
 
   const metaC = ShortcutRegistry.registry.createSerializedKey(
       KeyCodes.C, [KeyCodes.META]);
-  ShortcutRegistry.registry.addKeyMapping(metaC, copyShortcut.name);
+  ShortcutRegistry.registry.addKeyMapping(metaC, copyShortcut.name, true);
 };
 exports.registerCopy = registerCopy;
 
