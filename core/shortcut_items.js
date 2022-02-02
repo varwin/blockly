@@ -56,6 +56,10 @@ const registerEscape = function() {
     },
     callback: function(workspace) {
       workspace.hideChaff();
+
+      const massOperations = workspace.getMassOperations()
+      if (massOperations) massOperations.cleanUp()
+
       return true;
     },
   };
