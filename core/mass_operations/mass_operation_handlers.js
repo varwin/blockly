@@ -153,7 +153,7 @@ const MassOperationsHandler = function (workspace) {
 
 /** Methods */
 
-MassOperationsHandler.prototype.blockMouseDown = function (block, e) {
+MassOperationsHandler.prototype.selectedBlockMouseDown = function (block, e) {
   this.lastMouseDownBlock_ = block
   this.mouseDownXY_ = new Coordinate(e.clientX, e.clientY);
   this.onMoveBlockWrapper_ = browserEvents.conditionalBind(document, 'mousemove', null, this.handleMove_.bind(this));
