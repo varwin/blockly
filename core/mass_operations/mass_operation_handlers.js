@@ -233,7 +233,11 @@ MassOperationsHandler.prototype.handleUp_ = function (e) {
     this.blockDraggers_ = null
   }
 
-  this.cleanUp()
+  // Cleanup all data except for selected blocks
+  this.cleanUpLastMouseDownData_()
+  this.cleanUpEventWrappers_()
+  this.currentDragDeltaXY_ = null
+  this.initBlockStartCoordinates = null;
 }
 
 MassOperationsHandler.prototype.addBlockToSelected = function (block) {
