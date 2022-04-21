@@ -217,9 +217,9 @@ common.defineBlocksWithJsonArray([
       'type': 'input_statement',
       'name': 'DO',
     }],
-    'obsolete': true,
     'previousStatement': null,
     'nextStatement': null,
+    'obsolete': true,
     'style': 'loop_blocks',
     'helpUrl': '%{BKY_CONTROLS_FOREACH_HELPURL}',
     'extensions': [

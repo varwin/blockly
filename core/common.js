@@ -150,11 +150,11 @@ const svgResize = function(workspace) {
 
   const width = div.offsetWidth;
   const height = div.offsetHeight;
-  if (cachedSize.width !== width) {
+  if (cachedSize.width !== width && width > 0) {
     svg.setAttribute('width', width + 'px');
     mainWorkspace.setCachedParentSvgSize(width, null);
   }
-  if (cachedSize.height !== height) {
+  if (cachedSize.height !== height && height > 0) {
     svg.setAttribute('height', height + 'px');
     mainWorkspace.setCachedParentSvgSize(null, height);
   }
@@ -232,11 +232,6 @@ const defineBlocksWithJsonArray = function(jsonArray) {
             'Block definition #' + i +
             ' in JSON array is missing a type attribute. Skipping.');
       } else {
-        if (Blocks[typename]) {
-          console.warn(
-              'Block definition #' + i + ' in JSON array' +
-              ' overwrites prior definition of "' + typename + '".');
-        }
         Blocks[typename] = {init: jsonInitFactory(elem)};
       }
     }
