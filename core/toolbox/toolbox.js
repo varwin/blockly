@@ -225,6 +225,7 @@ Toolbox.prototype.init = function() {
 
   this.HtmlDiv = this.createDom_(this.workspace_);
   dom.insertAfter(this.flyout_.createDom('svg'), svg);
+  
   this.setVisible(true);
   this.flyout_.init(workspace);
 

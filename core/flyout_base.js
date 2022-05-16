@@ -225,6 +225,13 @@ Flyout.prototype.CORNER_RADIUS = 0;
  */
 Flyout.prototype.MARGIN = 8;
 
+/**
+ * Margin before first block or button in flyout
+ * @type {number}
+ * @const
+ */
+ Flyout.prototype.START_MARGIN = 25;
+
 // TODO: Move GAP_X and GAP_Y to their appropriate files.
 
 /**
