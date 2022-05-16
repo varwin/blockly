@@ -405,11 +405,16 @@ Toolbox.prototype.createFlyout_ = function() {
         'move': {
           'scrollbars': true,
         },
+         'zoom': {
+           'flyoutScale': workspace.options.zoomOptions.flyoutScale,
+         },
       }));
   // Options takes in either 'end' or 'start'. This has already been parsed to
   // be either 0 or 1, so set it after.
   workspaceOptions.toolboxPosition = workspace.options.toolboxPosition;
+
   let FlyoutClass = null;
+
   if (workspace.horizontalLayout) {
     FlyoutClass = registry.getClassFromOptions(
         registry.Type.FLYOUTS_HORIZONTAL_TOOLBOX, workspace.options, true);

@@ -44,6 +44,10 @@ goog.require('Blockly.constants');
  */
 const VerticalFlyout = function(workspaceOptions) {
   VerticalFlyout.superClass_.constructor.call(this, workspaceOptions);
+
+  if (workspaceOptions.zoomOptions.flyoutScale) {
+    this.workspace_.setScale(workspaceOptions.zoomOptions.flyoutScale);
+  }
 };
 object.inherits(VerticalFlyout, Flyout);
 
