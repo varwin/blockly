@@ -473,6 +473,15 @@ let content = (`
     box-shadow: -2px 0 5px #eee;
   }
 
+  .blocklyFlyoutZoomControl {
+    fill: lightgrey;
+  }
+
+  .blocklyFlyoutZoomControl:hover {
+    fill: grey;
+    cursor: pointer
+  }
+
   .blocklyScrollbarHorizontal,
   .blocklyScrollbarVertical {
     position: absolute;

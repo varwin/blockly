@@ -338,13 +338,13 @@ Options.parseZoomOptions_ = function(options) {
   }
 
   if (zoom['maxScale'] === undefined) {
-    zoomOptions.maxScale = 3;
+    zoomOptions.maxScale = 2;
   } else {
     zoomOptions.maxScale = Number(zoom['maxScale']);
   }
 
   if (zoom['minScale'] === undefined) {
-    zoomOptions.minScale = 0.3;
+    zoomOptions.minScale = 0.5;
   } else {
     zoomOptions.minScale = Number(zoom['minScale']);
   }

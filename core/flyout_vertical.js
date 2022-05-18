@@ -236,7 +236,7 @@ VerticalFlyout.prototype.wheel_ = function(e) {
 VerticalFlyout.prototype.layout_ = function(contents, gaps) {
   const margin = this.RTL ? this.MARGIN : this.START_MARGIN;
   const cursorX = this.RTL ? margin : this.MARGIN + this.tabWidth_;
-  let cursorY = margin + 50;
+  let cursorY = margin;
 
   for (let i = 0, item; (item = contents[i]); i++) {
     if (item.type === 'block') {
