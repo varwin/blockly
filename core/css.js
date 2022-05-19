@@ -473,6 +473,10 @@ let content = (`
     box-shadow: -2px 0 5px #eee;
   }
 
+  .blocklyFlyoutZoomControlContainer {
+    user-select: none
+  }
+
   .blocklyFlyoutZoomControl {
     fill: lightgrey;
   }
@@ -631,6 +635,14 @@ let content = (`
   .blocklyMenuItemRtl .blocklyMenuItemCheckbox {
     float: right;
     margin-right: -24px;
+  }
+
+  .blocklyTempBlockRoot {
+    position: absolute;
+    background: #ccc;
+    box-shadow: 0 0 5px #ccc;
+    transform-origin: 0 0;
+    z-index: 31;
   }
 `);
 exports.content = content;

@@ -654,11 +654,21 @@ Flyout.prototype.createZoomControls_ = function() {
 
   this.zoomInButtonSvg_.addEventListener('click', this.zoomIn_.bind(this));
   this.zoomOutButtonSvg_.addEventListener('click', this.zoomOut_.bind(this));
+  this.zoomInButtonSvg_.addEventListener('dblclick', (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+  });
+  this.zoomOutButtonSvg_.addEventListener('dblclick', (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+  });
 
   this.workspace_.getParentSvg().appendChild(this.zoomButtonsGroup_);
 };
 
-Flyout.prototype.zoomIn_ = function() {
+Flyout.prototype.zoomIn_ = function(e) {
+  e.stopPropagation();
+  e.preventDefault();
   const scale = this.workspace_.scale + 0.1;
 
   this.workspace_.setScale(scale);
@@ -666,7 +676,9 @@ Flyout.prototype.zoomIn_ = function() {
   eventUtils.fire(new (eventUtils.get(eventUtils.FLYOUT_ZOOM))(this.getWorkspace().id, scale));
 };
 
-Flyout.prototype.zoomOut_ = function() {
+Flyout.prototype.zoomOut_ = function(e) {
+  e.stopPropagation();
+  e.preventDefault();
   const scale = this.workspace_.scale - 0.1;
 
   this.workspace_.setScale(scale);
