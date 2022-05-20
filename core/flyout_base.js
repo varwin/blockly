@@ -1109,17 +1109,18 @@ Flyout.prototype.addBlockListeners_ = function(root, block, rect) {
   this.listeners_.push(browserEvents.conditionalBind(
       rect, 'mousedown', null, this.blockMouseDown_(block)));
   this.listeners_.push(
-      browserEvents.bind(root, 'mouseenter', this, () => this.blockMouseEnter_(block)));
+      browserEvents.bind(root, 'mouseenter', this, (e) => this.blockMouseEnter_(e, block)));
   this.listeners_.push(
       browserEvents.bind(root, 'mouseleave', this, () => this.blockMouseLeave_(block)));
   this.listeners_.push(
-      browserEvents.bind(rect, 'mouseenter', this, () => this.blockMouseEnter_(block)));
+      browserEvents.bind(rect, 'mouseenter', this, (e) => this.blockMouseEnter_(e, block)));
   this.listeners_.push(
       browserEvents.bind(rect, 'mouseleave', this, () => this.blockMouseLeave_(block)));
 };
 
-Flyout.prototype.blockMouseEnter_ = function(block) {
+Flyout.prototype.blockMouseEnter_ = function(e, block) {
   if (this.disableBlocksMouseEvents) return;
+  if (e.buttons) return;
 
   block.addSelect();
 };
