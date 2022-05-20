@@ -642,6 +642,7 @@ let content = (`
     background: #eee;
     box-shadow: 0 0 5px #ccc;
     transform-origin: 0 0;
+    user-select: none;
     z-index: 31;
   }
 `);
