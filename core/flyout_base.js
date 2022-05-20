@@ -687,9 +687,11 @@ Flyout.prototype.zoomOut_ = function(e) {
 };
 
 Flyout.prototype.removeZoomControls_ = function() {
-  this.zoomInButtonSvg_.removeEventListener('click', this.zoomIn_);
-  this.zoomOutButtonSvg_.removeEventListener('click', this.zoomOut_);
-  this.zoomButtonsGroup_.remove();
+  if (this.zoomInButtonSvg_) {
+    this.zoomInButtonSvg_.removeEventListener('click', this.zoomIn_);
+    this.zoomOutButtonSvg_.removeEventListener('click', this.zoomOut_);
+    this.zoomButtonsGroup_.remove();
+  }
 };
 
 

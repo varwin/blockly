@@ -1421,7 +1421,7 @@ BlockSvg.prototype.placeToFront = function() {
     flyoutWidth = parseInt(flyoutWidth.slice(0, flyoutWidth.length - 2)); // '100px' -> 100
     if (!flyoutWidth) return;
 
-    const blockWidth = this.svgGroup_.getBBox().width;
+    const blockWidth = this.svgGroup_.getBoundingClientRect().width;
 
     if (blockWidth < flyoutWidth) return;
 

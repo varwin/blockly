@@ -639,7 +639,7 @@ let content = (`
 
   .blocklyTempBlockRoot {
     position: absolute;
-    background: #ccc;
+    background: #eee;
     box-shadow: 0 0 5px #ccc;
     transform-origin: 0 0;
     z-index: 31;
