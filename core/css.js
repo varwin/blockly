@@ -474,7 +474,14 @@ let content = (`
   }
 
   .blocklyFlyoutZoomControlContainer {
-    user-select: none
+    display: flex;
+    align-items: center;
+    position: absolute;
+    user-select: none;
+    height: 28px;
+    padding: 4px;
+    background-color: #eee;
+    z-index: 21;
   }
 
   .blocklyFlyoutZoomControl {

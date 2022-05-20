@@ -602,14 +602,29 @@ Flyout.prototype.removeFlyoutEndShadow_ = function() {
 };
 
 Flyout.prototype.createZoomControls_ = function() {
-  if (this.zoomInButtonSvg_ || this.zoomOutButtonSvg_) return;
+  if (this.flyoutTopPanel_) return;
+
+  const flyoutSVG = this.workspace_.getParentSvg();
+  const flyoutParentEl = flyoutSVG.parentElement;
+
+  const flyoutClientRect = flyoutSVG.getBoundingClientRect();
+  const flyoutParentClientRect = flyoutParentEl.getBoundingClientRect();
+
+  const top = flyoutClientRect.top - flyoutParentClientRect.top;
+  const left = flyoutClientRect.left - flyoutParentClientRect.left;
+
+  this.flyoutTopPanel_ = document.createElement('div');
+  this.flyoutTopPanel_.classList.add('blocklyFlyoutZoomControlContainer');
+  this.flyoutTopPanel_.style.top = `${top}px`;
+  this.flyoutTopPanel_.style.left = `${left}px`;
+  this.flyoutTopPanel_.style.width = `${this.width_}px`;
+
+  // insert close button after the flyout svg
+  flyoutParentEl.insertBefore(this.flyoutTopPanel_, flyoutSVG.nextSibling);
 
   this.zoomButtonsGroup_ = dom.createSvgElement(Svg.SVG, {
-    'class': 'blocklyFlyoutZoomControlContainer',
     'width': '42px',
-    'x': '12',
-    'y': `-${this.height_ / 2 - 15}`,
-  });
+  }, this.flyoutTopPanel_);
 
   this.zoomInButtonSvg_ = dom.createSvgElement(Svg.SVG, {
     'class': 'blocklyFlyoutZoomControl',
@@ -662,8 +677,6 @@ Flyout.prototype.createZoomControls_ = function() {
     e.stopPropagation();
     e.preventDefault();
   });
-
-  this.workspace_.getParentSvg().appendChild(this.zoomButtonsGroup_);
 };
 
 Flyout.prototype.zoomIn_ = function(e) {
@@ -687,10 +700,11 @@ Flyout.prototype.zoomOut_ = function(e) {
 };
 
 Flyout.prototype.removeZoomControls_ = function() {
-  if (this.zoomInButtonSvg_) {
+  if (this.flyoutTopPanel_) {
     this.zoomInButtonSvg_.removeEventListener('click', this.zoomIn_);
     this.zoomOutButtonSvg_.removeEventListener('click', this.zoomOut_);
-    this.zoomButtonsGroup_.remove();
+    this.flyoutTopPanel_.remove();
+    this.flyoutTopPanel_ = null;
   }
 };
 
@@ -753,6 +767,7 @@ Flyout.prototype.hide = function(isButton = false) {
 
   this.removeCloseButton_();
   this.removeFlyoutEndShadow_();
+  this.removeZoomControls_();
 
   eventUtils.fire(new (eventUtils.get(eventUtils.FLYOUT_HIDE))(this.getWorkspace().id, isButton));
   // Delete all the event listeners.
