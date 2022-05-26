@@ -377,6 +377,7 @@ Scrollbar.prototype.requiresViewResize_ = function(hostMetrics) {
   if (!this.oldHostMetrics_) {
     return true;
   }
+
   return this.oldHostMetrics_.viewWidth !== hostMetrics.viewWidth ||
       this.oldHostMetrics_.viewHeight !== hostMetrics.viewHeight ||
       this.oldHostMetrics_.absoluteLeft !== hostMetrics.absoluteLeft ||
@@ -451,8 +452,7 @@ Scrollbar.prototype.resizeContentHorizontal = function(hostMetrics) {
   }
 
   // Resize the handle.
-  let handleLength =
-      this.scrollbarLength_ * hostMetrics.viewWidth / hostMetrics.scrollWidth;
+  let handleLength = this.scrollbarLength_ * hostMetrics.viewWidth / hostMetrics.scrollWidth;
   handleLength = this.constrainHandleLength_(handleLength);
   this.setHandleLength_(handleLength);
 
