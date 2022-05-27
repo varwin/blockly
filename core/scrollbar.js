@@ -348,8 +348,7 @@ Scrollbar.prototype.resize = function(opt_metrics) {
     }
   }
 
-  if (this.oldHostMetrics_ &&
-      Scrollbar.metricsAreEquivalent_(hostMetrics, this.oldHostMetrics_)) {
+  if (this.oldHostMetrics_ && Scrollbar.metricsAreEquivalent_(hostMetrics, this.oldHostMetrics_)) {
     return;
   }
 

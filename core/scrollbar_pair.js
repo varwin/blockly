@@ -37,8 +37,7 @@ const {WorkspaceSvg} = goog.requireType('Blockly.WorkspaceSvg');
  * @constructor
  * @alias Blockly.ScrollbarPair
  */
-const ScrollbarPair = function(
-    workspace, addHorizontal, addVertical, opt_class, opt_margin) {
+const ScrollbarPair = function(workspace, addHorizontal, addVertical, opt_class, opt_margin) {
   /**
    * The workspace this scrollbar pair is bound to.
    * @type {!WorkspaceSvg}
@@ -102,13 +101,14 @@ ScrollbarPair.prototype.dispose = function() {
  * Recalculate both of the scrollbars' locations and lengths.
  * Also reposition the corner rectangle.
  */
-ScrollbarPair.prototype.resize = function() {
+ScrollbarPair.prototype.resize = function(metrics) {
   // Look up the host metrics once, and use for both scrollbars.
-  const hostMetrics = this.workspace_.getMetrics();
+  const hostMetrics = metrics || this.workspace_.getMetrics();
   if (!hostMetrics) {
     // Host element is likely not visible.
     return;
   }
+
 
   // Only change the scrollbars if there has been a change in metrics.
   let resizeH = false;
