@@ -50,12 +50,10 @@ const ScrollbarPair = function(workspace, addHorizontal, addVertical, opt_class,
   const isPair = addHorizontal && addVertical;
 
   if (addHorizontal) {
-    this.hScroll =
-        new Scrollbar(workspace, true, isPair, opt_class, opt_margin);
+    this.hScroll = new Scrollbar(workspace, true, isPair, opt_class, opt_margin);
   }
   if (addVertical) {
-    this.vScroll =
-        new Scrollbar(workspace, false, isPair, opt_class, opt_margin);
+    this.vScroll = new Scrollbar(workspace, false, isPair, opt_class, opt_margin);
   }
 
   if (isPair) {
@@ -100,8 +98,10 @@ ScrollbarPair.prototype.dispose = function() {
 /**
  * Recalculate both of the scrollbars' locations and lengths.
  * Also reposition the corner rectangle.
+ * @param {Metrics} metrics Provide metrics
+ * @param {Boolean} keepCenter Keep center of view after resize
  */
-ScrollbarPair.prototype.resize = function(metrics) {
+ScrollbarPair.prototype.resize = function(metrics, keepCenter) {
   // Look up the host metrics once, and use for both scrollbars.
   const hostMetrics = metrics || this.workspace_.getMetrics();
   if (!hostMetrics) {
@@ -141,10 +141,10 @@ ScrollbarPair.prototype.resize = function(metrics) {
     try {
       eventUtils.disable();
       if (this.hScroll && resizeH) {
-        this.hScroll.resize(hostMetrics);
+        this.hScroll.resize(hostMetrics, keepCenter);
       }
       if (this.vScroll && resizeV) {
-        this.vScroll.resize(hostMetrics);
+        this.vScroll.resize(hostMetrics, keepCenter);
       }
     } finally {
       eventUtils.enable();

@@ -1190,7 +1190,7 @@ Workspace.prototype.flyoutListener = function(event) {
     }
 
     case Events.FLYOUT_HIDE: {
-      this.resize();
+      this.resize(true);
       break;
     }
     
@@ -1242,7 +1242,7 @@ WorkspaceSvg.prototype.resizeContents = function() {
   if (this.scrollbar) {
     this.scrollbar.resize();
   }
-  
+
   this.updateInverseScreenCTM();
 };
 
@@ -1252,8 +1252,9 @@ WorkspaceSvg.prototype.resizeContents = function() {
  * This should be called when something changes that
  * requires recalculating dimensions and positions of the
  * trash, zoom, toolbox, etc. (e.g. window resize).
+ * @param {Boolean} keepCenter keep center of view after resize
  */
-WorkspaceSvg.prototype.resize = function() {
+WorkspaceSvg.prototype.resize = function(keepCenter) {
   if (this.toolbox_) {
     this.toolbox_.position();
   }
@@ -1276,7 +1277,7 @@ WorkspaceSvg.prototype.resize = function() {
   }
 
   if (this.scrollbar) {
-    this.scrollbar.resize();
+    this.scrollbar.resize(undefined, keepCenter);
   }
 
   this.updateScreenCalculations_();
