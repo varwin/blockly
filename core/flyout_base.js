@@ -627,6 +627,7 @@ Flyout.prototype.createZoomControls_ = function() {
 
   this.zoomButtonsGroup_ = dom.createSvgElement(Svg.SVG, {
     'width': '42px',
+    'height': '18px',
   }, this.flyoutTopPanel_);
 
   this.zoomInButtonSvg_ = dom.createSvgElement(Svg.SVG, {
