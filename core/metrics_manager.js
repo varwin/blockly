@@ -29,7 +29,6 @@ const {Size} = goog.require('Blockly.utils.Size');
 /* eslint-disable-next-line no-unused-vars */
 const {WorkspaceSvg} = goog.requireType('Blockly.WorkspaceSvg');
 
-
 /**
  * The manager for all workspace metrics calculations.
  * @param {!WorkspaceSvg} workspace The workspace to calculate metrics
@@ -45,6 +44,11 @@ const MetricsManager = function(workspace) {
    * @protected
    */
   this.workspace_ = workspace;
+
+  /**
+   * Flyout gap for better UI near of flyout's controls
+   */
+  this.flyoutWidthGap = 25;
 };
 
 /**
@@ -128,7 +132,7 @@ MetricsManager.prototype.getFlyoutMetrics = function() {
   const flyoutDimensions = this.getDimensionsPx_(providedFlyout);
 
   if (flyoutDimensions.width) {
-    flyoutDimensions.width += 25;
+    flyoutDimensions.width += this.flyoutWidthGap;
   }
 
   return {
@@ -477,7 +481,6 @@ MetricsManager.prototype.getMetrics = function() {
   };
 };
 
-registry.register(
-    registry.Type.METRICS_MANAGER, registry.DEFAULT, MetricsManager);
+registry.register(registry.Type.METRICS_MANAGER, registry.DEFAULT, MetricsManager);
 
 exports.MetricsManager = MetricsManager;
