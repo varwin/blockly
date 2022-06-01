@@ -297,6 +297,11 @@ Scrollbar.prototype.constrainHandlePosition_ = function(value) {
  * @param {number} newPosition The new scrollbar handle offset in CSS pixels.
  */
 Scrollbar.prototype.setHandlePosition = function(newPosition) {
+  const offsetRatio = newPosition / this.scrollbarLength_;
+  if (!isNaN(offsetRatio)) {
+    this.previousOffsetRatio = offsetRatio;
+  }
+
   this.handlePosition_ = newPosition;
   this.svgHandle_.setAttribute(this.positionAttribute_, this.handlePosition_);
 };
@@ -310,8 +315,7 @@ Scrollbar.prototype.setHandlePosition = function(newPosition) {
 Scrollbar.prototype.setScrollbarLength_ = function(newSize) {
   this.scrollbarLength_ = newSize;
   this.outerSvg_.setAttribute(this.lengthAttribute_, this.scrollbarLength_);
-  this.svgBackground_.setAttribute(
-      this.lengthAttribute_, this.scrollbarLength_);
+  this.svgBackground_.setAttribute(this.lengthAttribute_, this.scrollbarLength_);
 };
 
 /**
@@ -396,7 +400,7 @@ Scrollbar.prototype.requiresViewResize_ = function(hostMetrics) {
  * @private
  */
 Scrollbar.prototype.resizeHorizontal_ = function(hostMetrics, keepCenter) {
-  if (this.requiresViewResize_(hostMetrics)) {
+  if (this.requiresViewResize_(hostMetrics) || keepCenter) {
     this.resizeViewHorizontal(hostMetrics, keepCenter);
   } else {
     this.resizeContentHorizontal(hostMetrics, keepCenter);
@@ -823,11 +827,13 @@ Scrollbar.prototype.getRatio_ = function() {
 Scrollbar.prototype.updateMetrics_ = function() {
   const ratio = this.getRatio_();
   const xyRatio = {};
+
   if (this.horizontal_) {
     xyRatio.x = ratio;
   } else {
     xyRatio.y = ratio;
   }
+
   this.workspace_.setMetrics(xyRatio);
 };
 
