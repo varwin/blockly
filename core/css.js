@@ -473,6 +473,14 @@ let content = (`
     box-shadow: -2px 0 5px #eee;
   }
 
+  .blocklyFlyoutBookmarks {
+    display: none;
+    position: absolute;
+    width: 25px;
+    background-color: red;
+    z-index: 21;
+  }
+
   .blocklyFlyoutZoomControlContainer {
     display: flex;
     position: absolute;
