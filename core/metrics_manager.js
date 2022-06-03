@@ -126,10 +126,6 @@ MetricsManager.prototype.getFlyoutMetrics = function() {
   const providedFlyout = flyout && flyout.isVisible() ? flyout : undefined;
   const flyoutDimensions = this.getDimensionsPx_(providedFlyout);
 
-  if (flyoutDimensions.width && flyout.RIGHT_PANEL_WiDTH) {
-    flyoutDimensions.width += flyout.RIGHT_PANEL_WiDTH;
-  }
-
   return {
     width: flyoutDimensions.width,
     height: flyoutDimensions.height,
