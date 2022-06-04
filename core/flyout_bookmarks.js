@@ -81,7 +81,12 @@ FlyoutBookmarks.prototype.createBookmark_ = function(button) {
 
   const callback = () => {
     if (this.flyout_.isScrollable()) {
-      this.workspace_.scrollbar.setY(button.position_.y);
+      const buttonPosition = button.position_.y;
+      const flyoutScale = this.flyout_.workspace_.scale;
+      const buttonHeight = button.svgGroup_.getBBox().height;
+      const targetY = (buttonPosition * flyoutScale) - (buttonHeight * flyoutScale * 2);
+
+      this.workspace_.scrollbar.setY(targetY);
     }
   };
 
