@@ -477,8 +477,19 @@ let content = (`
     display: none;
     position: absolute;
     width: 25px;
-    background-color: red;
+    writing-mode: vertical-lr;
+    user-select: none;
     z-index: 21;
+  }
+  
+  .blocklyFlyoutBookmark {
+    padding: 4px 2px;
+    background-color: #eee;
+    border-radius: 0 0 5px 0;
+  }
+
+  .blocklyFlyoutBookmark:hover {
+    cursor: pointer;
   }
 
   .blocklyFlyoutZoomControlContainer {

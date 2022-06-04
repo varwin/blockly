@@ -22,8 +22,10 @@ goog.module('Blockly.FlyoutBookmarks');
   */
 const FlyoutBookmarks = function(flyout) {
    this.flyout_ = flyout;
+   this.workspace_ = flyout.workspace_;
    this.inserted = false;
-   this.bookamrks_ = [];
+   this.bookmarks_ = [];
+   window.bkmrks = this; // TODO
 };
 
 FlyoutBookmarks.prototype.show = function() {
@@ -52,14 +54,14 @@ FlyoutBookmarks.prototype.show = function() {
 
   this.rootDiv_.style.top = `${top}px`;
   this.rootDiv_.style.left = `${left}px`;
-  this.rootDiv_.style.display = 'block';
+  this.rootDiv_.style.display = 'flex';
 
   this.createBookmarks_();
 };
 
 FlyoutBookmarks.prototype.createBookmarks_ = function() {
   this.flyout_.buttons_
-    .filter((button) => button.isLabel)
+    .filter((button) => button.isLabel())
     .forEach((button) => {
       this.createBookmark_(button);
     });
@@ -68,22 +70,48 @@ FlyoutBookmarks.prototype.createBookmarks_ = function() {
 FlyoutBookmarks.prototype.createBookmark_ = function(button) {
   const bookmarkDiv = document.createElement('div');
   bookmarkDiv.classList.add('blocklyFlyoutBookmark');
-  bookmarkDiv.textContent = button.info.text;
+
+  const categoryColor = getComputedStyle(button.svgText_).fill;
+  bookmarkDiv.style.color = categoryColor;
+  bookmarkDiv.style.boxShadow = `inset -2px 0px 2px ${categoryColor}`;
+
+  const textWrapper = document.createElement('div');
+  textWrapper.classList.add('blocklyFlyoutBookmarkText');
+
+  bookmarkDiv.appendChild(textWrapper);
+
+  textWrapper.textContent = button.info.text.slice(0, 5);
 
   this.rootDiv_.appendChild(bookmarkDiv);
-  this.bookamrks_.push(bookmarkDiv);
+
+  const callback = () => {
+    if (this.flyout_.isScrollable()) {
+      this.workspace_.scrollbar.setY(button.position_.y);
+    }
+  };
+
+  bookmarkDiv.addEventListener('click', callback.bind(this));
+  
+  this.bookmarks_.push({
+    div: bookmarkDiv,
+    target: button.position_.y,
+    callback,
+  });
 };
 
 FlyoutBookmarks.prototype.hide = function() {
   if (this.rootDiv_) this.rootDiv_.style.display = 'none';
 
-  this.bookamrks_.forEach((b) => b.remove());
-  this.bookamrks_ = [];
+  this.bookmarks_.forEach((bookmark) => {
+    bookmark.div.removeEventListener('click', bookmark.callback);
+    bookmark.div.remove();
+  });
+  this.bookmarks_ = [];
 };
 
 FlyoutBookmarks.prototype.removeDom_ = function() {
-  this.bookamrks_.forEach((b) => b.remove());
-  this.bookamrks_ = [];
+  this.bookmarks_.forEach((b) => b.remove());
+  this.bookmarks_ = [];
 
   if (this.rootDiv_) this.rootDiv_.remove();
 };
