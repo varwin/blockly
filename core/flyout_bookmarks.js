@@ -15,11 +15,6 @@
   */
 goog.module('Blockly.FlyoutBookmarks');
 
-/**
-  * Class for a flyout bookmarks.
-  * @constructor
-  * @alias Blockly.FlyoutBookmarks
-  */
 const FlyoutBookmarks = function(flyout) {
    this.flyout_ = flyout;
    this.workspace_ = flyout.workspace_;
@@ -94,7 +89,6 @@ FlyoutBookmarks.prototype.createBookmark_ = function(button) {
   
   this.bookmarks_.push({
     div: bookmarkDiv,
-    target: button.position_.y,
     callback,
   });
 };
