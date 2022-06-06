@@ -67,15 +67,18 @@ FlyoutBookmarks.prototype.createBookmark_ = function(button) {
   bookmarkDiv.classList.add('blocklyFlyoutBookmark');
 
   const categoryColor = getComputedStyle(button.svgText_).fill;
-  bookmarkDiv.style.color = categoryColor;
+  bookmarkDiv.style.backgroundColor = categoryColor;
   bookmarkDiv.style.boxShadow = `inset -2px 0px 2px ${categoryColor}`;
 
-  const textWrapper = document.createElement('div');
-  textWrapper.classList.add('blocklyFlyoutBookmarkText');
+  const firstCharSpan = document.createElement('span');
+  const fullTextSpan = document.createElement('span');
+  fullTextSpan.classList.add('blocklyFlyoutBookmarkFullText');
 
-  bookmarkDiv.appendChild(textWrapper);
+  bookmarkDiv.appendChild(firstCharSpan);
+  bookmarkDiv.appendChild(fullTextSpan);
 
-  textWrapper.textContent = button.info.text.slice(0, 5);
+  firstCharSpan.textContent = button.info.text.charAt(0);
+  fullTextSpan.textContent = button.info.text.slice(1);
 
   this.rootDiv_.appendChild(bookmarkDiv);
 

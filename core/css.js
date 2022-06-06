@@ -475,21 +475,33 @@ let content = (`
 
   .blocklyFlyoutBookmarks {
     display: none;
+    color: white;
     position: absolute;
     width: 25px;
-    writing-mode: vertical-lr;
     user-select: none;
     z-index: 21;
+    overflow: visible;
+    flex-direction: column;
   }
   
   .blocklyFlyoutBookmark {
-    padding: 4px 2px;
+    padding: 4px 6px;
     background-color: #eee;
-    border-radius: 0 0 5px 0;
+    overflow: hidden;
+  }
+
+  .blocklyFlyoutBookmarkFullText {
+    color: transparent;
   }
 
   .blocklyFlyoutBookmark:hover {
     cursor: pointer;
+    width: max-content;
+    border-radius: 0 5px 5px 0;
+  }
+
+  .blocklyFlyoutBookmark:hover .blocklyFlyoutBookmarkFullText {
+    color: inherit;
   }
 
   .blocklyFlyoutZoomControlContainer {
