@@ -20,7 +20,7 @@ const FlyoutBookmarks = function(flyout) {
    this.workspace_ = flyout.workspace_;
    this.inserted = false;
    this.bookmarks_ = [];
-   window.bkmrks = this; // TODO
+   this.currentActiveBookmark_ = null;
 };
 
 FlyoutBookmarks.prototype.show = function() {
@@ -60,6 +60,10 @@ FlyoutBookmarks.prototype.createBookmarks_ = function() {
     .forEach((button) => {
       this.createBookmark_(button);
     });
+
+  if (this.bookmarks_.length) {
+    this.bookmarks_[this.bookmarks_.length - 1].div.classList.add('blocklyFlyoutBookmarkLast');
+  }
 };
 
 FlyoutBookmarks.prototype.createBookmark_ = function(button) {
@@ -96,7 +100,9 @@ FlyoutBookmarks.prototype.createBookmark_ = function(button) {
   bookmarkDiv.addEventListener('click', callback.bind(this));
   
   this.bookmarks_.push({
+    button,
     div: bookmarkDiv,
+    text: button.info.text,
     callback,
   });
 };
@@ -116,6 +122,46 @@ FlyoutBookmarks.prototype.removeDom_ = function() {
   this.bookmarks_ = [];
 
   if (this.rootDiv_) this.rootDiv_.remove();
+};
+
+FlyoutBookmarks.prototype.updatePosition = function(scrollPosition) {
+  if (!this.bookmarks_.length) return;
+
+  const scrollMetrics = this.flyout_.workspace_.getMetricsManager().getScrollMetrics();
+  const scrollHeight = scrollMetrics.height;
+  const scale = this.flyout_.workspace_.scale;
+  let foundCurrentBookmark = false;
+
+  this.bookmarks_.forEach((bookmark, i, bookmarks) => {
+    const bookMarkStartPosition = (bookmark.button.position_.y * scale) / scrollHeight;
+
+    if (bookMarkStartPosition > scrollPosition) return;
+
+    if (bookmarks.length - 1 === i) {
+      foundCurrentBookmark = true;
+      this.markAsCurrent_(bookmark);
+      return;
+    }
+
+    const nextBookmarkPosition = (bookmarks[i + 1].button.position_.y * scale) / scrollHeight;
+    if (bookMarkStartPosition < scrollPosition && scrollPosition < nextBookmarkPosition) {
+      foundCurrentBookmark = true;
+      this.markAsCurrent_(bookmark);
+    }
+  });
+
+  if (!foundCurrentBookmark && this.currentActiveBookmark_) {
+    this.currentActiveBookmark_.div.classList.remove('blocklyFlyoutBookmarkActive');
+  }
+};
+
+FlyoutBookmarks.prototype.markAsCurrent_ = function(bookmark) {
+  if (this.currentActiveBookmark_) {
+    this.currentActiveBookmark_.div.classList.remove('blocklyFlyoutBookmarkActive');
+  }
+  
+  bookmark.div.classList.add('blocklyFlyoutBookmarkActive');
+  this.currentActiveBookmark_ = bookmark;
 };
 
 exports.FlyoutBookmarks = FlyoutBookmarks;

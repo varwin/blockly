@@ -490,6 +490,14 @@ let content = (`
     overflow: hidden;
   }
 
+  .blocklyFlyoutBookmarkLast {
+    border-radius: 0 0 5px 0;
+  }
+
+  .blocklyFlyoutBookmarkActive {
+    border-left: 3px solid #eee;
+  }
+
   .blocklyFlyoutBookmarkFullText {
     color: transparent;
   }
