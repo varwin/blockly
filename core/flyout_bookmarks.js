@@ -55,15 +55,11 @@ FlyoutBookmarks.prototype.show = function() {
 };
 
 FlyoutBookmarks.prototype.createBookmarks_ = function() {
-  this.flyout_.buttons_
-    .filter((button) => button.isLabel())
-    .forEach((button) => {
+  this.flyout_.buttons_.forEach((button) => {
+    if (button.isLabel()) {
       this.createBookmark_(button);
-    });
-
-  if (this.bookmarks_.length) {
-    this.bookmarks_[this.bookmarks_.length - 1].div.classList.add('blocklyFlyoutBookmarkLast');
-  }
+    }
+  });
 };
 
 FlyoutBookmarks.prototype.createBookmark_ = function(button) {

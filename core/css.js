@@ -490,7 +490,7 @@ let content = (`
     overflow: hidden;
   }
 
-  .blocklyFlyoutBookmarkLast {
+  .blocklyFlyoutBookmark:last-child {
     border-radius: 0 0 5px 0;
   }
 

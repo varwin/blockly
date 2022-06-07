@@ -257,13 +257,6 @@ Flyout.prototype.GAP_Y = Flyout.prototype.MARGIN * 3;
 Flyout.prototype.SCROLLBAR_MARGIN = 2.5;
 
 /**
- * Width of elements on right panel
- * @type {number}
- * @const
- */
-Flyout.prototype.RIGHT_PANEL_WiDTH = 25;
-
-/**
  * Width of flyout.
  * @type {number}
  * @protected
