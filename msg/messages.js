@@ -1659,3 +1659,6 @@ Blockly.Msg.DIALOG_OK = 'OK';
 /** @type {string} */
 /// button label - Pressing this button cancels a proposed action.\n{{Identical|Cancel}}
 Blockly.Msg.DIALOG_CANCEL = 'Cancel';
+
+/** @type {string} */
+Blockly.Msg.SEARCH = 'Search';
