@@ -190,11 +190,10 @@ MassOperationsHandler.prototype.handleMove_ = function(e) {
   this.currentDragDeltaXY_ = Coordinate.difference(currentXY, this.mouseDownXY_);
 
   if (this.blockDraggers_) {
-    this.blockDraggers_.forEach((dragger) => dragger.drag(e, this.currentDragDeltaXY_, this.initBlockStartCoordinates));
+    // We need use drag() only for one of draggers, because all sraggers use one drag_surface
+    this.blockDraggers_[0].drag(e, this.currentDragDeltaXY_, this.initBlockStartCoordinates);
     return;
   }
-
-  this.initBlockStartCoordinates = initBlockCoordinates;
 
   if (!this.hasExceededDragRadius_) {
     const currentDragDelta = Coordinate.magnitude(this.currentDragDeltaXY_);
@@ -207,16 +206,62 @@ MassOperationsHandler.prototype.handleMove_ = function(e) {
   const BlockDraggerClass = registry.getClassFromOptions(registry.Type.BLOCK_DRAGGER, this.workspace_.options, true);
   this.blockDraggers_ = this.selectedBlocks_.map((block) => new BlockDraggerClass(block, this.workspace_, true));
 
-  this.blockDraggers_.forEach((dragger, index) => {
-    const cordinates = this.selectedBlocks_[index].getRelativeToSurfaceXY();
+  // coordinates of start dragging may be not on top left block and we need to find
+  // top left angle for get right position of drag surface under all blocks
+  const dragSurfaceMinCoordinate = initBlockCoordinates.clone();
+  const dragSurfaceMaxCoordinate = initBlockCoordinates.clone();
+  let blocSvgkWithMaxX;
+  let blocSvgkWithMaxY;
 
-    let diff = Coordinate.difference(cordinates, initBlockCoordinates);
+  this.selectedBlocks_.forEach((block, index) => {
+    const blockSvg = block.getSvgRoot();
+    const cordinates = block.getRelativeToSurfaceXY();
+
+    if (index === 0) {
+      blocSvgkWithMaxX = blockSvg;
+      blocSvgkWithMaxY = blockSvg;
+    }
+
+    if (dragSurfaceMinCoordinate.x > cordinates.x) {
+      dragSurfaceMinCoordinate.x = cordinates.x;
+    }
+
+    if (dragSurfaceMaxCoordinate.x < cordinates.x) {
+      dragSurfaceMaxCoordinate.x = cordinates.x;
+      blocSvgkWithMaxX = blockSvg;
+    }
+
+    if (dragSurfaceMinCoordinate.y > cordinates.y) {
+      dragSurfaceMinCoordinate.y = cordinates.y;
+    }
+
+    if (dragSurfaceMaxCoordinate.y < cordinates.y) {
+      dragSurfaceMaxCoordinate.y = cordinates.y;
+      blocSvgkWithMaxY = blockSvg;
+    }
+  });
+  
+  // Now we can place all blocks to relative position on drag surface and keep positions between blocks
+  this.blockDraggers_.forEach((dragger, index) => {
+    const block = this.selectedBlocks_[index];
+    const cordinates = block.getRelativeToSurfaceXY();
+
+    let diff = Coordinate.difference(cordinates, dragSurfaceMinCoordinate);
     if (diff.x === 0 && diff.y === 0) diff = null;
 
-    dragger.startDrag(this.currentDragDeltaXY_, false, diff);
+    dragger.beforeStartDrag(this.currentDragDeltaXY_, false, diff);
+    block.prepareForMoveToDragSurface(diff);
   });
 
-  this.blockDraggers_.forEach((dragger) => dragger.drag(e, this.currentDragDeltaXY_, initBlockCoordinates));
+  const dragSurfaceWidth = (dragSurfaceMaxCoordinate.x - dragSurfaceMinCoordinate.x) + blocSvgkWithMaxX.getBBox().width;
+  const dragSurfaceHeight = (dragSurfaceMaxCoordinate.y - dragSurfaceMinCoordinate.y) + blocSvgkWithMaxY.getBBox().height;
+
+  this.initBlockStartCoordinates = dragSurfaceMinCoordinate;
+
+  this.workspace_.getBlockDragSurface().translateSurface(dragSurfaceMinCoordinate.x, dragSurfaceMinCoordinate.y, true);
+  this.workspace_.getBlockDragSurface().setBlocksAndShow(this.selectedBlocks_.map((b) => b.getSvgRoot()), dragSurfaceWidth, dragSurfaceHeight, true);
+
+  this.blockDraggers_[0].drag(e, this.currentDragDeltaXY_, dragSurfaceMinCoordinate);
 };
 
 MassOperationsHandler.prototype.blockMouseUp = function(block, e) {
