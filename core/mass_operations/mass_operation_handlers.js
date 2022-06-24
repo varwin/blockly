@@ -50,6 +50,7 @@ const MassOperationsHandler = function(workspace) {
   this.onMouseUpBlockWrapper_ = null;
   this.blocksCopyData_ = null;
   this.currentDragDeltaXY_ = new Coordinate(0, 0);
+  this.dragSurfacePadding_ = 50;
 
   workspace.addChangeListener(this.changeListener.bind(this));
 
@@ -210,58 +211,74 @@ MassOperationsHandler.prototype.handleMove_ = function(e) {
   // top left angle for get right position of drag surface under all blocks
   const dragSurfaceMinCoordinate = initBlockCoordinates.clone();
   const dragSurfaceMaxCoordinate = initBlockCoordinates.clone();
-  let blocSvgkWithMaxX;
-  let blocSvgkWithMaxY;
+  let blockSvgWithMaxX;
+  let blockSvgWithMaxY;
 
   this.selectedBlocks_.forEach((block, index) => {
     const blockSvg = block.getSvgRoot();
-    const cordinates = block.getRelativeToSurfaceXY();
+    const coordinates = block.getRelativeToSurfaceXY();
 
     if (index === 0) {
-      blocSvgkWithMaxX = blockSvg;
-      blocSvgkWithMaxY = blockSvg;
+      blockSvgWithMaxX = blockSvg;
+      blockSvgWithMaxY = blockSvg;
     }
 
-    if (dragSurfaceMinCoordinate.x > cordinates.x) {
-      dragSurfaceMinCoordinate.x = cordinates.x;
+    if (dragSurfaceMinCoordinate.x > coordinates.x) {
+      dragSurfaceMinCoordinate.x = coordinates.x;
     }
 
-    if (dragSurfaceMaxCoordinate.x < cordinates.x) {
-      dragSurfaceMaxCoordinate.x = cordinates.x;
-      blocSvgkWithMaxX = blockSvg;
+    if (dragSurfaceMaxCoordinate.x < coordinates.x) {
+      dragSurfaceMaxCoordinate.x = coordinates.x;
+      blockSvgWithMaxX = blockSvg;
     }
 
-    if (dragSurfaceMinCoordinate.y > cordinates.y) {
-      dragSurfaceMinCoordinate.y = cordinates.y;
+    if (dragSurfaceMinCoordinate.y > coordinates.y) {
+      dragSurfaceMinCoordinate.y = coordinates.y;
     }
 
-    if (dragSurfaceMaxCoordinate.y < cordinates.y) {
-      dragSurfaceMaxCoordinate.y = cordinates.y;
-      blocSvgkWithMaxY = blockSvg;
+    if (dragSurfaceMaxCoordinate.y < coordinates.y) {
+      dragSurfaceMaxCoordinate.y = coordinates.y;
+      blockSvgWithMaxY = blockSvg;
     }
   });
+
+  const workspaceCanvas = this.workspace_.getCanvas();
+  const workspaceCanvasTransform = window.getComputedStyle(workspaceCanvas).transform;
+  const workspaceCanvasMatrix = new WebKitCSSMatrix(workspaceCanvasTransform);
+
+  dragSurfaceMinCoordinate.x += workspaceCanvasMatrix.e / this.workspace_.scale;
+  dragSurfaceMinCoordinate.y += workspaceCanvasMatrix.f / this.workspace_.scale;
+  dragSurfaceMaxCoordinate.x += workspaceCanvasMatrix.e / this.workspace_.scale;
+  dragSurfaceMaxCoordinate.y += workspaceCanvasMatrix.f / this.workspace_.scale;
+
+  dragSurfaceMinCoordinate.x -= this.dragSurfacePadding_;
+  dragSurfaceMinCoordinate.y -= this.dragSurfacePadding_;
+  dragSurfaceMaxCoordinate.x += this.dragSurfacePadding_;
+  dragSurfaceMaxCoordinate.y += this.dragSurfacePadding_;
   
   // Now we can place all blocks to relative position on drag surface and keep positions between blocks
   this.blockDraggers_.forEach((dragger, index) => {
     const block = this.selectedBlocks_[index];
-    const cordinates = block.getRelativeToSurfaceXY();
+    const coordinates = block.getRelativeToSurfaceXY();
 
-    let diff = Coordinate.difference(cordinates, dragSurfaceMinCoordinate);
+    let diff = Coordinate.difference(coordinates, dragSurfaceMinCoordinate);
     if (diff.x === 0 && diff.y === 0) diff = null;
 
     dragger.beforeStartDrag(this.currentDragDeltaXY_, false, diff);
     block.prepareForMoveToDragSurface(diff);
   });
 
-  const dragSurfaceWidth = (dragSurfaceMaxCoordinate.x - dragSurfaceMinCoordinate.x) + blocSvgkWithMaxX.getBBox().width;
-  const dragSurfaceHeight = (dragSurfaceMaxCoordinate.y - dragSurfaceMinCoordinate.y) + blocSvgkWithMaxY.getBBox().height;
+  const dragSurfaceWidth = (dragSurfaceMaxCoordinate.x - dragSurfaceMinCoordinate.x) + blockSvgWithMaxX.getBBox().width;
+  const dragSurfaceHeight = (dragSurfaceMaxCoordinate.y - dragSurfaceMinCoordinate.y) + blockSvgWithMaxY.getBBox().height;
+  const dragSurface = this.workspace_.getBlockDragSurface();
+  const blocksSvg = this.selectedBlocks_.map((b) => b.getSvgRoot());
+  
+  this.initBlockStartCoordinates = dragSurfaceMinCoordinate.clone();
 
-  this.initBlockStartCoordinates = dragSurfaceMinCoordinate;
+  dragSurface.translateSurface(this.initBlockStartCoordinates.x, this.initBlockStartCoordinates.y, true);
+  dragSurface.setBlocksAndShow(blocksSvg, dragSurfaceWidth, dragSurfaceHeight, true);
 
-  this.workspace_.getBlockDragSurface().translateSurface(dragSurfaceMinCoordinate.x, dragSurfaceMinCoordinate.y, true);
-  this.workspace_.getBlockDragSurface().setBlocksAndShow(this.selectedBlocks_.map((b) => b.getSvgRoot()), dragSurfaceWidth, dragSurfaceHeight, true);
-
-  this.blockDraggers_[0].drag(e, this.currentDragDeltaXY_, dragSurfaceMinCoordinate);
+  this.blockDraggers_[0].drag(e, this.currentDragDeltaXY_, this.initBlockStartCoordinates);
 };
 
 MassOperationsHandler.prototype.blockMouseUp = function(block, e) {
