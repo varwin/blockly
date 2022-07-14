@@ -26,6 +26,7 @@ const fieldRegistry = goog.require('Blockly.fieldRegistry');
 const parsing = goog.require('Blockly.utils.parsing');
 const userAgent = goog.require('Blockly.utils.userAgent');
 const utilsString = goog.require('Blockly.utils.string');
+const browserEvents = goog.require('Blockly.browserEvents');
 const {Coordinate} = goog.require('Blockly.utils.Coordinate');
 const {Field} = goog.require('Blockly.Field');
 const {MenuItem} = goog.require('Blockly.MenuItem');
@@ -33,6 +34,7 @@ const {Menu} = goog.require('Blockly.Menu');
 /* eslint-disable-next-line no-unused-vars */
 const {Sentinel} = goog.requireType('Blockly.utils.Sentinel');
 const {Svg} = goog.require('Blockly.utils.Svg');
+const {Msg} = goog.require('Blockly.Msg');
 
 
 /**
@@ -296,9 +298,12 @@ class FieldDropdown extends Field {
     textInput.type = 'search';
     textInput.setAttribute('placeholder', Msg['SEARCH']);
     return textInput;
-  };
+  }
 
 
+  /**
+   * @param {Event} e event
+   */
   onInput_(e) {
     const seacrhText = e.target.value.toLowerCase();
     const suggestedItems = [];
@@ -314,7 +319,7 @@ class FieldDropdown extends Field {
     this.menu_.render(this.container_);
     const menuElement = /** @type {!Element} */ (this.menu_.getElement());
     dom.addClass(menuElement, 'blocklyDropdownMenu');
-  };
+  }
 
   /**
    * Create an SVG based arrow.
@@ -332,6 +337,10 @@ class FieldDropdown extends Field {
         this.getConstants().FIELD_DROPDOWN_SVG_ARROW_DATAURI);
   }
 
+  /**
+   * Creates the text input for the search bar.
+   * @return {HTMLDivElement} search input
+   */
   createSearch_() {
     const inputElement = this.createSearchInput_();
     const inputWrapper = document.createElement('div');
@@ -342,7 +351,7 @@ class FieldDropdown extends Field {
       inputElement, 'input', this, this.onInput_, 300);
 
     return inputWrapper;
-  };
+  }
 
   /**
    * Create a dropdown menu under the text.

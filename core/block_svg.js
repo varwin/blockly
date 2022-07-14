@@ -72,6 +72,7 @@ const {Theme} = goog.requireType('Blockly.Theme');
 const {Warning} = goog.requireType('Blockly.Warning');
 /* eslint-disable-next-line no-unused-vars */
 const {WorkspaceSvg} = goog.requireType('Blockly.WorkspaceSvg');
+const {argumentLocal} = goog.require('Blockly.utils.argumentLocal');
 /** @suppress {extraRequire} */
 goog.require('Blockly.Events.BlockMove');
 /** @suppress {extraRequire} */
@@ -556,7 +557,7 @@ class BlockSvg extends Block {
   } else {
     this.clearTransformAttributes_();
   }
-};
+}
 
   /**
    * Move this block to its workspace's drag surface, accounting for
@@ -647,7 +648,7 @@ class BlockSvg extends Block {
    */
   replaceTransformAttributes_(position) {
     this.getSvgRoot().setAttribute('transform', `translate(${position.x}, ${position.y})`);
-  };
+  }
 
   /**
    * Snap this block to the nearest grid point.
@@ -837,7 +838,7 @@ class BlockSvg extends Block {
    */
   onMouseUp_(e) {
     if (this.disableMovingToFront) this.disableMovingToFront = false;
-  };
+  }
 
 
   /**
@@ -890,7 +891,7 @@ class BlockSvg extends Block {
   showContextMenu(e) {
     // display parent context menu for argument local
     const block = this;
-    if (this.parentBlock_ && (this.isShadow_ && !isShadowArgumentLocal(block))) {
+    if (this.parentBlock_ && (this.isShadow_ && !argumentLocal.isShadowArgumentLocal(block))) {
       this.parentBlock_.showContextMenu_(e);
       return;
     }
@@ -908,6 +909,10 @@ class BlockSvg extends Block {
     }
   }
 
+  /**
+   * checkInGroupSelection
+   * @return {boolean} true of is it group selection
+   */
   checkInGroupSelection() {
     if (this.selectedAsGroup_) return true;
 
@@ -915,7 +920,7 @@ class BlockSvg extends Block {
     if (massOperations) return massOperations.checkBlockInSelectGroup(this);
 
     return false;
-  };
+  }
 
   /**
    * Move the connections for this block and all blocks attached under it.
@@ -1360,11 +1365,14 @@ class BlockSvg extends Block {
     }
   }
 
+  /**
+   * addSelectAsMassSelection
+   */
   addSelectAsMassSelection() {
     this.pathObject.updateMassSelected(true);
     this.selected_ = true;
     this.selectedAsGroup_ = true;
-  };
+  }
 
   /**
    * Create a temporary div and move the svg of the block in front of
@@ -1421,8 +1429,11 @@ class BlockSvg extends Block {
       this.isInFrontOfWorkspace = true;
       this.workspace.getParentSvg().parentElement.appendChild(this.tempRootDiv);
     }, 800); // This is enough to eliminate glitches when scrolling.
-  };
+  }
 
+  /**
+   * backToWorkspace
+   */
   backToWorkspace() {
     this.previousParent.insertBefore(this.getSvgRoot(), this.previousNextSibling);
     this.getSvgRoot().style.transform = '';
@@ -1435,7 +1446,7 @@ class BlockSvg extends Block {
     this.previousNextSibling = null;
     this.isInFrontOfWorkspace = false;
     this.removeSelect();
-  };
+  }
 
   /**
    * Removes the visual "select" effect from the block, but does not actually
@@ -1449,11 +1460,14 @@ class BlockSvg extends Block {
     this.selected_ = false;
   }
 
+  /**
+   * removeSelectAsMassSelection
+   */
   removeSelectAsMassSelection() {
     this.pathObject.updateMassSelected(false);
     this.selectedAsGroup_ = false;
     this.selected_ = false;
-  };
+  }
 
   /**
    * Update the cursor over this block by adding or removing a class.

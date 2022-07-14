@@ -26,6 +26,7 @@ const {Connection} = goog.require('Blockly.Connection');
 const {IConnectionChecker} = goog.require('Blockly.IConnectionChecker');
 /* eslint-disable-next-line no-unused-vars */
 const {RenderedConnection} = goog.requireType('Blockly.RenderedConnection');
+const {argumentLocal} = goog.require('Blockly.utils.argumentLocal');
 
 
 /**
@@ -247,7 +248,7 @@ class ConnectionChecker {
       // don't allow connecting a block to an argument local
       if (b && b.targetBlock()) {
         const targetBlock = b.targetBlock();
-        if (isShadowArgumentLocal(targetBlock)) {
+        if (argumentLocal.isShadowArgumentLocal(targetBlock)) {
           return false;
         }
       }
