@@ -1,6 +1,6 @@
 {
   "chunk": [
-    "blockly:276",
+    "blockly:279",
     "blocks:10:blockly",
     "all:11:blockly"
   ],
@@ -55,6 +55,8 @@
     ".\\core\\utils\\dom.js",
     ".\\core\\utils\\idgenerator.js",
     ".\\core\\connection_checker.js",
+    ".\\core\\module_model.js",
+    ".\\core\\module_manager.js",
     ".\\core\\toolbox\\separator.js",
     ".\\core\\toolbox\\toolbox_item.js",
     ".\\core\\interfaces\\i_selectable_toolbox_item.js",
@@ -119,7 +121,7 @@
     ".\\core\\events\\events_module_delete.js",
     ".\\core\\events\\events_module_base.js",
     ".\\core\\events\\events_module_create.js",
-    ".\\core\\events\\event_loading_error.js",
+    ".\\core\\events\\events_loading_error.js",
     ".\\core\\events\\events_flyout_zoom.js",
     ".\\core\\events\\events_flyout_hide.js",
     ".\\core\\events\\events_flyout_show.js",
@@ -137,6 +139,7 @@
     ".\\core\\events\\events_block_delete.js",
     ".\\core\\events\\events_block_create.js",
     ".\\core\\events\\events.js",
+    ".\\core\\utils\\argument_local.js",
     ".\\core\\utils.js",
     ".\\core\\renderers\\zelos\\measurables\\top_row.js",
     ".\\core\\renderers\\zelos\\measurables\\row_elements.js",

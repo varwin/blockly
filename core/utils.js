@@ -17,6 +17,7 @@ goog.module('Blockly.utils');
 
 const aria = goog.require('Blockly.utils.aria');
 const arrayUtils = goog.require('Blockly.utils.array');
+const argumentLocal = goog.require('Blockly.utils.argumentLocal');
 const browserEvents = goog.require('Blockly.browserEvents');
 const colourUtils = goog.require('Blockly.utils.colour');
 const common = goog.require('Blockly.common');
