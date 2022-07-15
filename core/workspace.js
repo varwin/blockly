@@ -32,6 +32,7 @@ const {Block} = goog.requireType('Blockly.Block');
 const {ConnectionDB} = goog.requireType('Blockly.ConnectionDB');
 /* eslint-disable-next-line no-unused-vars */
 const {IASTNodeLocation} = goog.require('Blockly.IASTNodeLocation');
+const {ModuleManager} = goog.require('Blockly.ModuleManager');
 /* eslint-disable-next-line no-unused-vars */
 const {IConnectionChecker} = goog.requireType('Blockly.IConnectionChecker');
 const {Options} = goog.require('Blockly.Options');
@@ -179,7 +180,6 @@ class Workspace {
      * @private
      */
     this.moduleManager_ = new ModuleManager(this);
-
     /**
      * Blocks in the flyout can refer to variables that don't exist in the main
      * workspace.  For instance, the "get item in list" block refers to an
@@ -262,7 +262,7 @@ class Workspace {
     let blocks = [];
 
     if (inActiveModule) {
-      for (var i = 0, block; (block = this.topBlocks_[i]); i++) {
+      for (let i = 0, block; (block = this.topBlocks_[i]); i++) {
         if (block.inActiveModule()) {
           blocks.push(block);
         }
@@ -559,7 +559,7 @@ class Workspace {
    */
   getModuleManager() {
     return this.moduleManager_;
-  };
+  }
 
   /* End functions that are just pass-throughs to the variable map. */
 

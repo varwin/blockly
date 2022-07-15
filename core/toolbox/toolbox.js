@@ -19,6 +19,7 @@ const Css = goog.require('Blockly.Css');
 const Touch = goog.require('Blockly.Touch');
 const aria = goog.require('Blockly.utils.aria');
 const browserEvents = goog.require('Blockly.browserEvents');
+const Events = goog.require('Blockly.Events');
 const common = goog.require('Blockly.common');
 const dom = goog.require('Blockly.utils.dom');
 const eventUtils = goog.require('Blockly.Events.utils');
@@ -446,7 +447,7 @@ class Toolbox extends DeleteArea {
     if (event.type === Events.FLYOUT_HIDE || event.type === Events.FLYOUT_SHOW) {
       eventUtils.fire(new (eventUtils.get(event.type))(this.getWorkspace().id));
     }
-  };
+  }
   /**
    * Fills the toolbox with new toolbox items and removes any old contents.
    * @param {!toolbox.ToolboxInfo} toolboxDef Object holding information

@@ -93,6 +93,13 @@ class Trashcan extends DeleteArea {
      */
     this.flyout = null;
 
+     /**
+     * Current state of lid opening (0.0 = closed, 1.0 = open).
+     * @type {number}
+     * @private
+     */
+    this.lidOpen_ = 0;
+
     if (this.workspace_.options.maxTrashcanContents <= 0) {
       return;
     }
@@ -131,13 +138,6 @@ class Trashcan extends DeleteArea {
      * @private
      */
     this.lidTask_ = 0;
-
-    /**
-     * Current state of lid opening (0.0 = closed, 1.0 = open).
-     * @type {number}
-     * @private
-     */
-    this.lidOpen_ = 0;
 
     /**
      * Left coordinate of the trash can.
@@ -497,9 +497,11 @@ class Trashcan extends DeleteArea {
     const frames = ANIMATION_FRAMES;
 
     const delta = 1 / (frames + 1);
+
     this.lidOpen_ += this.isLidOpen ? delta : -delta;
     this.lidOpen_ = Math.min(Math.max(this.lidOpen_, this.minOpenness_), 1);
 
+    console.log('animateLid_ -> setLidAngle_', this.lidOpen_, MAX_LID_ANGLE);
     this.setLidAngle_(this.lidOpen_ * MAX_LID_ANGLE);
 
     // Linear interpolation between min and max.
@@ -507,8 +509,7 @@ class Trashcan extends DeleteArea {
     this.svgGroup_.style.opacity = opacity;
 
     if (this.lidOpen_ > this.minOpenness_ && this.lidOpen_ < 1) {
-      this.lidTask_ =
-          setTimeout(this.animateLid_.bind(this), ANIMATION_LENGTH / frames);
+      this.lidTask_ = setTimeout(this.animateLid_.bind(this), ANIMATION_LENGTH / frames);
     }
   }
 
@@ -565,10 +566,10 @@ class Trashcan extends DeleteArea {
    * @private
    */
   fireUiEvent_(trashcanOpen) {
-    var uiEvent = new (Blockly.Events.get(Blockly.Events.TRASHCAN_OPEN))(
-        trashcanOpen,this.workspace_.id);
+    const uiEvent = new (Blockly.Events.get(Blockly.Events.TRASHCAN_OPEN))(
+        trashcanOpen, this.workspace_.id);
     Blockly.Events.fire(uiEvent);
-  };
+  }
 
   /**
    * Prevents a workspace scroll and click event if the trashcan has blocks.

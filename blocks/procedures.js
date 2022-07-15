@@ -486,7 +486,7 @@ blocks['procedures_defnoreturn'] = {
    */
   getProcedureDef: function() {
     return [this.getFieldValue('NAME'), this.arguments_, false];
-  }
+  },
 };
 
 blocks['procedures_defreturn'] = {
@@ -1168,7 +1168,7 @@ blocks['procedures_ifreturn'] = {
     } while (block);
     if (legal) {
       // If needed, toggle whether this block has a return value.
-      if (block.type === 'procedures_defnoreturn' && this.hasReturnValue_) {
+      if ((block.type === 'procedures_defnoreturn' || block.type === 'procedures_with_argument_defnoreturn') && this.hasReturnValue_) {
         this.removeInput('VALUE');
         this.appendDummyInput('VALUE').appendField(
             Msg['PROCEDURES_DEFRETURN_RETURN']);

@@ -78,7 +78,7 @@ class Block {
    *     create a new ID.
    * @throws When the prototypeName is not valid or not allowed.
    */
-  constructor(workspace, prototypeName, opt_id) {
+  constructor(workspace, prototypeName, opt_id, moduleId) {
     const {Generator} = goog.module.get('Blockly.Generator');
     if (Generator &&
         typeof Generator.prototype[prototypeName] !== 'undefined') {
@@ -180,7 +180,7 @@ class Block {
     this.getDeveloperVariables = undefined;
 
     /** @type {string} */
-  this.id = (opt_id && !workspace.getBlockById(opt_id)) ? opt_id :
+    this.id = (opt_id && !workspace.getBlockById(opt_id)) ? opt_id :
                                                           idGenerator.genUid();
     workspace.setBlockById(this.id, this);
     /** @type {Connection} */
@@ -190,24 +190,24 @@ class Block {
     /** @type {Connection} */
     this.previousConnection = null;
     /** @type {!Array<!Input>} */
-  this.inputList = [];
-  /** @type {boolean|undefined} */
-  this.inputsInline = undefined;
-  /**
-   * @type {string}
-   * @private
-   * */
-  this.moduleId_ = moduleId ? moduleId : workspace.getModuleManager().getActiveModule().getId();
-  /**
-   * @type {boolean}
-   * @private
-   */
-  this.obsolete = false;
-  /**
-   * @type {boolean}
-   * @private
-   */
-  this.removed = false;
+    this.inputList = [];
+    /** @type {boolean|undefined} */
+    this.inputsInline = undefined;
+    /**
+     * @type {string}
+     * @private
+     * */
+    this.moduleId_ = moduleId ? moduleId : workspace.getModuleManager().getActiveModule().getId();
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this.obsolete = false;
+    /**
+     * @type {boolean}
+     * @private
+     */
+    this.removed = false;
     /**
      * @type {boolean}
      * @private
@@ -335,15 +335,17 @@ class Block {
     this.statementInputCount = 0;
 
     // Copy the type-specific functions and data from the prototype.
-    if (prototypeName) {
+    if (prototypeName && prototypeName !== 'argument_local') {
       /** @type {string} */
       this.type = prototypeName;
       const prototype = Blocks[prototypeName];
+
       if (!prototype || typeof prototype !== 'object') {
         const errorMessage = `${Blockly.Msg['UNKNOWN_BLOCK_TYPE']}: "${prototypeName}"`;
         eventUtils.fire(new (eventUtils.get(eventUtils.LOADING_ERROR))(this.workspace, errorMessage), true);
-        throw TypeError();
+        throw TypeError("Unknown block type", prototypeName);
       }
+
       object.mixin(this, prototype);
     }
 
@@ -530,7 +532,8 @@ class Block {
           childConnection, parentConnection, false)) {
     parentConnection.connect(childConnection);
   } else {
-    childConnection.onFailedConnect(parentConnection);}
+    childConnection.onFailedConnect(parentConnection);
+}
   }
 
   /**
@@ -595,7 +598,7 @@ class Block {
    */
   getModuleId() {
     return this.moduleId_;
-  };
+  }
 
   /**
    * Returns module order for this block.
@@ -604,7 +607,7 @@ class Block {
    */
   getModuleOrder() {
     return this.workspace.getModuleManager().getModuleOrder(this.getModuleId());
-  };
+  }
 
   /**
    * Returns is this block in active module.
@@ -613,7 +616,7 @@ class Block {
    */
   inActiveModule() {
     return this.moduleId_ === this.workspace.getModuleManager().getActiveModule().getId();
-  };
+  }
 
   /**
    * Set module module id for this block.
@@ -622,7 +625,7 @@ class Block {
    */
   setModuleId(moduleId) {
     return this.moduleId_ = moduleId;
-  };
+  }
 
   /**
    * Returns all connections originating from this block.
@@ -1247,7 +1250,7 @@ class Block {
       throw Error('Field "' + name + '" not found.');
     }
     field.setText(newValue);
-  };
+  }
 
   /**
    * Set whether this block can chain onto the bottom of another block.
@@ -1419,7 +1422,7 @@ class Block {
    */
   isObsolete() {
     return this.obsolete;
-  };
+  }
 
   /**
    * Set whether the block is obsolete or not.
@@ -1432,7 +1435,7 @@ class Block {
     } else {
       this.setWarningText(null);
     }
-  };
+  }
 
   /**
    * Get whether this block is removed or not.
@@ -1440,7 +1443,7 @@ class Block {
    */
   isRemoved() {
     return this.removed;
-  };
+  }
 
   /**
    * Set whether the block is removed or not.
@@ -1453,7 +1456,7 @@ class Block {
     } else {
       this.setWarningText(null);
     }
-  };
+  }
 
   /**
    * Get whether the block is disabled or not due to parents.
@@ -1708,8 +1711,7 @@ class Block {
     if (json['enableContextMenu'] !== undefined) {
       this.contextMenu = !!json['enableContextMenu'];
     }
-    if (json['suppressPrefixSuffix'] !== undefined) {
-    }
+
   if (json['suppressPrefixSuffix'] !== undefined) {
     this.suppressPrefixSuffix = !!json['suppressPrefixSuffix'];
     }

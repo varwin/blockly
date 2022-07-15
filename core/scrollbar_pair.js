@@ -106,7 +106,7 @@ const ScrollbarPair = class {
    */
   resize(keepCenter) {
     // Look up the host metrics once, and use for both scrollbars.
-    const hostMetrics = metrics || this.workspace_.getMetrics();
+    const hostMetrics = this.workspace_.getMetrics();
     if (!hostMetrics) {
       // Host element is likely not visible.
       return;

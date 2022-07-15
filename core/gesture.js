@@ -25,6 +25,7 @@ const common = goog.require('Blockly.common');
 const eventUtils = goog.require('Blockly.Events.utils');
 const internalConstants = goog.require('Blockly.internalConstants');
 const registry = goog.require('Blockly.registry');
+const argumentLocal = goog.require('Blockly.utils.argumentLocal');
 /* eslint-disable-next-line no-unused-vars */
 const {BlockSvg} = goog.requireType('Blockly.BlockSvg');
 const {BubbleDragger} = goog.require('Blockly.BubbleDragger');
@@ -293,7 +294,7 @@ class Gesture {
     const changed = this.updateDragDelta_(currentXY);
     // Exceeded the drag radius for the first time.
     if (changed) {
-      this.updateIsDragging_();
+      this.updateIsDragging_(e);
       Touch.longStop();
     }
     this.mostRecentEvent_ = e;
@@ -436,9 +437,10 @@ class Gesture {
    * This function should be called on a mouse/touch move event the first time
    * the drag radius is exceeded.  It should be called no more than once per
    * gesture.
+   * @param {Event} e event
    * @private
    */
-  updateIsDragging_() {
+  updateIsDragging_(e) {
     // Sanity check.
     if (this.calledUpdateIsDragging_) {
       throw Error('updateIsDragging_ should only be called once per gesture.');
@@ -624,7 +626,7 @@ class Gesture {
     } else if (this.isFieldClick_()) {
       this.doFieldClick_();
     } else if (this.isBlockClick_()) {
-      this.doBlockClick_();
+      this.doBlockClick_(e);
     } else if (this.isWorkspaceClick_()) {
       this.doWorkspaceClick_(e);
     }
@@ -898,7 +900,7 @@ class Gesture {
     if (!this.startBlock_ && !this.startBubble_) {
       this.startBlock_ = block;
       this.shouldDuplicateOnDrag_ = !block.disabled && !block.getInheritedDisabled() &&
-        !block.isInFlyout && isShadowArgumentLocal(block);
+        !block.isInFlyout && argumentLocal.isShadowArgumentLocal(block);
 
       if (block.isInFlyout && block !== block.getRootBlock()) {
         this.setTargetBlock_(block.getRootBlock());

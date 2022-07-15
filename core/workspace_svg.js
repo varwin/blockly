@@ -1085,6 +1085,7 @@ class WorkspaceSvg extends Workspace {
     if (!Trashcan) {
       throw Error('Missing require for Blockly.Trashcan');
     }
+    
     /** @type {Trashcan} */
     this.trashcan = new Trashcan(this);
     const svgTrashcan = this.trashcan.createDom();

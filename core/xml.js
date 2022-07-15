@@ -710,8 +710,7 @@ const domToBlock = function(xmlBlock, workspace) {
   }
 
   if (eventUtils.isEnabled()) {
-    const newVariables =
-        goog.module.get('Blockly.Variables').getAddedVariables(workspace, variablesBeforeCreation);
+    const newVariables = goog.module.get('Blockly.Variables').getAddedVariables(workspace, variablesBeforeCreation);
     // Fire a VarCreate event for each (if any) new variable created.
     for (let i = 0; i < newVariables.length; i++) {
       const thisVariable = newVariables[i];

@@ -402,10 +402,11 @@ const FIRE_QUEUE = [];
  * @param {Boolean} force Force fire while events disabled.
  * @alias Blockly.Events.utils.fire
  */
-const fire = function(event) {
+const fire = function(event, force) {
   if (!force && !isEnabled()) {
     return;
   }
+  
   if (!FIRE_QUEUE.length) {
     // First event added; schedule a firing of the event queue.
     setTimeout(fireNow, 0);
