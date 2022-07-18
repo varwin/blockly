@@ -18,16 +18,19 @@
  */
 
 const isShadowArgumentLocal = function(block) {
+  console.log('isShadowArgumentLocal?', block.type, block.type === 'argument_local');
   return block.isShadow() && block.type === 'argument_local';
 };
 exports.isShadowArgumentLocal = isShadowArgumentLocal;
+
 /**
  * Whether a block is a argument local.
  * @param {!Blockly.BlockSvg} block The block that should be used to make this
  *     decision.
  * @return {boolean} True if the block is a argument local.
  */
- const isArgumentLocal = function(block) {
+const isArgumentLocal = function(block) {
+  console.log('isArgumentLocal?', block.type, block.type === 'argument_local');
   return block.type == 'argument_local';
 };
 exports.isArgumentLocal = isArgumentLocal;

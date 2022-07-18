@@ -926,7 +926,9 @@ const applyFieldTagNodes = function(xmlChildren, block) {
  *    found child block.
  */
 const findChildBlocks = function(xmlNode) {
+  console.log('findChildBlocks', xmlNode);
   const childBlockInfo = {childBlockElement: null, childShadowElement: null};
+
   for (let i = 0; i < xmlNode.childNodes.length; i++) {
     const xmlChild = xmlNode.childNodes[i];
     if (xmlChild.nodeType === dom.NodeType.ELEMENT_NODE) {

@@ -48,476 +48,477 @@
 const blocks = {};
 exports.blocks = blocks;
 
+const PROCEDURES_WITH_ARGUMENT = {
+    /**
+   * Disconnect old blocks from all value inputs on this block, but hold onto them
+   * in case they can be reattached later. Also save the shadow DOM if it exists.
+   * The result is a map from argument ID to information that was associated with
+   * that argument at the beginning of the mutation.
+   * @return {!Object.<string, {shadow: Element, block: Blockly.Block}>} An object
+   *     mapping argument IDs to blocks and shadow DOMs.
+   * @private
+   * @this Blockly.Block
+   */
+  disconnectOldBlocks_: function() {
+    // Remove old stuff
+    const connectionMap = {};
 
-/**
- * Disconnect old blocks from all value inputs on this block, but hold onto them
- * in case they can be reattached later. Also save the shadow DOM if it exists.
- * The result is a map from argument ID to information that was associated with
- * that argument at the beginning of the mutation.
- * @return {!Object.<string, {shadow: Element, block: Blockly.Block}>} An object
- *     mapping argument IDs to blocks and shadow DOMs.
- * @private
- * @this Blockly.Block
- */
-function disconnectOldBlocks_() {
-  // Remove old stuff
-  const connectionMap = {};
+    for (let i = 0, input; (input = this.inputList[i]); i++) {
+      if (input.name !== 'STACK' && input.connection) {
+        const target = input.connection.targetBlock();
+        const saveInfo = {
+          shadow: input.connection.getShadowDom(),
+          block: target,
+        };
+        connectionMap[input.name] = saveInfo;
 
-  for (let i = 0, input; (input = this.inputList[i]); i++) {
-    if (input.name !== 'STACK' && input.connection) {
-      const target = input.connection.targetBlock();
-      const saveInfo = {
-        shadow: input.connection.getShadowDom(),
-        block: target,
-      };
-      connectionMap[input.name] = saveInfo;
-
-      // Remove the shadow DOM, then disconnect the block. Otherwise a shadow
-      // block will respawn instantly, and we'd have to remove it when we remove
-      // the input.
-      input.connection.setShadowDom(null, true);
-      if (input.connection.targetConnection && input.name !== 'RETURN') {
-        input.connection.disconnect();
-      }
-    }
-  }
-
-  return connectionMap;
-}
-
-/**
- * Removes all value inputs on the block.
- * @private
- * @this Block
- */
-function removeValueInputs_() {
-  // Delete inputs directly instead of with block.removeInput to avoid splicing
-  // out of the input list at every index.
-  const newInputList = [];
-
-  for (let i = 0, input; (input = this.inputList[i]); i++) {
-    if (input.type === ConnectionType.INPUT_VALUE && input.name !== 'RETURN') {
-      input.dispose();
-    } else {
-      newInputList.push(input);
-    }
-  }
-
-  this.inputList = newInputList;
-}
-
-/**
- * Delete all shadow blocks in the given map.
- * @param {!Object.<string, Blockly.Block>} connectionMap An object mapping
- *     argument IDs to the blocks that were connected to those IDs at the
- *     beginning of the mutation.
- * @private
- * @this Blockly.Block
- */
-function deleteShadows_(connectionMap) {
-  // Get rid of all of the old shadow blocks if they aren't connected.
-  if (connectionMap) {
-    for (const id in connectionMap) {
-      const saveInfo = connectionMap[id];
-      if (saveInfo) {
-        const block = saveInfo['block'];
-        if (block && block.isShadow()) {
-          block.dispose();
-          delete connectionMap[id];
+        // Remove the shadow DOM, then disconnect the block. Otherwise a shadow
+        // block will respawn instantly, and we'd have to remove it when we remove
+        // the input.
+        input.connection.setShadowDom(null, true);
+        if (input.connection.targetConnection && input.name !== 'RETURN') {
+          input.connection.disconnect();
         }
       }
     }
-  }
-}
 
-/**
-  * Add or remove the statement block from this function definition.
-  * @param {boolean} hasStatements True if a statement block is needed.
-  * @this {Block}
-  */
-function setStatements_(hasStatements) {
-  if (this.hasStatements_ === hasStatements) {
-    return;
-  }
-  if (hasStatements) {
-    this.appendStatementInput('STACK').appendField(
-      Msg.PROCEDURES_DEFNORETURN_DO);
-    if (this.getInput('RETURN')) {
-      this.moveInputBefore('STACK', 'RETURN');
-    }
-  } else {
-    this.removeInput('STACK', true);
-  }
-  this.hasStatements_ = hasStatements;
-}
+    return connectionMap;
+  },
 
-/**
- * Build a DOM node representing a shadow block of the given type.
- * @param {string} name Name argument block.
- * @param {string} argId Id argument block.
- * @return {!Element} The DOM node representing the new shadow block.
- * @private
- * @this Block
- */
-function buildArgumentBlock_(name, argId) {
-  const block = xmlUtils.createElement('shadow');
-  block.setAttribute('type', 'argument_local');
+  /**
+   * Removes all value inputs on the block.
+   * @private
+   * @this Block
+   */
+  removeValueInputs_: function() {
+    // Delete inputs directly instead of with block.removeInput to avoid splicing
+    // out of the input list at every index.
+    const newInputList = [];
 
-  const data = xmlUtils.createElement('data');
-  data.appendChild(xmlUtils.createTextNode(argId));
-  block.appendChild(data);
-
-  const field = xmlUtils.createElement('field');
-  field.setAttribute('name', 'VALUE');
-  field.setAttribute('value', name);
-  field.textContent = name;
-
-  block.appendChild(field);
-  return block;
-}
-
-/**
- * Create inputs in def block
- */
-function createInputs_() {
-  this.argumentModels_ = [];
-
-  for (let i = 0, argument; (argument = this.updatedArguments_[i]); i++) {
-    const argumentBlock = this.buildArgumentBlock_(argument.name, argument.id);
-
-    this.argumentModels_.push({id: argument.id, name: argument.name});
-    this.appendValueInput(argument.id)
-      .setCheck(argument.id)
-      .setAlign(Align.RIGHT)
-      .setShadowDom(argumentBlock);
-    this.moveInputBefore(argument.id, 'PARAMS');
-  }
-}
-
-/**
-* Remove unused arguments in procedures.
-* @private
-*/
-function removeArguments_() {
-  if (!this.argumentModels_.length) {
-    return;
-  }
-
-  const updatesArgumentsId = this.updatedArguments_.map((a) => a.id);
-
-  const shouldRemove = this.argumentModels_.filter((a) => !updatesArgumentsId.includes(a.id));
-
-  const shouldRename = this.updatedArguments_.filter((arg) => {
-    const existArgument = this.argumentModels_.find((a) => a.id === arg.id);
-    return existArgument && arg.name !== existArgument.name;
-  });
-
-  const allBlocks = this.getDescendants();
-  const argumentsInProcedures = allBlocks.filter((block) => block.type === 'argument_local' && !block.isShadow());
-
-  if (!argumentsInProcedures.length) {
-    return;
-  }
-
-  for (let i = 0, argumentBlock; (argumentBlock = argumentsInProcedures[i]); i++) {
-    const argumentShouldRename = shouldRename.find((a) => a.id === argumentBlock.data);
-    if (shouldRename.length && argumentShouldRename) {
-      argumentBlock.changeArgumentName.call(argumentBlock, argumentShouldRename.name);
-    }
-
-    const argumentShouldRemove = shouldRemove.find((f) => f.id === argumentBlock.data);
-    if (shouldRemove.length && argumentShouldRemove) {
-      argumentBlock.dispose();
-    }
-  }
-}
-
-/**
-* Update the display of parameters for this procedure definition block.
-* @private
-* @this {Block}
-*/
-function updateParams_() {
-  Events.disable();
-  try {
-    const connectionMap = this.disconnectOldBlocks_();
-    this.removeArguments_();
-    this.removeValueInputs_();
-    this.deleteShadows_(connectionMap);
-    this.createInputs_();
-  } finally {
-    Events.enable();
-  }
-}
-
-/**
-  * Create XML to represent the argument inputs.
-  * Backwards compatible serialization implementation.
-  * @param {boolean=} optParamIds If true include the IDs of the parameter
-  *     quarks.  Used by Blockly.ProceduresLocalArgument.mutateCallers for reconnection.
-  * @return {!Element} XML storage element.
-  * @this {Block}
-  */
-function mutationToDom(optParamIds) {
-  const container = xmlUtils.createElement('mutation');
-  if (optParamIds) {
-    container.setAttribute('name', this.getFieldValue('NAME'));
-  }
-  for (let i = 0; i < this.argumentModels_.length; i++) {
-    const parameter = xmlUtils.createElement('arg');
-    const argModel = this.argumentModels_[i];
-    parameter.setAttribute('name', argModel.name);
-    parameter.setAttribute('value', argModel.name);
-    parameter.setAttribute('varid', argModel.id);
-    container.appendChild(parameter);
-  }
-
-  // Save whether the statement input is visible.
-  if (!this.hasStatements_) {
-    container.setAttribute('statements', 'false');
-  }
-  return container;
-}
-
-/**
-  * Parse XML to restore the argument inputs.
-  * Backwards compatible serialization implementation.
-  * @param {!Element} xmlElement XML storage element.
-  * @this {Block}
-  */
-function domToMutation(xmlElement) {
-  this.arguments_ = [];
-  this.argumentModels_ = [];
-  this.updatedArguments_ = [];
-  for (let i = 0, childNode; (childNode = xmlElement.childNodes[i]); i++) {
-    if (childNode.nodeName.toLowerCase() === 'arg') {
-      const varName = childNode.getAttribute('name');
-      const varId = childNode.getAttribute('varid') || childNode.getAttribute('varId');
-      if (varName !== null && varId !== null) {
-        this.arguments_.push(varName);
-        this.argumentModels_.push({id: varId, name: varName});
-        this.updatedArguments_.push({id: varId, name: varName});
+    for (let i = 0, input; (input = this.inputList[i]); i++) {
+      if (input.type === ConnectionType.INPUT_VALUE && input.name !== 'RETURN') {
+        input.dispose();
       } else {
-        console.log(
-          'Failed to create a variable with name ' + varName +
-              ', ignoring.');
+        newInputList.push(input);
       }
     }
-  }
-  this.updateParams_();
-  ProceduresLocalArgument.mutateCallers(this);
 
-  // Show or hide the statement input.
-  this.setStatements_(xmlElement.getAttribute('statements') !== 'false');
-}
+    this.inputList = newInputList;
+  },
 
-/**
-  * Returns the state of this block as a JSON serializable object.
-  * @return {?{params: (!Array<{name: string, id: string}>|undefined),
-  *     hasStatements: (boolean|undefined)}} The state of this block, eg the
-  *     parameters and statements.
-  */
-function saveExtraState() {
-  if (!this.argumentModels_.length && this.hasStatements_) {
-    return null;
-  }
-  const state = Object.create(null);
-  if (this.argumentModels_.length) {
-    state.params = [];
-    for (let i = 0; i < this.argumentModels_.length; i++) {
-      state.params.push({
-        'name': this.argumentModels_[i].name,
-        'value': this.argumentModels_[i].name,
-        'id': this.argumentModels_[i].id,
-      });
+  /**
+   * Delete all shadow blocks in the given map.
+   * @param {!Object.<string, Blockly.Block>} connectionMap An object mapping
+   *     argument IDs to the blocks that were connected to those IDs at the
+   *     beginning of the mutation.
+   * @private
+   * @this Blockly.Block
+   */
+  deleteShadows_: function(connectionMap) {
+    // Get rid of all of the old shadow blocks if they aren't connected.
+    if (connectionMap) {
+      for (const id in connectionMap) {
+        const saveInfo = connectionMap[id];
+        if (saveInfo) {
+          const block = saveInfo['block'];
+          if (block && block.isShadow()) {
+            block.dispose();
+            delete connectionMap[id];
+          }
+        }
+      }
     }
-  }
-  if (!this.hasStatements_) {
-    state.hasStatements = false;
-  }
-  return state;
-}
+  },
 
-/**
-  * Applies the given state to this block.
-  * @param {*} state The state to apply to this block, eg the parameters and
-  *     statements.
-  */
-function loadExtraState(state) {
-  this.arguments_ = [];
-  this.argumentModels_ = [];
-  this.updatedArguments_ = [];
-  if (state.params) {
-    for (let i = 0; i < state.params.length; i++) {
-      const param = state.params[i];
-      this.arguments_.push(param.name);
-      this.argumentModels_.push({id: param.id, name: param.name});
-      this.updatedArguments_.push({id: param.id, name: param.name});
-    }
-  }
-  this.updateParams_();
-  ProceduresLocalArgument.mutateCallers(this);
-  this.setStatements_(state.hasStatements !== false);
-}
-
-/**
-  * Populate the mutator's dialog with this block's components.
-  * @param {!Workspace} workspace Mutator's workspace.
-  * @return {!Block} Root block in mutator.
-  * @this {Block}
-  */
-function decompose(workspace) {
-  /*
-    * Creates the following XML:
-    * <block type="procedures_local_mutatorcontainer">
-    *   <statement name="STACK">
-    *     <block type="procedures_local_mutatorarg">
-    *       <data>arg1_id</data>
-    *       <field name="NAME">arg1_name</field>
-    *       <next>etc...</next>
-    *     </block>
-    *   </statement>
-    * </block>
+  /**
+    * Add or remove the statement block from this function definition.
+    * @param {boolean} hasStatements True if a statement block is needed.
+    * @this {Block}
     */
+  setStatements_: function(hasStatements) {
+    if (this.hasStatements_ === hasStatements) {
+      return;
+    }
+    if (hasStatements) {
+      this.appendStatementInput('STACK').appendField(
+        Msg.PROCEDURES_DEFNORETURN_DO);
+      if (this.getInput('RETURN')) {
+        this.moveInputBefore('STACK', 'RETURN');
+      }
+    } else {
+      this.removeInput('STACK', true);
+    }
+    this.hasStatements_ = hasStatements;
+  },
 
-  const containerBlockNode = xmlUtils.createElement('block');
-  containerBlockNode.setAttribute('type', 'procedures_local_mutatorcontainer');
-  const statementNode = xmlUtils.createElement('statement');
-  statementNode.setAttribute('name', 'STACK');
-  containerBlockNode.appendChild(statementNode);
-
-  let node = statementNode;
-  for (let i = 0; i < this.argumentModels_.length; i++) {
-    const argBlockNode = xmlUtils.createElement('block');
+  /**
+   * Build a DOM node representing a shadow block of the given type.
+   * @param {string} name Name argument block.
+   * @param {string} argId Id argument block.
+   * @return {!Element} The DOM node representing the new shadow block.
+   * @private
+   * @this Block
+   */
+  buildArgumentBlock_: function(name, argId) {
+    const block = xmlUtils.createElement('shadow');
+    block.setAttribute('type', 'argument_local');
 
     const data = xmlUtils.createElement('data');
-    data.appendChild(xmlUtils.createTextNode(this.argumentModels_[i].id));
-    argBlockNode.appendChild(data);
+    data.appendChild(xmlUtils.createTextNode(argId));
+    block.appendChild(data);
 
-    argBlockNode.setAttribute('type', 'procedures_local_mutatorarg');
-    const fieldNode = xmlUtils.createElement('field');
-    fieldNode.setAttribute('name', 'NAME');
-    const argumentName = xmlUtils.createTextNode(this.argumentModels_[i].name);
-    fieldNode.appendChild(argumentName);
-    argBlockNode.appendChild(fieldNode);
-    const nextNode = xmlUtils.createElement('next');
-    argBlockNode.appendChild(nextNode);
+    const field = xmlUtils.createElement('field');
+    field.setAttribute('name', 'VALUE');
+    field.setAttribute('value', name);
+    field.textContent = name;
 
-    node.appendChild(argBlockNode);
-    node = nextNode;
-  }
+    block.appendChild(field);
+    return block;
+  },
 
-  const containerBlock = Xml.domToBlock(containerBlockNode, workspace);
+  /**
+   * Create inputs in def block
+   */
+  createInputs_: function() {
+    this.argumentModels_ = [];
 
-  if (this.type === 'procedures_with_argument_defreturn') {
-    containerBlock.setFieldValue(this.hasStatements_, 'STATEMENTS');
-  } else {
-    containerBlock.removeInput('STATEMENT_INPUT');
-  }
+    for (let i = 0, argument; (argument = this.updatedArguments_[i]); i++) {
+      const argumentBlock = this.buildArgumentBlock_(argument.name, argument.id);
 
-  // Initialize procedure's callers with blank IDs.
-  ProceduresLocalArgument.mutateCallers(this);
-  return containerBlock;
-}
+      this.argumentModels_.push({id: argument.id, name: argument.name});
+      this.appendValueInput(argument.id)
+        .setCheck(argument.id)
+        .setAlign(Align.RIGHT)
+        .setShadowDom(argumentBlock);
+      this.moveInputBefore(argument.id, 'PARAMS');
+    }
+  },
 
-/**
-  * Reconfigure this block based on the mutator dialog's components.
-  * @param {!Block} containerBlock Root block in mutator.
-  * @this {Block}
+  /**
+  * Remove unused arguments in procedures.
+  * @private
   */
-function compose(containerBlock) {
-  // Parameter list.
-  this.arguments_ = [];
-  this.updatedArguments_ = [];
-  let paramBlock = containerBlock.getInputTargetBlock('STACK');
+  removeArguments_: function() {
+    if (!this.argumentModels_.length) {
+      return;
+    }
 
-  while (paramBlock && !paramBlock.isInsertionMarker()) {
-    const argumentName = paramBlock.getFieldValue('NAME');
-    const argumentId = paramBlock.getData();
-    this.updatedArguments_.push({id: argumentId, name: argumentName});
-    this.arguments_.push(argumentName);
+    const updatesArgumentsId = this.updatedArguments_.map((a) => a.id);
 
-    paramBlock =
-    paramBlock.nextConnection && paramBlock.nextConnection.targetBlock();
-  }
+    const shouldRemove = this.argumentModels_.filter((a) => !updatesArgumentsId.includes(a.id));
 
-  this.updateParams_();
-  ProceduresLocalArgument.mutateCallers(this);
+    const shouldRename = this.updatedArguments_.filter((arg) => {
+      const existArgument = this.argumentModels_.find((a) => a.id === arg.id);
+      return existArgument && arg.name !== existArgument.name;
+    });
 
-  // Show/hide the statement input.
-  let hasStatements = containerBlock.getFieldValue('STATEMENTS');
-  if (hasStatements !== null) {
-    hasStatements = hasStatements === 'TRUE';
-    if (this.hasStatements_ !== hasStatements) {
-      if (hasStatements) {
-        this.setStatements_(true);
-        // Restore the stack, if one was saved.
-        Mutator.reconnect(this.statementConnection_, this, 'STACK');
-        this.statementConnection_ = null;
-      } else {
-        // Save the stack, then disconnect it.
-        const stackConnection = this.getInput('STACK').connection;
-        this.statementConnection_ = stackConnection.targetConnection;
-        if (this.statementConnection_) {
-          const stackBlock = stackConnection.targetBlock();
-          stackBlock.unplug();
-          stackBlock.bumpNeighbours();
-        }
-        this.setStatements_(false);
+    const allBlocks = this.getDescendants();
+    const argumentsInProcedures = allBlocks.filter((block) => block.type === 'argument_local' && !block.isShadow());
+
+    if (!argumentsInProcedures.length) {
+      return;
+    }
+
+    for (let i = 0, argumentBlock; (argumentBlock = argumentsInProcedures[i]); i++) {
+      const argumentShouldRename = shouldRename.find((a) => a.id === argumentBlock.data);
+      if (shouldRename.length && argumentShouldRename) {
+        argumentBlock.changeArgumentName.call(argumentBlock, argumentShouldRename.name);
+      }
+
+      const argumentShouldRemove = shouldRemove.find((f) => f.id === argumentBlock.data);
+      if (shouldRemove.length && argumentShouldRemove) {
+        argumentBlock.dispose();
       }
     }
-  }
-}
+  },
 
-/**
-  * Return all variables referenced by this block.
-  * @return {!Array<string>} List of variable names.
+  /**
+  * Update the display of parameters for this procedure definition block.
+  * @private
   * @this {Block}
   */
-function getArguments() {
-  return this.arguments_;
-}
+  updateParams_: function() {
+    Events.disable();
+    try {
+      const connectionMap = this.disconnectOldBlocks_();
+      this.removeArguments_();
+      this.removeValueInputs_();
+      this.deleteShadows_(connectionMap);
+      this.createInputs_();
+    } finally {
+      Events.enable();
+    }
+  },
 
-/**
-  * Add custom menu options to this block's context menu.
-  * @param {!Array} options List of menu options to add to.
+  /**
+    * Create XML to represent the argument inputs.
+    * Backwards compatible serialization implementation.
+    * @param {boolean=} optParamIds If true include the IDs of the parameter
+    *     quarks.  Used by Blockly.ProceduresLocalArgument.mutateCallers for reconnection.
+    * @return {!Element} XML storage element.
+    * @this {Block}
+    */
+  mutationToDom: function(optParamIds) {
+    const container = xmlUtils.createElement('mutation');
+    if (optParamIds) {
+      container.setAttribute('name', this.getFieldValue('NAME'));
+    }
+    for (let i = 0; i < this.argumentModels_.length; i++) {
+      const parameter = xmlUtils.createElement('arg');
+      const argModel = this.argumentModels_[i];
+      parameter.setAttribute('name', argModel.name);
+      parameter.setAttribute('value', argModel.name);
+      parameter.setAttribute('varid', argModel.id);
+      container.appendChild(parameter);
+    }
+
+    // Save whether the statement input is visible.
+    if (!this.hasStatements_) {
+      container.setAttribute('statements', 'false');
+    }
+    return container;
+  },
+
+  /**
+    * Parse XML to restore the argument inputs.
+    * Backwards compatible serialization implementation.
+    * @param {!Element} xmlElement XML storage element.
+    * @this {Block}
+    */
+  domToMutation: function(xmlElement) {
+    this.arguments_ = [];
+    this.argumentModels_ = [];
+    this.updatedArguments_ = [];
+    for (let i = 0, childNode; (childNode = xmlElement.childNodes[i]); i++) {
+      if (childNode.nodeName.toLowerCase() === 'arg') {
+        const varName = childNode.getAttribute('name');
+        const varId = childNode.getAttribute('varid') || childNode.getAttribute('varId');
+        if (varName !== null && varId !== null) {
+          this.arguments_.push(varName);
+          this.argumentModels_.push({id: varId, name: varName});
+          this.updatedArguments_.push({id: varId, name: varName});
+        } else {
+          console.log(
+            'Failed to create a variable with name ' + varName +
+                ', ignoring.');
+        }
+      }
+    }
+    this.updateParams_();
+    ProceduresLocalArgument.mutateCallers(this);
+
+    // Show or hide the statement input.
+    this.setStatements_(xmlElement.getAttribute('statements') !== 'false');
+  },
+
+  /**
+    * Returns the state of this block as a JSON serializable object.
+    * @return {?{params: (!Array<{name: string, id: string}>|undefined),
+    *     hasStatements: (boolean|undefined)}} The state of this block, eg the
+    *     parameters and statements.
+    */
+  saveExtraState: function() {
+    if (!this.argumentModels_.length && this.hasStatements_) {
+      return null;
+    }
+    const state = Object.create(null);
+    if (this.argumentModels_.length) {
+      state.params = [];
+      for (let i = 0; i < this.argumentModels_.length; i++) {
+        state.params.push({
+          'name': this.argumentModels_[i].name,
+          'value': this.argumentModels_[i].name,
+          'id': this.argumentModels_[i].id,
+        });
+      }
+    }
+    if (!this.hasStatements_) {
+      state.hasStatements = false;
+    }
+    return state;
+  },
+
+  /**
+    * Applies the given state to this block.
+    * @param {*} state The state to apply to this block, eg the parameters and
+    *     statements.
+    */
+  loadExtraState: function(state) {
+    this.arguments_ = [];
+    this.argumentModels_ = [];
+    this.updatedArguments_ = [];
+    if (state.params) {
+      for (let i = 0; i < state.params.length; i++) {
+        const param = state.params[i];
+        this.arguments_.push(param.name);
+        this.argumentModels_.push({id: param.id, name: param.name});
+        this.updatedArguments_.push({id: param.id, name: param.name});
+      }
+    }
+    this.updateParams_();
+    ProceduresLocalArgument.mutateCallers(this);
+    this.setStatements_(state.hasStatements !== false);
+  },
+
+  /**
+    * Populate the mutator's dialog with this block's components.
+    * @param {!Workspace} workspace Mutator's workspace.
+    * @return {!Block} Root block in mutator.
+    * @this {Block}
+    */
+  decompose: function(workspace) {
+    /*
+      * Creates the following XML:
+      * <block type="procedures_local_mutatorcontainer">
+      *   <statement name="STACK">
+      *     <block type="procedures_local_mutatorarg">
+      *       <data>arg1_id</data>
+      *       <field name="NAME">arg1_name</field>
+      *       <next>etc...</next>
+      *     </block>
+      *   </statement>
+      * </block>
+      */
+
+    const containerBlockNode = xmlUtils.createElement('block');
+    containerBlockNode.setAttribute('type', 'procedures_local_mutatorcontainer');
+    const statementNode = xmlUtils.createElement('statement');
+    statementNode.setAttribute('name', 'STACK');
+    containerBlockNode.appendChild(statementNode);
+
+    let node = statementNode;
+    for (let i = 0; i < this.argumentModels_.length; i++) {
+      const argBlockNode = xmlUtils.createElement('block');
+
+      const data = xmlUtils.createElement('data');
+      data.appendChild(xmlUtils.createTextNode(this.argumentModels_[i].id));
+      argBlockNode.appendChild(data);
+
+      argBlockNode.setAttribute('type', 'procedures_local_mutatorarg');
+      const fieldNode = xmlUtils.createElement('field');
+      fieldNode.setAttribute('name', 'NAME');
+      const argumentName = xmlUtils.createTextNode(this.argumentModels_[i].name);
+      fieldNode.appendChild(argumentName);
+      argBlockNode.appendChild(fieldNode);
+      const nextNode = xmlUtils.createElement('next');
+      argBlockNode.appendChild(nextNode);
+
+      node.appendChild(argBlockNode);
+      node = nextNode;
+    }
+
+    const containerBlock = Xml.domToBlock(containerBlockNode, workspace);
+
+    if (this.type === 'procedures_with_argument_defreturn') {
+      containerBlock.setFieldValue(this.hasStatements_, 'STATEMENTS');
+    } else {
+      containerBlock.removeInput('STATEMENT_INPUT');
+    }
+
+    // Initialize procedure's callers with blank IDs.
+    ProceduresLocalArgument.mutateCallers(this);
+    return containerBlock;
+  },
+
+  /**
+    * Reconfigure this block based on the mutator dialog's components.
+    * @param {!Block} containerBlock Root block in mutator.
+    * @this {Block}
+    */
+  compose: function(containerBlock) {
+    // Parameter list.
+    this.arguments_ = [];
+    this.updatedArguments_ = [];
+    let paramBlock = containerBlock.getInputTargetBlock('STACK');
+
+    while (paramBlock && !paramBlock.isInsertionMarker()) {
+      const argumentName = paramBlock.getFieldValue('NAME');
+      const argumentId = paramBlock.getData();
+      this.updatedArguments_.push({id: argumentId, name: argumentName});
+      this.arguments_.push(argumentName);
+
+      paramBlock =
+      paramBlock.nextConnection && paramBlock.nextConnection.targetBlock();
+    }
+
+    this.updateParams_();
+    ProceduresLocalArgument.mutateCallers(this);
+
+    // Show/hide the statement input.
+    let hasStatements = containerBlock.getFieldValue('STATEMENTS');
+    if (hasStatements !== null) {
+      hasStatements = hasStatements === 'TRUE';
+      if (this.hasStatements_ !== hasStatements) {
+        if (hasStatements) {
+          this.setStatements_(true);
+          // Restore the stack, if one was saved.
+          Mutator.reconnect(this.statementConnection_, this, 'STACK');
+          this.statementConnection_ = null;
+        } else {
+          // Save the stack, then disconnect it.
+          const stackConnection = this.getInput('STACK').connection;
+          this.statementConnection_ = stackConnection.targetConnection;
+          if (this.statementConnection_) {
+            const stackBlock = stackConnection.targetBlock();
+            stackBlock.unplug();
+            stackBlock.bumpNeighbours();
+          }
+          this.setStatements_(false);
+        }
+      }
+    }
+  },
+
+  /**
+    * Return all variables referenced by this block.
+    * @return {!Array<string>} List of variable names.
+    * @this {Block}
+    */
+  getArguments: function() {
+    return this.arguments_;
+  },
+
+  /**
+    * Add custom menu options to this block's context menu.
+    * @param {!Array} options List of menu options to add to.
+    * @this {Block}
+    */
+  customContextMenu: function(options) {
+    if (this.isInFlyout) {
+      return;
+    }
+    // Add option to create caller.
+    const option = {enabled: true};
+    const name = this.getFieldValue('NAME');
+    option.text = Msg.PROCEDURES_CREATE_DO.replace('%1', name);
+    const xmlMutation = xmlUtils.createElement('mutation');
+    xmlMutation.setAttribute('name', name);
+    for (let i = 0; i < this.argumentModels_.length; i++) {
+      const xmlArg = xmlUtils.createElement('arg');
+      xmlArg.setAttribute('name', this.argumentModels_[i].name);
+      xmlArg.setAttribute('varId', this.argumentModels_[i].id);
+      xmlMutation.appendChild(xmlArg);
+    }
+    const xmlBlock = xmlUtils.createElement('block');
+    xmlBlock.setAttribute('type', this.callType_);
+    xmlBlock.appendChild(xmlMutation);
+    option.callback = ContextMenu.callbackFactory(this, xmlBlock);
+    options.push(option);
+  },
+
+  /**
+  * Return the signature of this procedure definition.
+  * @return {!Array} Tuple containing three elements:
+  *     - the name of the defined procedure,
+  *     - a list of all its arguments,
+  *     - that it DOES NOT have a return value.
   * @this {Block}
   */
-function customContextMenu(options) {
-  if (this.isInFlyout) {
-    return;
-  }
-  // Add option to create caller.
-  const option = {enabled: true};
-  const name = this.getFieldValue('NAME');
-  option.text = Msg.PROCEDURES_CREATE_DO.replace('%1', name);
-  const xmlMutation = xmlUtils.createElement('mutation');
-  xmlMutation.setAttribute('name', name);
-  for (let i = 0; i < this.argumentModels_.length; i++) {
-    const xmlArg = xmlUtils.createElement('arg');
-    xmlArg.setAttribute('name', this.argumentModels_[i].name);
-    xmlArg.setAttribute('varId', this.argumentModels_[i].id);
-    xmlMutation.appendChild(xmlArg);
-  }
-  const xmlBlock = xmlUtils.createElement('block');
-  xmlBlock.setAttribute('type', this.callType_);
-  xmlBlock.appendChild(xmlMutation);
-  option.callback = ContextMenu.callbackFactory(this, xmlBlock);
-  options.push(option);
-}
+  getProcedureDef: function() {
+    return [this.getFieldValue('NAME'), this.arguments_, false];
+  },
 
-/**
-* Return the signature of this procedure definition.
-* @return {!Array} Tuple containing three elements:
-*     - the name of the defined procedure,
-*     - a list of all its arguments,
-*     - that it DOES NOT have a return value.
-* @this {Block}
-*/
-function getProcedureDef() {
-  return [this.getFieldValue('NAME'), this.arguments_, false];
-}
-
+};
 
 blocks['procedures_with_argument_defnoreturn'] = {
   /**
@@ -550,24 +551,7 @@ blocks['procedures_with_argument_defnoreturn'] = {
     this.statementConnection_ = null;
   },
 
-  disconnectOldBlocks_: disconnectOldBlocks_,
-  deleteShadows_: deleteShadows_,
-  createInputs_: createInputs_,
-  removeArguments_: removeArguments_,
-  removeValueInputs_: removeValueInputs_,
-  setStatements_: setStatements_,
-  buildArgumentBlock_: buildArgumentBlock_,
-  updateParams_: updateParams_,
-  mutationToDom: mutationToDom,
-  domToMutation: domToMutation,
-  saveExtraState: saveExtraState,
-  loadExtraState: loadExtraState,
-  decompose: decompose,
-  compose: compose,
-  getArguments: getArguments,
-  customContextMenu: customContextMenu,
-  getProcedureDef: getProcedureDef,
-  callType_: 'procedures_with_argument_callnoreturn',
+  ...PROCEDURES_WITH_ARGUMENT,
 };
 
 blocks['procedures_with_argument_defreturn'] = {
@@ -604,23 +588,7 @@ blocks['procedures_with_argument_defreturn'] = {
     this.statementConnection_ = null;
   },
 
-  disconnectOldBlocks_: disconnectOldBlocks_,
-  deleteShadows_: deleteShadows_,
-  createInputs_: createInputs_,
-  removeArguments_: removeArguments_,
-  removeValueInputs_: removeValueInputs_,
-  setStatements_: setStatements_,
-  buildArgumentBlock_: buildArgumentBlock_,
-  updateParams_: updateParams_,
-  mutationToDom: mutationToDom,
-  domToMutation: domToMutation,
-  saveExtraState: saveExtraState,
-  loadExtraState: loadExtraState,
-  decompose: decompose,
-  compose: compose,
-  getArguments: getArguments,
-  customContextMenu: customContextMenu,
-  getProcedureDef: getProcedureDef,
+  ...PROCEDURES_WITH_ARGUMENT,
   callType_: 'procedures_with_argument_callreturn',
 };
 

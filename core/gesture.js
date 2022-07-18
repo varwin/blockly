@@ -25,7 +25,7 @@ const common = goog.require('Blockly.common');
 const eventUtils = goog.require('Blockly.Events.utils');
 const internalConstants = goog.require('Blockly.internalConstants');
 const registry = goog.require('Blockly.registry');
-const argumentLocal = goog.require('Blockly.utils.argumentLocal');
+const {isShadowArgumentLocal} = goog.require('Blockly.utils.argumentLocal');
 /* eslint-disable-next-line no-unused-vars */
 const {BlockSvg} = goog.requireType('Blockly.BlockSvg');
 const {BubbleDragger} = goog.require('Blockly.BubbleDragger');
@@ -900,7 +900,7 @@ class Gesture {
     if (!this.startBlock_ && !this.startBubble_) {
       this.startBlock_ = block;
       this.shouldDuplicateOnDrag_ = !block.disabled && !block.getInheritedDisabled() &&
-        !block.isInFlyout && argumentLocal.isShadowArgumentLocal(block);
+        !block.isInFlyout && isShadowArgumentLocal(block);
 
       if (block.isInFlyout && block !== block.getRootBlock()) {
         this.setTargetBlock_(block.getRootBlock());

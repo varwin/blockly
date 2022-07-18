@@ -72,7 +72,7 @@ const {Theme} = goog.requireType('Blockly.Theme');
 const {Warning} = goog.requireType('Blockly.Warning');
 /* eslint-disable-next-line no-unused-vars */
 const {WorkspaceSvg} = goog.requireType('Blockly.WorkspaceSvg');
-const argumentLocal = goog.require('Blockly.utils.argumentLocal');
+const {isShadowArgumentLocal} = goog.require('Blockly.utils.argumentLocal');
 /** @suppress {extraRequire} */
 goog.require('Blockly.Events.BlockMove');
 /** @suppress {extraRequire} */
@@ -891,7 +891,7 @@ class BlockSvg extends Block {
   showContextMenu(e) {
     // display parent context menu for argument local
     const block = this;
-    if (this.parentBlock_ && (this.isShadow_ && !argumentLocal.isShadowArgumentLocal(block))) {
+    if (this.parentBlock_ && (this.isShadow_ && !isShadowArgumentLocal(block))) {
       this.parentBlock_.showContextMenu_(e);
       return;
     }

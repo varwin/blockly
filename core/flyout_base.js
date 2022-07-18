@@ -933,6 +933,7 @@ class Flyout extends DeleteArea {
    *     toolbox definition, or a string with the name of the dynamic category.
    */
   show(flyoutDef) {
+    console.log('show(flyoutDef)', flyoutDef);
     this.workspace_.setResizesEnabled(false);
     this.hide();
     this.clearOldBlocks_();
@@ -940,6 +941,7 @@ class Flyout extends DeleteArea {
     // Handle dynamic categories, represented by a name instead of a list.
     if (typeof flyoutDef === 'string') {
       flyoutDef = this.getDynamicCategoryContents_(flyoutDef);
+      console.log('getDynamicCategoryContents_', flyoutDef);
     }
     this.setVisible(true);
 
@@ -947,6 +949,7 @@ class Flyout extends DeleteArea {
 
     // Parse the Array, Node or NodeList into a a list of flyout items.
     const parsedContent = toolbox.convertFlyoutDefToJsonArray(flyoutDef);
+    console.log('parsedContent', parsedContent);
     const flyoutInfo =
         /** @type {{contents:!Array<!Object>, gaps:!Array<number>}} */ (
             this.createFlyoutInfo_(parsedContent));
@@ -1010,8 +1013,7 @@ class Flyout extends DeleteArea {
         const parsedDynamicContent = /** @type {!toolbox.FlyoutItemInfoArray} */
             (toolbox.convertFlyoutDefToJsonArray(flyoutDef));
         // Replace the element at i with the dynamic content it represents.
-        parsedContent.splice.apply(
-            parsedContent, [i, 1].concat(parsedDynamicContent));
+        parsedContent.splice.apply(parsedContent, [i, 1].concat(parsedDynamicContent));
         contentInfo = parsedContent[i];
       }
 
