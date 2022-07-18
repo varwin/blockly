@@ -10,9 +10,7 @@
  */
  'use strict';
 
- goog.module('Blockly.blocks.proceduresLocalArgument');
-
- Blockly.ProceduresLocalArgumentUtils = {};
+ goog.module('Blockly.libraryBlocks.proceduresLocalArgument');
 
  /* eslint-disable-next-line no-unused-vars */
  const AbstractEvent = goog.requireType('Blockly.Events.Abstract');
@@ -26,7 +24,6 @@
  const {ConnectionType} = goog.require('Blockly.ConnectionType');
  /* eslint-disable-next-line no-unused-vars */
  const {Block} = goog.requireType('Blockly.Block');
- const {Blocks} = goog.require('Blockly.blocks');
  /* eslint-disable-next-line no-unused-vars */
  const {Gesture} = goog.require('Blockly.Gesture');
  const {FieldCheckbox} = goog.require('Blockly.FieldCheckbox');
@@ -38,15 +35,20 @@
  const {Names} = goog.require('Blockly.Names');
  /* eslint-disable-next-line no-unused-vars */
  const {Workspace} = goog.requireType('Blockly.Workspace');
+ const {defineBlocks} = goog.require('Blockly.common');
  /** @suppress {extraRequire} */
  goog.require('Blockly.Comment');
  /** @suppress {extraRequire} */
  goog.require('Blockly.Warning');
 
 /**
-  * Common properties for the procedure_defnoreturn and
-  * procedure_defreturn blocks.
-  */
+ * A dictionary of the block definitions provided by this module.
+ * @type {!Object<string, !BlockDefinition>}
+ */
+const blocks = {};
+exports.blocks = blocks;
+
+
 /**
  * Disconnect old blocks from all value inputs on this block, but hold onto them
  * in case they can be reattached later. Also save the shadow DOM if it exists.
@@ -57,9 +59,10 @@
  * @private
  * @this Blockly.Block
  */
-  Blockly.ProceduresLocalArgumentUtils.disconnectOldBlocks_ = function() {
+function disconnectOldBlocks_() {
   // Remove old stuff
   const connectionMap = {};
+
   for (let i = 0, input; (input = this.inputList[i]); i++) {
     if (input.name !== 'STACK' && input.connection) {
       const target = input.connection.targetBlock();
@@ -78,26 +81,31 @@
       }
     }
   }
+
   return connectionMap;
-  };
-  /**
+}
+
+/**
  * Removes all value inputs on the block.
  * @private
  * @this Block
  */
-  Blockly.ProceduresLocalArgumentUtils.removeValueInputs_ = function() {
+function removeValueInputs_() {
   // Delete inputs directly instead of with block.removeInput to avoid splicing
   // out of the input list at every index.
-    const newInputList = [];
-    for (let i = 0, input; (input = this.inputList[i]); i++) {
-      if (input.type === ConnectionType.INPUT_VALUE && input.name !== 'RETURN') {
-        input.dispose();
-      } else {
-        newInputList.push(input);
-      }
+  const newInputList = [];
+
+  for (let i = 0, input; (input = this.inputList[i]); i++) {
+    if (input.type === ConnectionType.INPUT_VALUE && input.name !== 'RETURN') {
+      input.dispose();
+    } else {
+      newInputList.push(input);
     }
-    this.inputList = newInputList;
-  };
+  }
+
+  this.inputList = newInputList;
+}
+
 /**
  * Delete all shadow blocks in the given map.
  * @param {!Object.<string, Blockly.Block>} connectionMap An object mapping
@@ -106,7 +114,7 @@
  * @private
  * @this Blockly.Block
  */
-  Blockly.ProceduresLocalArgumentUtils.deleteShadows_ = function(connectionMap) {
+function deleteShadows_(connectionMap) {
   // Get rid of all of the old shadow blocks if they aren't connected.
   if (connectionMap) {
     for (const id in connectionMap) {
@@ -120,386 +128,398 @@
       }
     }
   }
-  };
-  /**
-    * Add or remove the statement block from this function definition.
-    * @param {boolean} hasStatements True if a statement block is needed.
-    * @this {Block}
-    */
-  Blockly.ProceduresLocalArgumentUtils.setStatements_ = function(hasStatements) {
-    if (this.hasStatements_ === hasStatements) {
-      return;
-    }
-    if (hasStatements) {
-      this.appendStatementInput('STACK').appendField(
-        Msg.PROCEDURES_DEFNORETURN_DO);
-      if (this.getInput('RETURN')) {
-        this.moveInputBefore('STACK', 'RETURN');
-      }
-    } else {
-      this.removeInput('STACK', true);
-    }
-    this.hasStatements_ = hasStatements;
-  };
-  /**
-   * Build a DOM node representing a shadow block of the given type.
-   * @param {string} name Name argument block.
-   * @param {string} argId Id argument block.
-   * @return {!Element} The DOM node representing the new shadow block.
-   * @private
-   * @this Block
-   */
-  Blockly.ProceduresLocalArgumentUtils.buildArgumentBlock_ = function(name, argId) {
-    const block = xmlUtils.createElement('shadow');
-    block.setAttribute('type', 'argument_local');
+}
 
-    const data = xmlUtils.createElement('data');
-    data.appendChild(xmlUtils.createTextNode(argId));
-    block.appendChild(data);
-
-    const field = xmlUtils.createElement('field');
-    field.setAttribute('name', 'VALUE');
-    field.setAttribute('value', name);
-    field.textContent = name;
-
-    block.appendChild(field);
-    return block;
-  };
-  /**
-   * Create inputs in def block
-   */
-  Blockly.ProceduresLocalArgumentUtils.createInputs_ = function() {
-    this.argumentModels_ = [];
-    for (let i = 0, argument; (argument = this.updatedArguments_[i]); i++) {
-      const argumentBlock = this.buildArgumentBlock_(argument.name, argument.id);
-
-      this.argumentModels_.push({id: argument.id, name: argument.name});
-      this.appendValueInput(argument.id)
-        .setCheck(argument.id)
-        .setAlign(Align.RIGHT)
-        .setShadowDom(argumentBlock);
-      this.moveInputBefore(argument.id, 'PARAMS');
-    }
-  };
-
-  /**
-  * Remove unused arguments in procedures.
-  * @private
-  */
-  Blockly.ProceduresLocalArgumentUtils.removeArguments_ = function() {
-    if (!this.argumentModels_.length) {
-      return;
-    }
-
-    const updatesArgumentsId = this.updatedArguments_.map((a) => a.id);
-
-    const shouldRemove = this.argumentModels_.filter((a) => !updatesArgumentsId.includes(a.id));
-
-    const shouldRename = this.updatedArguments_.filter((arg) => {
-      const existArgument = this.argumentModels_.find((a) => a.id === arg.id);
-      return existArgument && arg.name !== existArgument.name;
-    });
-
-    const allBlocks = this.getDescendants();
-    const argumentsInProcedures = allBlocks.filter((block) => block.type === 'argument_local' && !block.isShadow());
-
-    if (!argumentsInProcedures.length) {
-      return;
-    }
-
-    for (let i = 0, argumentBlock; (argumentBlock = argumentsInProcedures[i]); i++) {
-      const argumentShouldRename = shouldRename.find((a) => a.id === argumentBlock.data);
-      if (shouldRename.length && argumentShouldRename) {
-        argumentBlock.changeArgumentName.call(argumentBlock, argumentShouldRename.name);
-      }
-
-      const argumentShouldRemove = shouldRemove.find((f) => f.id === argumentBlock.data);
-      if (shouldRemove.length && argumentShouldRemove) {
-        argumentBlock.dispose();
-      }
-    }
-  };
-  /**
-    * Update the display of parameters for this procedure definition block.
-    * @private
-    * @this {Block}
-    */
-  Blockly.ProceduresLocalArgumentUtils.updateParams_ = function() {
-    Events.disable();
-    try {
-      const connectionMap = this.disconnectOldBlocks_();
-      this.removeArguments_();
-      this.removeValueInputs_();
-      this.deleteShadows_(connectionMap);
-      this.createInputs_();
-    } finally {
-      Events.enable();
-    }
-  };
-  /**
-    * Create XML to represent the argument inputs.
-    * Backwards compatible serialization implementation.
-    * @param {boolean=} optParamIds If true include the IDs of the parameter
-    *     quarks.  Used by Blockly.ProceduresLocalArgument.mutateCallers for reconnection.
-    * @return {!Element} XML storage element.
-    * @this {Block}
-    */
-  Blockly.ProceduresLocalArgumentUtils.mutationToDom = function(optParamIds) {
-    const container = xmlUtils.createElement('mutation');
-    if (optParamIds) {
-      container.setAttribute('name', this.getFieldValue('NAME'));
-    }
-    for (let i = 0; i < this.argumentModels_.length; i++) {
-      const parameter = xmlUtils.createElement('arg');
-      const argModel = this.argumentModels_[i];
-      parameter.setAttribute('name', argModel.name);
-      parameter.setAttribute('value', argModel.name);
-      parameter.setAttribute('varid', argModel.id);
-      container.appendChild(parameter);
-    }
-
-    // Save whether the statement input is visible.
-    if (!this.hasStatements_) {
-      container.setAttribute('statements', 'false');
-    }
-    return container;
-  };
-  /**
-    * Parse XML to restore the argument inputs.
-    * Backwards compatible serialization implementation.
-    * @param {!Element} xmlElement XML storage element.
-    * @this {Block}
-    */
-  Blockly.ProceduresLocalArgumentUtils.domToMutation = function(xmlElement) {
-    this.arguments_ = [];
-    this.argumentModels_ = [];
-    this.updatedArguments_ = [];
-    for (let i = 0, childNode; (childNode = xmlElement.childNodes[i]); i++) {
-      if (childNode.nodeName.toLowerCase() === 'arg') {
-        const varName = childNode.getAttribute('name');
-        const varId = childNode.getAttribute('varid') || childNode.getAttribute('varId');
-        if (varName !== null && varId !== null) {
-          this.arguments_.push(varName);
-          this.argumentModels_.push({id: varId, name: varName});
-          this.updatedArguments_.push({id: varId, name: varName});
-        } else {
-          console.log(
-            'Failed to create a variable with name ' + varName +
-               ', ignoring.');
-        }
-      }
-    }
-    this.updateParams_();
-    ProceduresLocalArgument.mutateCallers(this);
-
-    // Show or hide the statement input.
-    this.setStatements_(xmlElement.getAttribute('statements') !== 'false');
-  };
-  /**
-    * Returns the state of this block as a JSON serializable object.
-    * @return {?{params: (!Array<{name: string, id: string}>|undefined),
-    *     hasStatements: (boolean|undefined)}} The state of this block, eg the
-    *     parameters and statements.
-    */
-  Blockly.ProceduresLocalArgumentUtils.saveExtraState = function() {
-    if (!this.argumentModels_.length && this.hasStatements_) {
-      return null;
-    }
-    const state = Object.create(null);
-    if (this.argumentModels_.length) {
-      state.params = [];
-      for (let i = 0; i < this.argumentModels_.length; i++) {
-        state.params.push({
-          'name': this.argumentModels_[i].name,
-          'value': this.argumentModels_[i].name,
-          'id': this.argumentModels_[i].id,
-        });
-      }
-    }
-    if (!this.hasStatements_) {
-      state.hasStatements = false;
-    }
-    return state;
-  };
-  /**
-    * Applies the given state to this block.
-    * @param {*} state The state to apply to this block, eg the parameters and
-    *     statements.
-    */
-  Blockly.ProceduresLocalArgumentUtils.loadExtraState = function(state) {
-    this.arguments_ = [];
-    this.argumentModels_ = [];
-    this.updatedArguments_ = [];
-    if (state.params) {
-      for (let i = 0; i < state.params.length; i++) {
-        const param = state.params[i];
-        this.arguments_.push(param.name);
-        this.argumentModels_.push({id: param.id, name: param.name});
-        this.updatedArguments_.push({id: param.id, name: param.name});
-      }
-    }
-    this.updateParams_();
-    ProceduresLocalArgument.mutateCallers(this);
-    this.setStatements_(state.hasStatements !== false);
-  };
-  /**
-    * Populate the mutator's dialog with this block's components.
-    * @param {!Workspace} workspace Mutator's workspace.
-    * @return {!Block} Root block in mutator.
-    * @this {Block}
-    */
-  Blockly.ProceduresLocalArgumentUtils.decompose = function(workspace) {
-    /*
-      * Creates the following XML:
-      * <block type="procedures_local_mutatorcontainer">
-      *   <statement name="STACK">
-      *     <block type="procedures_local_mutatorarg">
-      *       <data>arg1_id</data>
-      *       <field name="NAME">arg1_name</field>
-      *       <next>etc...</next>
-      *     </block>
-      *   </statement>
-      * </block>
-      */
-
-    const containerBlockNode = xmlUtils.createElement('block');
-    containerBlockNode.setAttribute('type', 'procedures_local_mutatorcontainer');
-    const statementNode = xmlUtils.createElement('statement');
-    statementNode.setAttribute('name', 'STACK');
-    containerBlockNode.appendChild(statementNode);
-
-    let node = statementNode;
-    for (let i = 0; i < this.argumentModels_.length; i++) {
-      const argBlockNode = xmlUtils.createElement('block');
-
-      const data = xmlUtils.createElement('data');
-      data.appendChild(xmlUtils.createTextNode(this.argumentModels_[i].id));
-      argBlockNode.appendChild(data);
-
-      argBlockNode.setAttribute('type', 'procedures_local_mutatorarg');
-      const fieldNode = xmlUtils.createElement('field');
-      fieldNode.setAttribute('name', 'NAME');
-      const argumentName = xmlUtils.createTextNode(this.argumentModels_[i].name);
-      fieldNode.appendChild(argumentName);
-      argBlockNode.appendChild(fieldNode);
-      const nextNode = xmlUtils.createElement('next');
-      argBlockNode.appendChild(nextNode);
-
-      node.appendChild(argBlockNode);
-      node = nextNode;
-    }
-
-    const containerBlock = Xml.domToBlock(containerBlockNode, workspace);
-
-    if (this.type === 'procedures_with_argument_defreturn') {
-      containerBlock.setFieldValue(this.hasStatements_, 'STATEMENTS');
-    } else {
-      containerBlock.removeInput('STATEMENT_INPUT');
-    }
-
-    // Initialize procedure's callers with blank IDs.
-    ProceduresLocalArgument.mutateCallers(this);
-    return containerBlock;
-  };
-  /**
-    * Reconfigure this block based on the mutator dialog's components.
-    * @param {!Block} containerBlock Root block in mutator.
-    * @this {Block}
-    */
-  Blockly.ProceduresLocalArgumentUtils.compose = function(containerBlock) {
-    // Parameter list.
-    this.arguments_ = [];
-    this.updatedArguments_ = [];
-    let paramBlock = containerBlock.getInputTargetBlock('STACK');
-
-    while (paramBlock && !paramBlock.isInsertionMarker()) {
-      const argumentName = paramBlock.getFieldValue('NAME');
-      const argumentId = paramBlock.getData();
-      this.updatedArguments_.push({id: argumentId, name: argumentName});
-      this.arguments_.push(argumentName);
-
-      paramBlock =
-      paramBlock.nextConnection && paramBlock.nextConnection.targetBlock();
-    }
-
-    this.updateParams_();
-    ProceduresLocalArgument.mutateCallers(this);
-
-    // Show/hide the statement input.
-    let hasStatements = containerBlock.getFieldValue('STATEMENTS');
-    if (hasStatements !== null) {
-      hasStatements = hasStatements === 'TRUE';
-      if (this.hasStatements_ !== hasStatements) {
-        if (hasStatements) {
-          this.setStatements_(true);
-          // Restore the stack, if one was saved.
-          Mutator.reconnect(this.statementConnection_, this, 'STACK');
-          this.statementConnection_ = null;
-        } else {
-          // Save the stack, then disconnect it.
-          const stackConnection = this.getInput('STACK').connection;
-          this.statementConnection_ = stackConnection.targetConnection;
-          if (this.statementConnection_) {
-            const stackBlock = stackConnection.targetBlock();
-            stackBlock.unplug();
-            stackBlock.bumpNeighbours();
-          }
-          this.setStatements_(false);
-        }
-      }
-    }
-  };
-  /**
-    * Return all variables referenced by this block.
-    * @return {!Array<string>} List of variable names.
-    * @this {Block}
-    */
-  Blockly.ProceduresLocalArgumentUtils.getArguments = function() {
-    return this.arguments_;
-  };
-  /**
-    * Add custom menu options to this block's context menu.
-    * @param {!Array} options List of menu options to add to.
-    * @this {Block}
-    */
-  Blockly.ProceduresLocalArgumentUtils.customContextMenu = function(options) {
-    if (this.isInFlyout) {
-      return;
-    }
-    // Add option to create caller.
-    const option = {enabled: true};
-    const name = this.getFieldValue('NAME');
-    option.text = Msg.PROCEDURES_CREATE_DO.replace('%1', name);
-    const xmlMutation = xmlUtils.createElement('mutation');
-    xmlMutation.setAttribute('name', name);
-    for (let i = 0; i < this.argumentModels_.length; i++) {
-      const xmlArg = xmlUtils.createElement('arg');
-      xmlArg.setAttribute('name', this.argumentModels_[i].name);
-      xmlArg.setAttribute('varId', this.argumentModels_[i].id);
-      xmlMutation.appendChild(xmlArg);
-    }
-    const xmlBlock = xmlUtils.createElement('block');
-    xmlBlock.setAttribute('type', this.callType_);
-    xmlBlock.appendChild(xmlMutation);
-    option.callback = ContextMenu.callbackFactory(this, xmlBlock);
-    options.push(option);
-  };
-  /**
-  * Return the signature of this procedure definition.
-  * @return {!Array} Tuple containing three elements:
-  *     - the name of the defined procedure,
-  *     - a list of all its arguments,
-  *     - that it DOES NOT have a return value.
+/**
+  * Add or remove the statement block from this function definition.
+  * @param {boolean} hasStatements True if a statement block is needed.
   * @this {Block}
   */
-  Blockly.ProceduresLocalArgumentUtils.getProcedureDef = function() {
-    return [this.getFieldValue('NAME'), this.arguments_, false];
-  };
+function setStatements_(hasStatements) {
+  if (this.hasStatements_ === hasStatements) {
+    return;
+  }
+  if (hasStatements) {
+    this.appendStatementInput('STACK').appendField(
+      Msg.PROCEDURES_DEFNORETURN_DO);
+    if (this.getInput('RETURN')) {
+      this.moveInputBefore('STACK', 'RETURN');
+    }
+  } else {
+    this.removeInput('STACK', true);
+  }
+  this.hasStatements_ = hasStatements;
+}
 
-  Blockly.ProceduresLocalArgumentUtils.callType_ = 'procedures_with_argument_callnoreturn';
+/**
+ * Build a DOM node representing a shadow block of the given type.
+ * @param {string} name Name argument block.
+ * @param {string} argId Id argument block.
+ * @return {!Element} The DOM node representing the new shadow block.
+ * @private
+ * @this Block
+ */
+function buildArgumentBlock_(name, argId) {
+  const block = xmlUtils.createElement('shadow');
+  block.setAttribute('type', 'argument_local');
+
+  const data = xmlUtils.createElement('data');
+  data.appendChild(xmlUtils.createTextNode(argId));
+  block.appendChild(data);
+
+  const field = xmlUtils.createElement('field');
+  field.setAttribute('name', 'VALUE');
+  field.setAttribute('value', name);
+  field.textContent = name;
+
+  block.appendChild(field);
+  return block;
+}
+
+/**
+ * Create inputs in def block
+ */
+function createInputs_() {
+  this.argumentModels_ = [];
+
+  for (let i = 0, argument; (argument = this.updatedArguments_[i]); i++) {
+    const argumentBlock = this.buildArgumentBlock_(argument.name, argument.id);
+
+    this.argumentModels_.push({id: argument.id, name: argument.name});
+    this.appendValueInput(argument.id)
+      .setCheck(argument.id)
+      .setAlign(Align.RIGHT)
+      .setShadowDom(argumentBlock);
+    this.moveInputBefore(argument.id, 'PARAMS');
+  }
+}
+
+/**
+* Remove unused arguments in procedures.
+* @private
+*/
+function removeArguments_() {
+  if (!this.argumentModels_.length) {
+    return;
+  }
+
+  const updatesArgumentsId = this.updatedArguments_.map((a) => a.id);
+
+  const shouldRemove = this.argumentModels_.filter((a) => !updatesArgumentsId.includes(a.id));
+
+  const shouldRename = this.updatedArguments_.filter((arg) => {
+    const existArgument = this.argumentModels_.find((a) => a.id === arg.id);
+    return existArgument && arg.name !== existArgument.name;
+  });
+
+  const allBlocks = this.getDescendants();
+  const argumentsInProcedures = allBlocks.filter((block) => block.type === 'argument_local' && !block.isShadow());
+
+  if (!argumentsInProcedures.length) {
+    return;
+  }
+
+  for (let i = 0, argumentBlock; (argumentBlock = argumentsInProcedures[i]); i++) {
+    const argumentShouldRename = shouldRename.find((a) => a.id === argumentBlock.data);
+    if (shouldRename.length && argumentShouldRename) {
+      argumentBlock.changeArgumentName.call(argumentBlock, argumentShouldRename.name);
+    }
+
+    const argumentShouldRemove = shouldRemove.find((f) => f.id === argumentBlock.data);
+    if (shouldRemove.length && argumentShouldRemove) {
+      argumentBlock.dispose();
+    }
+  }
+}
+
+/**
+* Update the display of parameters for this procedure definition block.
+* @private
+* @this {Block}
+*/
+function updateParams_() {
+  Events.disable();
+  try {
+    const connectionMap = this.disconnectOldBlocks_();
+    this.removeArguments_();
+    this.removeValueInputs_();
+    this.deleteShadows_(connectionMap);
+    this.createInputs_();
+  } finally {
+    Events.enable();
+  }
+}
+
+/**
+  * Create XML to represent the argument inputs.
+  * Backwards compatible serialization implementation.
+  * @param {boolean=} optParamIds If true include the IDs of the parameter
+  *     quarks.  Used by Blockly.ProceduresLocalArgument.mutateCallers for reconnection.
+  * @return {!Element} XML storage element.
+  * @this {Block}
+  */
+function mutationToDom(optParamIds) {
+  const container = xmlUtils.createElement('mutation');
+  if (optParamIds) {
+    container.setAttribute('name', this.getFieldValue('NAME'));
+  }
+  for (let i = 0; i < this.argumentModels_.length; i++) {
+    const parameter = xmlUtils.createElement('arg');
+    const argModel = this.argumentModels_[i];
+    parameter.setAttribute('name', argModel.name);
+    parameter.setAttribute('value', argModel.name);
+    parameter.setAttribute('varid', argModel.id);
+    container.appendChild(parameter);
+  }
+
+  // Save whether the statement input is visible.
+  if (!this.hasStatements_) {
+    container.setAttribute('statements', 'false');
+  }
+  return container;
+}
+
+/**
+  * Parse XML to restore the argument inputs.
+  * Backwards compatible serialization implementation.
+  * @param {!Element} xmlElement XML storage element.
+  * @this {Block}
+  */
+function domToMutation(xmlElement) {
+  this.arguments_ = [];
+  this.argumentModels_ = [];
+  this.updatedArguments_ = [];
+  for (let i = 0, childNode; (childNode = xmlElement.childNodes[i]); i++) {
+    if (childNode.nodeName.toLowerCase() === 'arg') {
+      const varName = childNode.getAttribute('name');
+      const varId = childNode.getAttribute('varid') || childNode.getAttribute('varId');
+      if (varName !== null && varId !== null) {
+        this.arguments_.push(varName);
+        this.argumentModels_.push({id: varId, name: varName});
+        this.updatedArguments_.push({id: varId, name: varName});
+      } else {
+        console.log(
+          'Failed to create a variable with name ' + varName +
+              ', ignoring.');
+      }
+    }
+  }
+  this.updateParams_();
+  ProceduresLocalArgument.mutateCallers(this);
+
+  // Show or hide the statement input.
+  this.setStatements_(xmlElement.getAttribute('statements') !== 'false');
+}
+
+/**
+  * Returns the state of this block as a JSON serializable object.
+  * @return {?{params: (!Array<{name: string, id: string}>|undefined),
+  *     hasStatements: (boolean|undefined)}} The state of this block, eg the
+  *     parameters and statements.
+  */
+function saveExtraState() {
+  if (!this.argumentModels_.length && this.hasStatements_) {
+    return null;
+  }
+  const state = Object.create(null);
+  if (this.argumentModels_.length) {
+    state.params = [];
+    for (let i = 0; i < this.argumentModels_.length; i++) {
+      state.params.push({
+        'name': this.argumentModels_[i].name,
+        'value': this.argumentModels_[i].name,
+        'id': this.argumentModels_[i].id,
+      });
+    }
+  }
+  if (!this.hasStatements_) {
+    state.hasStatements = false;
+  }
+  return state;
+}
+
+/**
+  * Applies the given state to this block.
+  * @param {*} state The state to apply to this block, eg the parameters and
+  *     statements.
+  */
+function loadExtraState(state) {
+  this.arguments_ = [];
+  this.argumentModels_ = [];
+  this.updatedArguments_ = [];
+  if (state.params) {
+    for (let i = 0; i < state.params.length; i++) {
+      const param = state.params[i];
+      this.arguments_.push(param.name);
+      this.argumentModels_.push({id: param.id, name: param.name});
+      this.updatedArguments_.push({id: param.id, name: param.name});
+    }
+  }
+  this.updateParams_();
+  ProceduresLocalArgument.mutateCallers(this);
+  this.setStatements_(state.hasStatements !== false);
+}
+
+/**
+  * Populate the mutator's dialog with this block's components.
+  * @param {!Workspace} workspace Mutator's workspace.
+  * @return {!Block} Root block in mutator.
+  * @this {Block}
+  */
+function decompose(workspace) {
+  /*
+    * Creates the following XML:
+    * <block type="procedures_local_mutatorcontainer">
+    *   <statement name="STACK">
+    *     <block type="procedures_local_mutatorarg">
+    *       <data>arg1_id</data>
+    *       <field name="NAME">arg1_name</field>
+    *       <next>etc...</next>
+    *     </block>
+    *   </statement>
+    * </block>
+    */
+
+  const containerBlockNode = xmlUtils.createElement('block');
+  containerBlockNode.setAttribute('type', 'procedures_local_mutatorcontainer');
+  const statementNode = xmlUtils.createElement('statement');
+  statementNode.setAttribute('name', 'STACK');
+  containerBlockNode.appendChild(statementNode);
+
+  let node = statementNode;
+  for (let i = 0; i < this.argumentModels_.length; i++) {
+    const argBlockNode = xmlUtils.createElement('block');
+
+    const data = xmlUtils.createElement('data');
+    data.appendChild(xmlUtils.createTextNode(this.argumentModels_[i].id));
+    argBlockNode.appendChild(data);
+
+    argBlockNode.setAttribute('type', 'procedures_local_mutatorarg');
+    const fieldNode = xmlUtils.createElement('field');
+    fieldNode.setAttribute('name', 'NAME');
+    const argumentName = xmlUtils.createTextNode(this.argumentModels_[i].name);
+    fieldNode.appendChild(argumentName);
+    argBlockNode.appendChild(fieldNode);
+    const nextNode = xmlUtils.createElement('next');
+    argBlockNode.appendChild(nextNode);
+
+    node.appendChild(argBlockNode);
+    node = nextNode;
+  }
+
+  const containerBlock = Xml.domToBlock(containerBlockNode, workspace);
+
+  if (this.type === 'procedures_with_argument_defreturn') {
+    containerBlock.setFieldValue(this.hasStatements_, 'STATEMENTS');
+  } else {
+    containerBlock.removeInput('STATEMENT_INPUT');
+  }
+
+  // Initialize procedure's callers with blank IDs.
+  ProceduresLocalArgument.mutateCallers(this);
+  return containerBlock;
+}
+
+/**
+  * Reconfigure this block based on the mutator dialog's components.
+  * @param {!Block} containerBlock Root block in mutator.
+  * @this {Block}
+  */
+function compose(containerBlock) {
+  // Parameter list.
+  this.arguments_ = [];
+  this.updatedArguments_ = [];
+  let paramBlock = containerBlock.getInputTargetBlock('STACK');
+
+  while (paramBlock && !paramBlock.isInsertionMarker()) {
+    const argumentName = paramBlock.getFieldValue('NAME');
+    const argumentId = paramBlock.getData();
+    this.updatedArguments_.push({id: argumentId, name: argumentName});
+    this.arguments_.push(argumentName);
+
+    paramBlock =
+    paramBlock.nextConnection && paramBlock.nextConnection.targetBlock();
+  }
+
+  this.updateParams_();
+  ProceduresLocalArgument.mutateCallers(this);
+
+  // Show/hide the statement input.
+  let hasStatements = containerBlock.getFieldValue('STATEMENTS');
+  if (hasStatements !== null) {
+    hasStatements = hasStatements === 'TRUE';
+    if (this.hasStatements_ !== hasStatements) {
+      if (hasStatements) {
+        this.setStatements_(true);
+        // Restore the stack, if one was saved.
+        Mutator.reconnect(this.statementConnection_, this, 'STACK');
+        this.statementConnection_ = null;
+      } else {
+        // Save the stack, then disconnect it.
+        const stackConnection = this.getInput('STACK').connection;
+        this.statementConnection_ = stackConnection.targetConnection;
+        if (this.statementConnection_) {
+          const stackBlock = stackConnection.targetBlock();
+          stackBlock.unplug();
+          stackBlock.bumpNeighbours();
+        }
+        this.setStatements_(false);
+      }
+    }
+  }
+}
+
+/**
+  * Return all variables referenced by this block.
+  * @return {!Array<string>} List of variable names.
+  * @this {Block}
+  */
+function getArguments() {
+  return this.arguments_;
+}
+
+/**
+  * Add custom menu options to this block's context menu.
+  * @param {!Array} options List of menu options to add to.
+  * @this {Block}
+  */
+function customContextMenu(options) {
+  if (this.isInFlyout) {
+    return;
+  }
+  // Add option to create caller.
+  const option = {enabled: true};
+  const name = this.getFieldValue('NAME');
+  option.text = Msg.PROCEDURES_CREATE_DO.replace('%1', name);
+  const xmlMutation = xmlUtils.createElement('mutation');
+  xmlMutation.setAttribute('name', name);
+  for (let i = 0; i < this.argumentModels_.length; i++) {
+    const xmlArg = xmlUtils.createElement('arg');
+    xmlArg.setAttribute('name', this.argumentModels_[i].name);
+    xmlArg.setAttribute('varId', this.argumentModels_[i].id);
+    xmlMutation.appendChild(xmlArg);
+  }
+  const xmlBlock = xmlUtils.createElement('block');
+  xmlBlock.setAttribute('type', this.callType_);
+  xmlBlock.appendChild(xmlMutation);
+  option.callback = ContextMenu.callbackFactory(this, xmlBlock);
+  options.push(option);
+}
+
+/**
+* Return the signature of this procedure definition.
+* @return {!Array} Tuple containing three elements:
+*     - the name of the defined procedure,
+*     - a list of all its arguments,
+*     - that it DOES NOT have a return value.
+* @this {Block}
+*/
+function getProcedureDef() {
+  return [this.getFieldValue('NAME'), this.arguments_, false];
+}
 
 
-Blocks['procedures_with_argument_defnoreturn'] = {
+blocks['procedures_with_argument_defnoreturn'] = {
   /**
     * Block for defining a procedure with no return value.
     * @this {Block}
@@ -530,27 +550,27 @@ Blocks['procedures_with_argument_defnoreturn'] = {
     this.statementConnection_ = null;
   },
 
-  disconnectOldBlocks_: Blockly.ProceduresLocalArgumentUtils.disconnectOldBlocks_,
-  deleteShadows_: Blockly.ProceduresLocalArgumentUtils.deleteShadows_,
-  createInputs_: Blockly.ProceduresLocalArgumentUtils.createInputs_,
-  removeArguments_: Blockly.ProceduresLocalArgumentUtils.removeArguments_,
-  removeValueInputs_: Blockly.ProceduresLocalArgumentUtils.removeValueInputs_,
-  setStatements_: Blockly.ProceduresLocalArgumentUtils.setStatements_,
-  buildArgumentBlock_: Blockly.ProceduresLocalArgumentUtils.buildArgumentBlock_,
-  updateParams_: Blockly.ProceduresLocalArgumentUtils.updateParams_,
-  mutationToDom: Blockly.ProceduresLocalArgumentUtils.mutationToDom,
-  domToMutation: Blockly.ProceduresLocalArgumentUtils.domToMutation,
-  saveExtraState: Blockly.ProceduresLocalArgumentUtils.saveExtraState,
-  loadExtraState: Blockly.ProceduresLocalArgumentUtils.loadExtraState,
-  decompose: Blockly.ProceduresLocalArgumentUtils.decompose,
-  compose: Blockly.ProceduresLocalArgumentUtils.compose,
-  getArguments: Blockly.ProceduresLocalArgumentUtils.getArguments,
-  customContextMenu: Blockly.ProceduresLocalArgumentUtils.customContextMenu,
-  getProcedureDef: Blockly.ProceduresLocalArgumentUtils.getProcedureDef,
+  disconnectOldBlocks_: disconnectOldBlocks_,
+  deleteShadows_: deleteShadows_,
+  createInputs_: createInputs_,
+  removeArguments_: removeArguments_,
+  removeValueInputs_: removeValueInputs_,
+  setStatements_: setStatements_,
+  buildArgumentBlock_: buildArgumentBlock_,
+  updateParams_: updateParams_,
+  mutationToDom: mutationToDom,
+  domToMutation: domToMutation,
+  saveExtraState: saveExtraState,
+  loadExtraState: loadExtraState,
+  decompose: decompose,
+  compose: compose,
+  getArguments: getArguments,
+  customContextMenu: customContextMenu,
+  getProcedureDef: getProcedureDef,
   callType_: 'procedures_with_argument_callnoreturn',
 };
 
-Blocks['procedures_with_argument_defreturn'] = {
+blocks['procedures_with_argument_defreturn'] = {
   /**
     * Block for defining a procedure with a return value.
     * @this {Block}
@@ -584,27 +604,27 @@ Blocks['procedures_with_argument_defreturn'] = {
     this.statementConnection_ = null;
   },
 
-  disconnectOldBlocks_: Blockly.ProceduresLocalArgumentUtils.disconnectOldBlocks_,
-  deleteShadows_: Blockly.ProceduresLocalArgumentUtils.deleteShadows_,
-  createInputs_: Blockly.ProceduresLocalArgumentUtils.createInputs_,
-  removeArguments_: Blockly.ProceduresLocalArgumentUtils.removeArguments_,
-  removeValueInputs_: Blockly.ProceduresLocalArgumentUtils.removeValueInputs_,
-  setStatements_: Blockly.ProceduresLocalArgumentUtils.setStatements_,
-  buildArgumentBlock_: Blockly.ProceduresLocalArgumentUtils.buildArgumentBlock_,
-  updateParams_: Blockly.ProceduresLocalArgumentUtils.updateParams_,
-  mutationToDom: Blockly.ProceduresLocalArgumentUtils.mutationToDom,
-  domToMutation: Blockly.ProceduresLocalArgumentUtils.domToMutation,
-  saveExtraState: Blockly.ProceduresLocalArgumentUtils.saveExtraState,
-  loadExtraState: Blockly.ProceduresLocalArgumentUtils.loadExtraState,
-  decompose: Blockly.ProceduresLocalArgumentUtils.decompose,
-  compose: Blockly.ProceduresLocalArgumentUtils.compose,
-  getArguments: Blockly.ProceduresLocalArgumentUtils.getArguments,
-  customContextMenu: Blockly.ProceduresLocalArgumentUtils.customContextMenu,
-  getProcedureDef: Blockly.ProceduresLocalArgumentUtils.getProcedureDef,
+  disconnectOldBlocks_: disconnectOldBlocks_,
+  deleteShadows_: deleteShadows_,
+  createInputs_: createInputs_,
+  removeArguments_: removeArguments_,
+  removeValueInputs_: removeValueInputs_,
+  setStatements_: setStatements_,
+  buildArgumentBlock_: buildArgumentBlock_,
+  updateParams_: updateParams_,
+  mutationToDom: mutationToDom,
+  domToMutation: domToMutation,
+  saveExtraState: saveExtraState,
+  loadExtraState: loadExtraState,
+  decompose: decompose,
+  compose: compose,
+  getArguments: getArguments,
+  customContextMenu: customContextMenu,
+  getProcedureDef: getProcedureDef,
   callType_: 'procedures_with_argument_callreturn',
 };
 
-Blocks['procedures_local_mutatorcontainer'] = {
+blocks['procedures_local_mutatorcontainer'] = {
   /**
     * Mutator block for procedure container.
     * @this {Block}
@@ -622,7 +642,7 @@ Blocks['procedures_local_mutatorcontainer'] = {
   },
 };
 
-Blocks['procedures_local_mutatorarg'] = {
+blocks['procedures_local_mutatorarg'] = {
   /**
     * Mutator block for procedure argument.
     * @this {Block}
@@ -1054,6 +1074,7 @@ const PROCEDURE_CALL_COMMON = {
     option.text = Msg.PROCEDURES_HIGHLIGHT_DEF;
     const name = this.getProcedureCall();
     const workspace = this.workspace;
+
     option.callback = function() {
       let def = ProceduresLocalArgument.getDefinition(name, workspace);
 
@@ -1071,7 +1092,7 @@ const PROCEDURE_CALL_COMMON = {
   },
 };
 
-Blocks.procedures_with_argument_callnoreturn = {
+blocks.procedures_with_argument_callnoreturn = {
   ...PROCEDURE_CALL_COMMON,
   /**
     * Block for calling a procedure with no return value.
@@ -1094,7 +1115,7 @@ Blocks.procedures_with_argument_callnoreturn = {
   defType_: 'procedures_with_argument_defnoreturn',
 };
 
-Blocks.procedures_with_argument_callreturn = {
+blocks.procedures_with_argument_callreturn = {
   ...PROCEDURE_CALL_COMMON,
   /**
     * Block for calling a procedure with a return value.
@@ -1115,3 +1136,6 @@ Blocks.procedures_with_argument_callreturn = {
 
   defType_: 'procedures_with_argument_defreturn',
 };
+
+// Register provided blocks.
+defineBlocks(blocks);

@@ -13,14 +13,14 @@
 goog.module('Blockly.libraryBlocks');
 goog.module.declareLegacyNamespace();
 
-const argumentLocal = goog.require('Blockly.blocks.argumentLocal');
+const argumentLocal = goog.require('Blockly.libraryBlocks.argumentLocal');
 const colour = goog.require('Blockly.libraryBlocks.colour');
 const lists = goog.require('Blockly.libraryBlocks.lists');
 const logic = goog.require('Blockly.libraryBlocks.logic');
 const loops = goog.require('Blockly.libraryBlocks.loops');
 const math = goog.require('Blockly.libraryBlocks.math');
 const procedures = goog.require('Blockly.libraryBlocks.procedures');
-const proceduresLocalArgument = goog.require('Blockly.blocks.proceduresLocalArgument');
+const proceduresLocalArgument = goog.require('Blockly.libraryBlocks.proceduresLocalArgument');
 const texts = goog.require('Blockly.libraryBlocks.texts');
 const variables = goog.require('Blockly.libraryBlocks.variables');
 const variablesDynamic = goog.require('Blockly.libraryBlocks.variablesDynamic');
@@ -45,6 +45,16 @@ exports.variablesDynamic = variablesDynamic;
  * @type {!Object<string, !BlockDefinition>}
  */
 const blocks = Object.assign(
-    {}, colour.blocks, lists.blocks, logic.blocks, loops.blocks, math.blocks,
-    procedures.blocks, variables.blocks, variablesDynamic.blocks);
+  {},
+  argumentLocal.blocks,
+  colour.blocks,
+  lists.blocks,
+  logic.blocks,
+  loops.blocks,
+  math.blocks,
+  procedures.blocks,
+  proceduresLocalArgument.blocks,
+  variables.blocks,
+  variablesDynamic.blocks
+);
 exports.blocks = blocks;

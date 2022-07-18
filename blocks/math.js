@@ -584,8 +584,10 @@ const LIST_MODES_MUTATOR_EXTENSION = function() {
 };
 
 Extensions.registerMutator(
-    'math_modes_of_list_mutator', LIST_MODES_MUTATOR_MIXIN,
-    LIST_MODES_MUTATOR_EXTENSION);
+  'math_modes_of_list_mutator',
+  LIST_MODES_MUTATOR_MIXIN,
+  LIST_MODES_MUTATOR_EXTENSION
+);
 
 // Register provided blocks.
 defineBlocks(blocks);

@@ -550,18 +550,21 @@ class Connection {
     const target = this.targetBlock();
     if (!target) {
       this.respawnShadow_();
+
       if (this.targetBlock() && this.targetBlock().isShadow()) {
         this.serializeShadow_(this.targetBlock());
       }
     } else if (target.isShadow()) {
       target.dispose(false);
       this.respawnShadow_();
+
       if (this.targetBlock() && this.targetBlock().isShadow()) {
         this.serializeShadow_(this.targetBlock());
       }
     } else {
       const shadow = this.createShadowBlock_(false);
       this.serializeShadow_(shadow);
+      
       if (shadow) {
         shadow.dispose(false);
       }
@@ -598,7 +601,6 @@ class Connection {
 
     if (shadowDom) {
       blockShadow = Xml.domToBlock(shadowDom, parentBlock.workspace);
-      console.log('shadowDom', shadowDom, blockShadow, blockShadow.outputConnection);
 
       if (attemptToConnect) {
         if (this.type === ConnectionType.INPUT_VALUE) {
