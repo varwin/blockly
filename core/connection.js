@@ -598,13 +598,15 @@ class Connection {
 
     if (shadowDom) {
       blockShadow = Xml.domToBlock(shadowDom, parentBlock.workspace);
+      console.log('shadowDom', shadowDom, blockShadow, blockShadow.outputConnection);
 
       if (attemptToConnect) {
         if (this.type === ConnectionType.INPUT_VALUE) {
           if (!blockShadow.outputConnection) {
-            console.error('Shadow block is missing an output connection', blockShadow);
-            // throw new Error('Shadow block is missing an output connection', blockShadow);
+            console.trace('Shadow block is missing an output connection', blockShadow);
+            throw new Error('Shadow block is missing an output connection', blockShadow);
           }
+
           if (!this.connect(blockShadow.outputConnection)) {
             throw new Error('Could not connect shadow block to connection', blockShadow);
           }
@@ -612,12 +614,12 @@ class Connection {
           if (!blockShadow.previousConnection) {
             throw new Error('Shadow block is missing previous connection', blockShadow);
           }
+
           if (!this.connect(blockShadow.previousConnection)) {
             throw new Error('Could not connect shadow block to connection', blockShadow);
           }
         } else {
-          throw new Error(
-              'Cannot connect a shadow block to a previous/output connection', blockShadow);
+          throw new Error('Cannot connect a shadow block to a previous/output connection', blockShadow);
         }
       }
       return blockShadow;

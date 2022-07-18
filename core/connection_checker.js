@@ -248,6 +248,7 @@ class ConnectionChecker {
       // don't allow connecting a block to an argument local
       if (b && b.targetBlock()) {
         const targetBlock = b.targetBlock();
+        
         if (argumentLocal.isShadowArgumentLocal(targetBlock)) {
           return false;
         }
