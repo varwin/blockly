@@ -34,6 +34,7 @@ const {Menu} = goog.require('Blockly.Menu');
 /* eslint-disable-next-line no-unused-vars */
 const {Sentinel} = goog.requireType('Blockly.utils.Sentinel');
 const {Svg} = goog.require('Blockly.utils.Svg');
+const {Msg} = goog.require('Blockly.Msg');
 
 
 /**
@@ -324,22 +325,6 @@ class FieldDropdown extends Field {
   }
 
   /**
-   * Create an SVG based arrow.
-   * @protected
-   */
-  createSVGArrow_() {
-    this.svgArrow_ = dom.createSvgElement(
-        Svg.IMAGE, {
-          'height': this.getConstants().FIELD_DROPDOWN_SVG_ARROW_SIZE + 'px',
-          'width': this.getConstants().FIELD_DROPDOWN_SVG_ARROW_SIZE + 'px',
-        },
-        this.fieldGroup_);
-    this.svgArrow_.setAttributeNS(
-        dom.XLINK_NS, 'xlink:href',
-        this.getConstants().FIELD_DROPDOWN_SVG_ARROW_DATAURI);
-  }
-
-  /**
    * Creates the text input for the search bar.
    * @return {HTMLDivElement} search input
    */
@@ -375,10 +360,8 @@ class FieldDropdown extends Field {
     // Remove any pre-existing elements in the dropdown.
     dropDownDiv.clearContent();
 
-
-
     // Element gets created in render.
-    this.menu_.render(DropDownDiv.getContentDiv());
+    this.menu_.render(dropDownDiv.getContentDiv());
     const menuElement = /** @type {!Element} */ (this.menu_.getElement());
     dom.addClass(menuElement, 'blocklyDropdownMenu');
 

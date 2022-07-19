@@ -157,6 +157,10 @@ const Menu = class {
     return textInput;
   }
 
+  /**
+    * Creates the text input for the search bar.
+    * @param {Event} e event
+    */
   onInput_(e) {
     const searchText = e.target.value.toLowerCase();
     const suggestedItems = [];
@@ -183,17 +187,22 @@ const Menu = class {
     this.menuItems_.push(menuItem);
   }
 
-  Menu.prototype.createSearch_ = function() {
-  const inputElement = this.searchElement_ = this.createSearchInput_();
-  const inputWrapper = document.createElement('div');
-  dom.addClass(inputWrapper, 'blockly-dropdown-search-input');
-  inputWrapper.appendChild(inputElement);
+  /**
+   * createSearch_
+   * @return {HTMLDivElement} HTMLDivElement
+   */
+  createSearch_() {
+    const inputElement = this.searchElement_ = this.createSearchInput_();
+    const inputWrapper = document.createElement('div');
+    dom.addClass(inputWrapper, 'blockly-dropdown-search-input');
+    inputWrapper.appendChild(inputElement);
 
-  this.onInputHandler_ = browserEvents.conditionalBind(
-  inputElement, 'input', this, this.onInput_, 300);
+    this.onInputHandler_ = browserEvents.conditionalBind(
+    inputElement, 'input', this, this.onInput_, 300);
 
-  return inputWrapper;
-};/**
+    return inputWrapper;
+  }
+  /**
    * Creates the menu DOM.
    * @param {!Element} container Element upon which to append this menu.
    */
