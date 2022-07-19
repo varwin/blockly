@@ -25,6 +25,7 @@ const {KeyCodes} = goog.require('Blockly.utils.KeyCodes');
 const {MenuItem} = goog.requireType('Blockly.MenuItem');
 /* eslint-disable-next-line no-unused-vars */
 const {Size} = goog.requireType('Blockly.utils.Size');
+const {Msg} = goog.require('Blockly.Msg');
 
 
 /**
@@ -117,7 +118,62 @@ const Menu = class {
      * @private
      */
     this.searchText_ = '';
+
+    /**
+    * The menu's search DOM element. @type {?Element}
+    * @private
+    */
+    this.searchElement_ = null;
+
+    /**
+     * On search input event data.
+     * @type {?browserEvents.Data}
+     * @private
+     */
+    this.onInputHandler_ = null;
+
+    /**
+     * Constant max count option menu for add search
+     */
+    this.MAX_OPTIONS_FOR_ADD_SEARCH = 10;
+
+    /**
+     * Max height dropdown
+     * @type {Number}
+     * @private
+     */
+    this.MAX_HEIGHT_MENU = 265;
   }
+
+  /**
+  * Creates the text input for the search bar.
+  * @return {!HTMLInputElement} A text input for the search bar.
+  * @protected
+  */
+  createSearchInput_() {
+    const textInput = document.createElement('input');
+    textInput.type = 'search';
+    textInput.setAttribute('placeholder', Msg['SEARCH']);
+    return textInput;
+  }
+
+  onInput_(e) {
+    const searchText = e.target.value.toLowerCase();
+    const suggestedItems = [];
+
+    for (let i = 0; i < this.menuItems_.length; i++) {
+      if (this.menuItems_[i].content_.toLowerCase().indexOf(searchText) > -1) {
+        suggestedItems.push(this.menuItems_[i]);
+      }
+    }
+
+    this.element_.innerHTML = '';
+
+    for (let i = 0, menuItem; (menuItem = suggestedItems[i]); i++) {
+      this.element_.appendChild(menuItem.createDom());
+    }
+  }
+
 
   /**
    * Add a new menu item to the bottom of this menu.
@@ -127,11 +183,23 @@ const Menu = class {
     this.menuItems_.push(menuItem);
   }
 
-  /**
+  Menu.prototype.createSearch_ = function() {
+  const inputElement = this.searchElement_ = this.createSearchInput_();
+  const inputWrapper = document.createElement('div');
+  dom.addClass(inputWrapper, 'blockly-dropdown-search-input');
+  inputWrapper.appendChild(inputElement);
+
+  this.onInputHandler_ = browserEvents.conditionalBind(
+  inputElement, 'input', this, this.onInput_, 300);
+
+  return inputWrapper;
+};/**
    * Creates the menu DOM.
    * @param {!Element} container Element upon which to append this menu.
    */
   render(container) {
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('blocklyMenuWrapper');
     const element =
         /** @type {!HTMLDivElement} */ (document.createElement('div'));
     // goog-menu is deprecated, use blocklyMenu.  May 2020.
@@ -142,7 +210,11 @@ const Menu = class {
     }
     this.element_ = element;
 
-    // Add menu items.
+    const addSearchInput = this.menuItems_.length > this.MAX_OPTIONS_FOR_ADD_SEARCH;
+    if (addSearchInput && !this.searchElement_) {
+      wrapper.appendChild(this.createSearch_());
+    }// Add menu items.
+
     for (let i = 0, menuItem; (menuItem = this.menuItems_[i]); i++) {
       element.appendChild(menuItem.createDom());
     }
@@ -159,7 +231,8 @@ const Menu = class {
     this.onKeyDownHandler_ = browserEvents.conditionalBind(
         element, 'keydown', this, this.handleKeyEvent_);
 
-    container.appendChild(element);
+    wrapper.appendChild(element);
+    container.appendChild(wrapper);
   }
 
   /**
@@ -180,6 +253,10 @@ const Menu = class {
     if (el) {
       el.focus({preventScroll: true});
       dom.addClass(el, 'blocklyFocused');
+    }
+
+    if (this.searchElement_) {
+      this.searchElement_.focus();
     }
   }
 
@@ -228,6 +305,10 @@ const Menu = class {
     if (this.onKeyDownHandler_) {
       browserEvents.unbind(this.onKeyDownHandler_);
       this.onKeyDownHandler_ = null;
+    }
+    if (this.onInputHandler_) {
+      browserEvents.unbind(this.onInputHandler_);
+      this.onInputHandler_ = null;
     }
 
     // Remove menu items.
@@ -483,7 +564,7 @@ const Menu = class {
     const menuSize = style.getSize(/** @type {!Element} */
                                    (menuDom));
     // Recalculate height for the total content, not only box height.
-    menuSize.height = menuDom.scrollHeight;
+    menuSize.height = Math.min(this.MAX_HEIGHT_MENU, menuDom.scrollHeight);
     return menuSize;
   }
 };

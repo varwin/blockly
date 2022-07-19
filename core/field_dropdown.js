@@ -34,7 +34,6 @@ const {Menu} = goog.require('Blockly.Menu');
 /* eslint-disable-next-line no-unused-vars */
 const {Sentinel} = goog.requireType('Blockly.utils.Sentinel');
 const {Svg} = goog.require('Blockly.utils.Svg');
-const {Msg} = goog.require('Blockly.Msg');
 
 
 /**
@@ -71,20 +70,7 @@ class FieldDropdown extends Field {
     this.selectedMenuItem_ = null;
 
     /**
-     * On search input event data.
-     * @type {?browserEvents.Data}
-     * @private
-     */
-    this.onInputHandler_ = null;
 
-    /**
-     * Constant max count option menu for add search
-     * @type {number}
-     * @private
-     */
-    this.maxOptionForAddSearch = 10;
-
-    /**
      * The dropdown menu.
      * @type {?Menu}
      * @protected
@@ -289,6 +275,22 @@ class FieldDropdown extends Field {
   }
 
   /**
+   * Create an SVG based arrow.
+   * @protected
+   */
+  createSVGArrow_() {
+    this.svgArrow_ = dom.createSvgElement(
+        Svg.IMAGE, {
+          'height': this.getConstants().FIELD_DROPDOWN_SVG_ARROW_SIZE + 'px',
+          'width': this.getConstants().FIELD_DROPDOWN_SVG_ARROW_SIZE + 'px',
+        },
+        this.fieldGroup_);
+    this.svgArrow_.setAttributeNS(
+        dom.XLINK_NS, 'xlink:href',
+        this.getConstants().FIELD_DROPDOWN_SVG_ARROW_DATAURI);
+  }
+
+  /**
    * Creates the text input for the search bar.
    * @return {!HTMLInputElement} A text input for the search bar.
    * @protected
@@ -373,13 +375,10 @@ class FieldDropdown extends Field {
     // Remove any pre-existing elements in the dropdown.
     dropDownDiv.clearContent();
 
-    const addSearchInput = this.options_.length > this.maxOptionForAddSearch;
-    if (addSearchInput) {
-      this.container_.appendChild(this.createSearch_());
-    }
+
 
     // Element gets created in render.
-    this.menu_.render(this.container_);
+    this.menu_.render(DropDownDiv.getContentDiv());
     const menuElement = /** @type {!Element} */ (this.menu_.getElement());
     dom.addClass(menuElement, 'blocklyDropdownMenu');
 
@@ -404,10 +403,7 @@ class FieldDropdown extends Field {
       this.menu_.setHighlighted(this.selectedMenuItem_);
     }
 
-    // Workaround to prevent dropdown menus from collapsing, when search elements.
-  if (addSearchInput) {
-    this.container_.style.width = this.container_.offsetWidth + 'px';
-  }
+
   this.applyColour();
 }
 
@@ -417,11 +413,12 @@ class FieldDropdown extends Field {
    * @param {!Array<!Array<string>>} options A non-empty array of option tuples:
    * (human-readable text or image, language-neutral name).
    */
-  dropdownCreate_(options) {
+  dropdownCreate_() {
     const menu = new Menu();
     menu.setRole(aria.Role.LISTBOX);
     this.menu_ = menu;
 
+    const options = this.getOptions(false);
     this.selectedMenuItem_ = null;
 
     for (let i = 0; i < options.length; i++) {
