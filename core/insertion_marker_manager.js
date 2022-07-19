@@ -514,7 +514,7 @@ class InsertionMarkerManager {
     // connection.
     if (closest === this.closestConnection_ ||
         closest.getSourceBlock().isInsertionMarker()) {
-      console.log('Trying to connect to an insertion marker');
+      console.info('Trying to connect to an insertion marker');
       return;
     }
     // Add an insertion marker or replacement marker.

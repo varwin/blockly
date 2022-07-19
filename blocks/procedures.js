@@ -147,7 +147,7 @@ const PROCEDURE_DEF_COMMON = {
         if (variable !== null) {
           this.argumentVarModels_.push(variable);
         } else {
-          console.log(
+          console.info(
               'Failed to create a variable with name ' + varName +
               ', ignoring.');
         }
@@ -1005,7 +1005,7 @@ const PROCEDURE_CALL_COMMON = {
           // problem with event grouping. If you see this message please
           // investigate. If the use ends up being valid we may need to reorder
           // events in the undo stack.
-          console.log(
+          console.info(
               'Saw an existing group while responding to a definition change');
         }
         Events.setGroup(event.group);

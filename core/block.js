@@ -332,12 +332,10 @@ class Block {
     this.statementInputCount = 0;
 
     // Copy the type-specific functions and data from the prototype.
-    console.log('new Block -> prototypeName', prototypeName);
     if (prototypeName) {
       /** @type {string} */
       this.type = prototypeName;
       const prototype = Blocks[prototypeName];
-      console.log('Blocks[prototypeName]', Blocks[prototypeName]);
 
       if (!prototype || typeof prototype !== 'object') {
         const errorMessage = `${Blockly.Msg['UNKNOWN_BLOCK_TYPE']}: "${prototypeName}"`;
@@ -1324,7 +1322,6 @@ class Block {
       }
 
       if (!this.outputConnection) {
-        console.log('Block.js -> setOutput -> !this.outputConnection -> makeConnection_');
         this.outputConnection = this.makeConnection_(ConnectionType.OUTPUT_VALUE);
       }
       this.outputConnection.setCheck(opt_check);
@@ -1646,7 +1643,6 @@ class Block {
    * @param {!Object} json Structured data describing the block.
    */
   jsonInit(json) {
-    console.log('jsonInit', json);
     const warningPrefix = json['type'] ? 'Block "' + json['type'] + '": ' : '';
 
   // Validate inputs.
@@ -1686,7 +1682,6 @@ class Block {
     this.setInputsInline(json['inputsInline']);
   }
   // Set output and previous/next connections.
-  console.log("json['output'] !== undefined", json['output'] !== undefined);
   if (json['output'] !== undefined) {
     this.setOutput(true, json['output']);
   }

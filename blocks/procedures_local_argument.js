@@ -298,9 +298,7 @@ const PROCEDURES_WITH_ARGUMENT = {
           this.argumentModels_.push({id: varId, name: varName});
           this.updatedArguments_.push({id: varId, name: varName});
         } else {
-          console.log(
-            'Failed to create a variable with name ' + varName +
-                ', ignoring.');
+          console.info('Failed to create a variable with name ' + varName + ', ignoring.');
         }
       }
     }
@@ -1012,8 +1010,7 @@ const PROCEDURE_CALL_COMMON = {
           // problem with event grouping. If you see this message please
           // investigate. If the use ends up being valid we may need to reorder
           // events in the undo stack.
-          console.log(
-            'Saw an existing group while responding to a definition change');
+          console.info('Saw an existing group while responding to a definition change');
         }
         Events.setGroup(event.group);
         if (event.newValue) {

@@ -501,7 +501,6 @@ class Trashcan extends DeleteArea {
     this.lidOpen_ += this.isLidOpen ? delta : -delta;
     this.lidOpen_ = Math.min(Math.max(this.lidOpen_, this.minOpenness_), 1);
 
-    console.log('animateLid_ -> setLidAngle_', this.lidOpen_, MAX_LID_ANGLE);
     this.setLidAngle_(this.lidOpen_ * MAX_LID_ANGLE);
 
     // Linear interpolation between min and max.

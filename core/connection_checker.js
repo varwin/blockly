@@ -245,11 +245,9 @@ class ConnectionChecker {
         return false;
       }
       
-      console.log('case ConnectionType.INPUT_VALUE: -> b && b.targetBlock', b && b.targetBlock);
       // don't allow connecting a block to an argument local
       if (b && b.targetBlock()) {
         const targetBlock = b.targetBlock();
-        console.log('case ConnectionType.INPUT_VALUE: -> isShadowArgumentLocal', isShadowArgumentLocal(targetBlock));
         
         if (isShadowArgumentLocal(targetBlock)) {
           return false;

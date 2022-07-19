@@ -18,7 +18,6 @@
  */
 
 const isShadowArgumentLocal = function(block) {
-  console.log('isShadowArgumentLocal?', block.type, block.type === 'argument_local');
   return block.isShadow() && block.type === 'argument_local';
 };
 exports.isShadowArgumentLocal = isShadowArgumentLocal;
@@ -30,7 +29,6 @@ exports.isShadowArgumentLocal = isShadowArgumentLocal;
  * @return {boolean} True if the block is a argument local.
  */
 const isArgumentLocal = function(block) {
-  console.log('isArgumentLocal?', block.type, block.type === 'argument_local');
   return block.type == 'argument_local';
 };
 exports.isArgumentLocal = isArgumentLocal;

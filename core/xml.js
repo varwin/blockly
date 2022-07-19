@@ -927,7 +927,6 @@ const applyFieldTagNodes = function(xmlChildren, block) {
  *    found child block.
  */
 const findChildBlocks = function(xmlNode) {
-  console.log('findChildBlocks', xmlNode);
   const childBlockInfo = {childBlockElement: null, childShadowElement: null};
 
   for (let i = 0; i < xmlNode.childNodes.length; i++) {
@@ -1024,7 +1023,6 @@ const applyNextTagNodes = function(xmlChildren, workspace, block) {
  * @return {!Block} The root block created.
  */
 const domToBlockHeadless = function(xmlBlock, workspace, parentConnection, connectedToParentNext) {
-  console.log('domToBlockHeadless', xmlBlock);
   let block = null;
   const prototypeName = xmlBlock.getAttribute('type');
 
@@ -1040,9 +1038,6 @@ const domToBlockHeadless = function(xmlBlock, workspace, parentConnection, conne
   }
 
   block = workspace.newBlock(prototypeName, id, moduleId);
-  console.log('block', block);
-  console.log('parentConnection', parentConnection);
-  console.log('connectedToParentNext', connectedToParentNext);
   // Preprocess childNodes so tags can be processed in a consistent order.
   const xmlChildNameMap = mapSupportedXmlTags(xmlBlock);
 

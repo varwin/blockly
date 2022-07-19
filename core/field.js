@@ -857,9 +857,12 @@ class Field {
       }
     } else {
       const bBox = this.borderRect_.getBoundingClientRect();
+      
       xy = style.getPageOffset(this.borderRect_);
       scaledWidth = bBox.width;
-    scaledHeight = bBox.height;}
+      scaledHeight = bBox.height;
+    }
+
     return new Rect(xy.y, xy.y + scaledHeight, xy.x, xy.x + scaledWidth);
   }
 
@@ -943,10 +946,14 @@ class Field {
     }
   }
 
+  /**
+   * newText
+   * @param {string} newText New value.
+   */
   setText(newText) {
     this.textContent_ = newText;
     this.forceRerender();
-  };
+  }
 
   /**
    * Used to change the value of the field. Handles validation and events.
@@ -958,7 +965,7 @@ class Field {
   setValue(newValue) {
     const doLogging = false;
     if (newValue === null) {
-      doLogging && console.log('null, return');
+      doLogging && console.info('null, return');
       // Not a valid value to check.
       return;
     }
