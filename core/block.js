@@ -332,10 +332,12 @@ class Block {
     this.statementInputCount = 0;
 
     // Copy the type-specific functions and data from the prototype.
-    if (prototypeName && prototypeName !== 'argument_local') {
+    console.log('new Block -> prototypeName', prototypeName);
+    if (prototypeName) {
       /** @type {string} */
       this.type = prototypeName;
       const prototype = Blocks[prototypeName];
+      console.log('Blocks[prototypeName]', Blocks[prototypeName]);
 
       if (!prototype || typeof prototype !== 'object') {
         const errorMessage = `${Blockly.Msg['UNKNOWN_BLOCK_TYPE']}: "${prototypeName}"`;
@@ -1322,6 +1324,7 @@ class Block {
       }
 
       if (!this.outputConnection) {
+        console.log('Block.js -> setOutput -> !this.outputConnection -> makeConnection_');
         this.outputConnection = this.makeConnection_(ConnectionType.OUTPUT_VALUE);
       }
       this.outputConnection.setCheck(opt_check);
@@ -1643,6 +1646,7 @@ class Block {
    * @param {!Object} json Structured data describing the block.
    */
   jsonInit(json) {
+    console.log('jsonInit', json);
     const warningPrefix = json['type'] ? 'Block "' + json['type'] + '": ' : '';
 
   // Validate inputs.
@@ -1678,65 +1682,70 @@ class Block {
     i++;
   }
 
-    if (json['inputsInline'] !== undefined) {
-      this.setInputsInline(json['inputsInline']);
-    }
-    // Set output and previous/next connections.
-    if (json['output'] !== undefined) {
-      this.setOutput(true, json['output']);
-    }
-    if (json['outputShape'] !== undefined) {
-      this.setOutputShape(json['outputShape']);
-    }
-    if (json['previousStatement'] !== undefined) {
-      this.setPreviousStatement(true, json['previousStatement']);
-    }
-    if (json['nextStatement'] !== undefined) {
-      this.setNextStatement(true, json['nextStatement']);
-    }
-    if (json['obsolete'] === true) {
-    this.setObsolete(true);
+  if (json['inputsInline'] !== undefined) {
+    this.setInputsInline(json['inputsInline']);
+  }
+  // Set output and previous/next connections.
+  console.log("json['output'] !== undefined", json['output'] !== undefined);
+  if (json['output'] !== undefined) {
+    this.setOutput(true, json['output']);
+  }
+  if (json['outputShape'] !== undefined) {
+    this.setOutputShape(json['outputShape']);
+  }
+  if (json['previousStatement'] !== undefined) {
+    this.setPreviousStatement(true, json['previousStatement']);
+  }
+  if (json['nextStatement'] !== undefined) {
+    this.setNextStatement(true, json['nextStatement']);
+  }
+  if (json['obsolete'] === true) {
+  this.setObsolete(true);
   }
   if (json['removed'] === true) {
     this.setRemoved(true);
   }
+
   if (json['tooltip'] !== undefined) {
       const rawValue = json['tooltip'];
       const localizedText = parsing.replaceMessageReferences(rawValue);
       this.setTooltip(localizedText);
     }
-    if (json['enableContextMenu'] !== undefined) {
-      this.contextMenu = !!json['enableContextMenu'];
-    }
+
+  if (json['enableContextMenu'] !== undefined) {
+    this.contextMenu = !!json['enableContextMenu'];
+  }
 
   if (json['suppressPrefixSuffix'] !== undefined) {
     this.suppressPrefixSuffix = !!json['suppressPrefixSuffix'];
-    }
-    if (json['helpUrl'] !== undefined) {
-      const rawValue = json['helpUrl'];
-      const localizedValue = parsing.replaceMessageReferences(rawValue);
-      this.setHelpUrl(localizedValue);
-    }
-    if (typeof json['extensions'] === 'string') {
-      console.warn(
-          warningPrefix +
-          'JSON attribute \'extensions\' should be an array of' +
-          ' strings. Found raw string in JSON for \'' + json['type'] +
-          '\' block.');
-      json['extensions'] = [json['extensions']];  // Correct and continue.
-    }
+  }
 
-    // Add the mutator to the block.
-    if (json['mutator'] !== undefined) {
-      Extensions.apply(json['mutator'], this, true);
-    }
+  if (json['helpUrl'] !== undefined) {
+    const rawValue = json['helpUrl'];
+    const localizedValue = parsing.replaceMessageReferences(rawValue);
+    this.setHelpUrl(localizedValue);
+  }
 
-    const extensionNames = json['extensions'];
-    if (Array.isArray(extensionNames)) {
-      for (let j = 0; j < extensionNames.length; j++) {
-        Extensions.apply(extensionNames[j], this, false);
-      }
+  if (typeof json['extensions'] === 'string') {
+    console.warn(
+        warningPrefix +
+        'JSON attribute \'extensions\' should be an array of' +
+        ' strings. Found raw string in JSON for \'' + json['type'] +
+        '\' block.');
+    json['extensions'] = [json['extensions']];  // Correct and continue.
+  }
+
+  // Add the mutator to the block.
+  if (json['mutator'] !== undefined) {
+    Extensions.apply(json['mutator'], this, true);
+  }
+
+  const extensionNames = json['extensions'];
+  if (Array.isArray(extensionNames)) {
+    for (let j = 0; j < extensionNames.length; j++) {
+      Extensions.apply(extensionNames[j], this, false);
     }
+  }
   }
 
   /**

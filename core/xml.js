@@ -1040,7 +1040,9 @@ const domToBlockHeadless = function(xmlBlock, workspace, parentConnection, conne
   }
 
   block = workspace.newBlock(prototypeName, id, moduleId);
-
+  console.log('block', block);
+  console.log('parentConnection', parentConnection);
+  console.log('connectedToParentNext', connectedToParentNext);
   // Preprocess childNodes so tags can be processed in a consistent order.
   const xmlChildNameMap = mapSupportedXmlTags(xmlBlock);
 
@@ -1124,6 +1126,7 @@ const domToBlockHeadless = function(xmlBlock, workspace, parentConnection, conne
     if (block.getVarModels().length) {
       throw TypeError('Shadow blocks cannot have variable references.');
     }
+    
     block.setShadow(true);
   }
   return block;

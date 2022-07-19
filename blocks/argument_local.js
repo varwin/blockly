@@ -17,29 +17,28 @@ const dialog = goog.require('Blockly.dialog');
 const Extensions = goog.require('Blockly.Extensions');
 const Events = goog.require('Blockly.Events');
 const {Msg} = goog.require('Blockly.Msg');
-const {createBlockDefinitionsFromJsonArray, defineBlocks} = goog.require('Blockly.common');
+const {defineBlocks} = goog.require('Blockly.common');
 
 
-const blocks = createBlockDefinitionsFromJsonArray([
-  {
-    'type': 'argument_local',
-    'message0': '%1',
-    'args0': [
-      {
-        'type': 'field_label_hover',
-        'name': 'VALUE',
-        'text': '',
-      },
-    ],
-    'style': 'argument_local_blocks',
-    'inputsInline': true,
-    'output': null,
-    'extensions': ['contextMenu'],
-  },
-]);
-exports.blocks = blocks;
+const blocks = {};
 
 blocks['argument_local'] = {
+  init: function() {
+    this.jsonInit({
+      'message0': '%1',
+      'args0': [
+        {
+          'type': 'field_label_hover',
+          'name': 'VALUE',
+          'text': '',
+        },
+      ],
+      'style': 'argument_local_blocks',
+      'inputsInline': true,
+      'output': null,
+      'extensions': ['contextMenu'],
+    });
+  },
   onchange: function(event) {
     if (event.type !== Events.BLOCK_MOVE) {
       return;
@@ -73,6 +72,9 @@ blocks['argument_local'] = {
     field.forceRerender();
   },
 };
+
+
+exports.blocks = blocks;
 
 /**
  * Mixin to add context menu items to rename argument.
