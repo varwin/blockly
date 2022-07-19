@@ -247,7 +247,7 @@ class Workspace {
    */
   removeTopBlock(block) {
     if (!arrayUtils.removeElem(this.topBlocks_, block)) {
-      throw Error('Block not present in workspace\'s list of top-most blocks.');
+      throw Error('Block not present in workspace\'s list of top-most blocks.', block, this.topBlocks_);
     }
   }
 
