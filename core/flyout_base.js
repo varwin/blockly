@@ -548,7 +548,6 @@ class Flyout extends DeleteArea {
 
   /**
    * The function to be called when close button is clicked.
-   * @type {?function(!FieldImage)}
    * @private
    */
   onCloseHandler_() {
