@@ -1143,7 +1143,6 @@ class WorkspaceCommentSvg extends WorkspaceComment {
         /** @type {!WorkspaceCommentSvg} */ (comment));
     return (/** @type {!WorkspaceCommentSvg} */ (comment));
   }
-
 }
 
 /**

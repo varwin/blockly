@@ -241,13 +241,15 @@ class ConnectionChecker {
       // connected value pair is ok, we'll splice it in.
       // However, don't offer to splice into an immovable block.
       if (b.isConnected() && !b.targetBlock().isMovable() &&
-          !b.targetBlock().isShadow()) {
+      !b.targetBlock().isShadow()) {
         return false;
       }
-
+      
+      console.log('case ConnectionType.INPUT_VALUE: -> b && b.targetBlock', b && b.targetBlock);
       // don't allow connecting a block to an argument local
       if (b && b.targetBlock()) {
         const targetBlock = b.targetBlock();
+        console.log('case ConnectionType.INPUT_VALUE: -> isShadowArgumentLocal', isShadowArgumentLocal(targetBlock));
         
         if (isShadowArgumentLocal(targetBlock)) {
           return false;

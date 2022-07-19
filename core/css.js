@@ -450,7 +450,7 @@ let content = (`
 }
 
 .blocklyFlyoutBackground {
-  fill: #ddd;
+  fill: #eee;
 }
 
 .blocklyMainWorkspaceScrollbar {

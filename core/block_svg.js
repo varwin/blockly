@@ -209,10 +209,9 @@ class BlockSvg extends Block {
     /**
      * The renderer's path object.
      * @type {IPathObject}
-   * @package
-   */
-  this.pathObject =
-      workspace.getRenderer().makePathObject(this.svgGroup_, this.style);
+     * @package
+     */
+    this.pathObject = workspace.getRenderer().makePathObject(this.svgGroup_, this.style);
 
     /** @type {boolean} */
     this.rendered = false;
@@ -246,8 +245,7 @@ class BlockSvg extends Block {
      * @type {boolean}
      * @private
      */
-    this.useDragSurface_ =
-        svgMath.is3dSupported() && !!workspace.getBlockDragSurface();
+    this.useDragSurface_ = svgMath.is3dSupported() && !!workspace.getBlockDragSurface();
 
     const svgPath = this.pathObject.svgPath;
     svgPath.tooltip = this;

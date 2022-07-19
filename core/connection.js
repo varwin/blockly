@@ -605,7 +605,7 @@ class Connection {
       if (attemptToConnect) {
         if (this.type === ConnectionType.INPUT_VALUE) {
           if (!blockShadow.outputConnection) {
-            console.trace('Shadow block is missing an output connection', blockShadow);
+            console.trace('Shadow block is missing an output connection', blockShadow, shadowDom, this.type, this.sourceBlock_);
             throw new Error('Shadow block is missing an output connection', blockShadow);
           }
 

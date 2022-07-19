@@ -295,39 +295,40 @@ class WorkspaceComment {
 
   /**
    * Returns module id for this comment.
-   * @return string
+   * @return {string} moduleId_
    * @package
    */
   getModuleId() {
     return this.moduleId_;
-  };
+  }
 
   /**
    * Returns module order for this comment.
-   * @return int
+   * @return {int} module order
    * @package
    */
   getModuleOrder() {
     return this.workspace.getModuleManager().getModuleOrder(this.moduleId_);
-  };
+  }
 
   /**
    * Returns is this comment in active module.
-   * @return string
+   * @return {boolean} inActiveModule
    * @package
    */
   inActiveModule() {
     return this.moduleId_ === this.workspace.getModuleManager().getActiveModule().getId();
-  };
+  }
 
   /**
    * Set module module id for this comment.
    * @param {string} moduleId module id.
+   * @return {string} moduleId
    * @package
    */
   setModuleId(moduleId) {
     return this.moduleId_ = moduleId;
-  };
+  }
 
   /**
    * Encode a comment subtree as XML with XY coordinates.
@@ -396,9 +397,7 @@ class WorkspaceComment {
    */
   static fromXml(xmlComment, workspace) {
     const info = WorkspaceComment.parseAttributes(xmlComment);
-
-    const comment =
-        new WorkspaceComment(workspace, info.content, info.h, info.w, info.id);
+    const comment = new WorkspaceComment(workspace, info.content, info.h, info.w, info.id);
 
     comment.moduleId_ = info.module;
 

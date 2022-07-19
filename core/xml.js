@@ -531,7 +531,7 @@ const domToWorkspace = function(xml, workspace) {
             console.warn(
                 'Missing require for Blockly.WorkspaceCommentSvg, ignoring workspace comment.');
           } else {
-            WorkspaceCommentSvg.fromXmlRendered(xmlChildElement, /** @type {!WorkspaceSvg} */ (workspace), width);
+            WorkspaceCommentSvg.fromXml(xmlChildElement, /** @type {!WorkspaceSvg} */ (workspace), width);
           }
         } else {
           const {WorkspaceComment} =
@@ -671,6 +671,7 @@ const domToBlock = function(xmlBlock, workspace) {
 
   const variablesBeforeCreation = workspace.getAllVariables();
   let topBlock;
+
   try {
     topBlock = domToBlockHeadless(xmlBlock, workspace);
     // Generate list of all blocks.
@@ -1022,13 +1023,15 @@ const applyNextTagNodes = function(xmlChildren, workspace, block) {
  *    is a next connection, rather than output or statement.
  * @return {!Block} The root block created.
  */
-const domToBlockHeadless = function(
-    xmlBlock, workspace, parentConnection, connectedToParentNext) {
+const domToBlockHeadless = function(xmlBlock, workspace, parentConnection, connectedToParentNext) {
+  console.log('domToBlockHeadless', xmlBlock);
   let block = null;
   const prototypeName = xmlBlock.getAttribute('type');
+
   if (!prototypeName) {
     throw TypeError('Block type unspecified: ' + xmlBlock.outerHTML);
   }
+
   const id = xmlBlock.getAttribute('id');
   let moduleId;
 
@@ -1059,8 +1062,7 @@ const domToBlockHeadless = function(
       } else if (block.previousConnection) {
         parentConnection.connect(block.previousConnection);
       } else {
-        throw TypeError(
-            'Child block does not have output or previous statement.');
+        throw TypeError('Child block does not have output or previous statement.');
       }
     }
   }
@@ -1081,35 +1083,43 @@ const domToBlockHeadless = function(
   if (inline) {
     block.setInputsInline(inline === 'true');
   }
+
   const disabled = xmlBlock.getAttribute('disabled');
   if (disabled) {
     block.setEnabled(disabled !== 'true' && disabled !== 'disabled');
   }
+
   const deletable = xmlBlock.getAttribute('deletable');
   if (deletable) {
     block.setDeletable(deletable === 'true');
   }
+
   const movable = xmlBlock.getAttribute('movable');
   if (movable) {
     block.setMovable(movable === 'true');
   }
+
   const editable = xmlBlock.getAttribute('editable');
   if (editable) {
     block.setEditable(editable === 'true');
   }
+
   const collapsed = xmlBlock.getAttribute('collapsed');
   if (collapsed) {
     block.setCollapsed(collapsed === 'true');
   }
+
   if (xmlBlock.nodeName.toLowerCase() === 'shadow') {
     // Ensure all children are also shadows.
     const children = block.getChildren(false);
+
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
       if (!child.isShadow()) {
         throw TypeError('Shadow block not allowed non-shadow child.');
       }
     }
+
     // Ensure this block doesn't have any variable inputs.
     if (block.getVarModels().length) {
       throw TypeError('Shadow blocks cannot have variable references.');

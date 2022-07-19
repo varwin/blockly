@@ -76,16 +76,14 @@ class Block {
    *     type-specific functions for this block.
    * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
    *     create a new ID.
+   * @param {int} moduleId moduleId.
    * @throws When the prototypeName is not valid or not allowed.
    */
   constructor(workspace, prototypeName, opt_id, moduleId) {
     const {Generator} = goog.module.get('Blockly.Generator');
-    if (Generator &&
-        typeof Generator.prototype[prototypeName] !== 'undefined') {
+    if (Generator && typeof Generator.prototype[prototypeName] !== 'undefined') {
       // Occluding Generator class members is not allowed.
-      throw Error(
-          'Block prototypeName "' + prototypeName +
-          '" conflicts with Blockly.Generator members.');
+      throw Error('Block prototypeName "' + prototypeName + '" conflicts with Blockly.Generator members.');
     }
 
     /**
@@ -180,8 +178,7 @@ class Block {
     this.getDeveloperVariables = undefined;
 
     /** @type {string} */
-    this.id = (opt_id && !workspace.getBlockById(opt_id)) ? opt_id :
-                                                          idGenerator.genUid();
+    this.id = (opt_id && !workspace.getBlockById(opt_id)) ? opt_id : idGenerator.genUid();
     workspace.setBlockById(this.id, this);
     /** @type {Connection} */
     this.outputConnection = null;
@@ -1323,9 +1320,9 @@ class Block {
       if (opt_check === undefined) {
         opt_check = null;
       }
+
       if (!this.outputConnection) {
-        this.outputConnection =
-            this.makeConnection_(ConnectionType.OUTPUT_VALUE);
+        this.outputConnection = this.makeConnection_(ConnectionType.OUTPUT_VALUE);
       }
       this.outputConnection.setCheck(opt_check);
     } else {
