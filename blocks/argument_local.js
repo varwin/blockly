@@ -19,6 +19,9 @@ const Events = goog.require('Blockly.Events');
 const {Blocks} = goog.require('Blockly.blocks');
 const {Msg} = goog.require('Blockly.Msg');
 
+// For local argument block of this block type should rename label and value equally.
+const blockTypesRenameValue = ['controls_for_with_argument', 'controls_forEach_with_argument'];
+
  Blocks['argument_local'] = {
   init: function() {
     this.jsonInit({
@@ -63,11 +66,51 @@ const {Msg} = goog.require('Blockly.Msg');
     Events.enable();
   },
 
-  changeArgumentName: function(newName) {
-    this.setFieldValue(newName, 'VALUE');
-    this.setFieldText(newName, 'VALUE');
-    const field = this.getField('VALUE');
+    /**
+   * Create or delete an input for a numeric index.
+   * This block has two such inputs, independent of each other.
+   * @param {Block} block Specify first or second input (1 or 2).
+   * @param {string} newName True if the input should exist.
+   * @param {boolean} isRenameValue Rename field value
+   * @private
+   */
+  renameField_: function(block, newName, isRenameValue) {
+    if (isRenameValue) {
+      block.setFieldValue(newName, 'VALUE');
+    }
+    block.setFieldText(newName, 'VALUE');
+
+    const field = block.getField('VALUE');
     field.forceRerender();
+  },
+
+
+  changeArgumentName: function(newName) {
+    const parentBlock = this.getParent();
+
+    const argumentField = this.getField('VALUE');
+    const argumentFieldText = argumentField.getText('VALUE');
+    
+    if (parentBlock) {
+      const parentBlockType = parentBlock.type;
+      const allBlocks = parentBlock.getDescendants();
+      const argumentsLocal = allBlocks.filter((block) => block.type === 'argument_local' && !block.isShadow());
+
+      const isShouldRenameValue = blockTypesRenameValue.includes(parentBlockType);
+      this.renameField_(this, newName, isShouldRenameValue);
+
+      for (let i = 0, childArgumentBlock; (childArgumentBlock = argumentsLocal[i]); i++) {
+          const childLocalArgField = childArgumentBlock.getField('VALUE');
+          const childLocalArgFieldText = childLocalArgField.getText('VALUE');
+
+          // Rename only child argument block with same label
+          if (childLocalArgFieldText === argumentFieldText) {
+            this.renameField_(childArgumentBlock, newName, isShouldRenameValue);
+          }
+      }
+    } else {
+      this.renameField_(this, newName, true);
+    }
   },
 };
 
@@ -115,7 +158,7 @@ const {Msg} = goog.require('Blockly.Msg');
  * @return {!function()} A function that renames the argument.
  */
  const renameOptionCallbackFactory = function(block) {
-  const argumentValue = block.getFieldValue('VALUE');
+  const argumentValue = block.getFieldText('VALUE');
   return function() {
     const callback = (newName) => {
       block.changeArgumentName.call(block, newName);
