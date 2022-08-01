@@ -26,12 +26,9 @@ goog.module('Blockly.ModuleBar');
 const Css = goog.require('Blockly.Css');
 // const Touch = goog.require('Blockly.Touch');
 const utils = goog.require('Blockly.utils');
-const utilsAria = goog.require('Blockly.utils.aria');
-const utilsColour = goog.require('Blockly.utils.colour');
 const utilsDom = goog.require('Blockly.utils.dom');
-const utilsObject = goog.require('Blockly.utils.object');
 const browserEvents = goog.require('Blockly.browserEvents');
-
+const eventUtils = goog.require('Blockly.Events.utils');
 
 /**
  * Class for a module bar.
@@ -72,6 +69,13 @@ const ModuleBar = function(workspace) {
   this.onClickWrapper_ = null;
 
   /**
+   * Workspace change event data.
+   * @type {?Blockly.EventData}
+   * @private
+   */
+  this.onWorkspaceChangeWrapper_ = null;
+
+  /**
    * Mouse down event data.
    * @type {?Blockly.EventData}
    * @private
@@ -91,6 +95,13 @@ const ModuleBar = function(workspace) {
    * @private
    */
   this.onMouseUpWrapper_ = null;
+
+  /**
+   * Flag blockly loading finished
+   * @type {boolean}
+   * @private
+   */
+  this.isFinishedLoading_ = false;
 };
 
 /**
@@ -123,7 +134,7 @@ ModuleBar.prototype.render = function() {
   this.htmlContainer_.innerHTML = '';
 
   const modules = this.workspace_.getModuleManager().getAllModules();
-
+  
   for (let i = 0; i < modules.length; i++) {
     const tab = document.createElement('li');
 
@@ -193,6 +204,7 @@ ModuleBar.prototype.attachEvents_ = function() {
   this.onMouseDownWrapper_ = browserEvents.conditionalBind(this.htmlContainer_, 'mousedown', this, this.onMouseDown_);
   this.onMouseUpWrapper_ = browserEvents.conditionalBind(document, 'mouseup', this, this.onMouseUp_);
   this.onMouseMoveWrapper_ = browserEvents.conditionalBind(document, 'mousemove', this, this.onMouseMove_);
+  this.onWorkspaceChangeWrapper_ = this.workspace_.addChangeListener(this.onWorkspaceChange_.bind(this));
 };
 
 /**
@@ -219,6 +231,10 @@ ModuleBar.prototype.detachEvents_ = function() {
     Blockly.browserEvents.unbind(this.onMouseMoveWrapper_);
     this.onMouseMoveWrapper_ = null;
   }
+
+  if (this.onWorkspaceChangeWrapper_) {
+    this.workspace_.removeChangeListener(this.onWorkspaceChangeWrapper_);
+  }
 };
 
 /**
@@ -227,16 +243,21 @@ ModuleBar.prototype.detachEvents_ = function() {
  * @private
  */
 ModuleBar.prototype.onMouseClick_ = function(e) {
+  if (!this.isFinishedLoading_) {
+    return;
+  }
   const role = e.target.getAttribute('role');
 
   switch (role) {
     case 'module-menu-control':
-      return this.handleShowModuleMenu_(e);
+      this.handleShowModuleMenu_(e);
+      return;
     case 'create-module-control':
-      return this.handleCreateModule_();
+      this.handleCreateModule_();
+      return;
   }
 
-  return this.handleActivateModule_(e);
+  this.handleActivateModule_(e);
 };
 
 /**
@@ -335,26 +356,19 @@ ModuleBar.prototype.onMouseMove_ = function(e) {
 };
 
 /**
- * Mouse click handler.
+ * Workspace listener on change.
  * @param {!Event} e The browser event.
  * @private
  */
-ModuleBar.prototype.onMouseClick_ = function(e) {
-  const role = e.target.getAttribute('role');
-
-  switch (role) {
-    case 'module-menu-control':
-      return this.handleShowModuleMenu_(e);
-    case 'create-module-control':
-      return this.handleCreateModule_();
+ModuleBar.prototype.onWorkspaceChange_ = function(e) {
+  if (e.type === eventUtils.FINISHED_LOADING) {
+    this.isFinishedLoading_ = false;
   }
-
-  return this.handleActivateModule_(e);
 };
-
 
 /**
  * Activate module control handler.
+ * @param {!Event} e The browser event.
  * @private
  */
 ModuleBar.prototype.handleShowModuleMenu_ = function(e) {
@@ -569,11 +583,11 @@ Css.register(
   }
 
   .blocklyModuleBarTabMenuIcon {
-    background-image: url("data:image/svg+xml,%3C%3Fxml version=\'1.0\' encoding=\'iso-8859-1\'%3F%3E%3C!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'%3E%3Csvg version=\'1.1\' id=\'Capa_1\' xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' x=\'0px\' y=\'0px\' width=\'255px\' height=\'255px\' viewBox=\'0 0 255 255\' style=\'enable-background:new 0 0 255 255;\' xml:space=\'preserve\'%3E%3Cg%3E%3Cg id=\'arrow-drop-down\'%3E%3Cpolygon points=\'0,63.75 127.5,191.25 255,63.75 \'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='iso-8859-1'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='255px' height='255px' viewBox='0 0 255 255' style='enable-background:new 0 0 255 255;' xml:space='preserve'%3E%3Cg%3E%3Cg id='arrow-drop-down'%3E%3Cpolygon points='0,63.75 127.5,191.25 255,63.75 '/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
   }
 
   .blocklyModuleBarTabCreateIcon {
-    background: url(\'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE2LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgd2lkdGg9IjM1N3B4IiBoZWlnaHQ9IjM1N3B4IiB2aWV3Qm94PSIwIDAgMzU3IDM1NyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMzU3IDM1NzsiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPGc+DQoJPGcgaWQ9ImFkZCI+DQoJCTxwYXRoIGQ9Ik0zNTcsMjA0SDIwNHYxNTNoLTUxVjIwNEgwdi01MWgxNTNWMGg1MXYxNTNoMTUzVjIwNHoiLz4NCgk8L2c+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8L3N2Zz4NCg==\');
+    background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE2LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgd2lkdGg9IjM1N3B4IiBoZWlnaHQ9IjM1N3B4IiB2aWV3Qm94PSIwIDAgMzU3IDM1NyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMzU3IDM1NzsiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPGc+DQoJPGcgaWQ9ImFkZCI+DQoJCTxwYXRoIGQ9Ik0zNTcsMjA0SDIwNHYxNTNoLTUxVjIwNEgwdi01MWgxNTNWMGg1MXYxNTNoMTUzVjIwNHoiLz4NCgk8L2c+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8L3N2Zz4NCg==');
     width: 15px;
     height: 15px;
   }
