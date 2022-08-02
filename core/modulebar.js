@@ -115,7 +115,7 @@ ModuleBar.prototype.init = function() {
    * @type {Element}
    */
   this.htmlContainer_ = document.createElement('ul');
-  this.htmlContainer_.className = 'blocklyModuleBarContainer blocklyNonSelectable';
+  this.htmlContainer_.className = 'blocklyModuleBarContainer blocklyNonSelectable cursorNotAllowed';
   injectionContainer.parentNode.insertBefore(this.htmlContainer_, injectionContainer);
 
   if (this.workspace_.RTL) {
@@ -148,19 +148,18 @@ ModuleBar.prototype.render = function() {
     name.className = 'blocklyModuleName';
     name.appendChild(utils.xml.createTextNode(modules[i].getName()));
     link.appendChild(name);
+    link.className = 'blocklyModuleBarLink';
 
     const activeModule = this.workspace_.getModuleManager().getActiveModule();
 
     if (activeModule && modules[i].getId() === activeModule.getId()) {
-      link.className = 'blocklyModuleBarLink blocklyModuleBarLinkActive';
+      link.className += ' blocklyModuleBarLinkActive';
 
       const menuIcon = document.createElement('span');
 
       menuIcon.className = 'blocklyModuleBarTabIcon blocklyModuleBarTabMenuIcon';
       menuIcon.setAttribute('role', 'module-menu-control');
       link.appendChild(menuIcon);
-    } else {
-      link.className = 'blocklyModuleBarLink';
     }
 
     tab.appendChild(link);
@@ -362,7 +361,9 @@ ModuleBar.prototype.onMouseMove_ = function(e) {
  */
 ModuleBar.prototype.onWorkspaceChange_ = function(e) {
   if (e.type === eventUtils.FINISHED_LOADING) {
-    this.isFinishedLoading_ = false;
+    this.isFinishedLoading_ = true;
+
+    this.htmlContainer_.classList.remove('cursorNotAllowed');
   }
 };
 
@@ -548,6 +549,9 @@ Css.register(
     margin: 0;
   }
 
+  .cursorNotAllowed {
+    cursor: not-allowed;
+  }
 
   .blocklyModuleBarTabDropZone {
     border-right: 5px solid #ccc;
@@ -577,7 +581,7 @@ Css.register(
     border-color: #ddd;
   }
 
-  .blocklyModuleBarTab:not(.blocklyModuleBarTabDropZone) .blocklyModuleBarLink:not(.blocklyModuleBarLinkActive):hover {
+  .blocklyModuleBarContainer:not(.cursorNotAllowed) > .blocklyModuleBarTab:not(.blocklyModuleBarTabDropZone) .blocklyModuleBarLink:not(.blocklyModuleBarLinkActive):hover {
     background-color: #e4e4e4;
     border-color: #e4e4e4;
   }
