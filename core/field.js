@@ -198,7 +198,7 @@ Field.prototype.disposed = false;
  * Maximum characters of text to display before adding an ellipsis.
  * @type {number}
  */
-Field.prototype.maxDisplayLength = 60;
+Field.prototype.maxDisplayLength = 80;
 
 /**
  * Block this field is attached to.  Starts as null, then set in init.
