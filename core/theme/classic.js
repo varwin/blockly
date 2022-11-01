@@ -29,7 +29,7 @@ const defaultBlockStyles = {
   'procedure_blocks': {'colourPrimary': '290'},
   'text_blocks': {'colourPrimary': '160'},
   'variable_blocks': {'colourPrimary': '330'},
-  'variable_dynamic_blocks': {'colourPrimary': '310'},
+  'variable_dynamic_blocks': {'colourPrimary': '330'},
   'hat_blocks': {'colourPrimary': '330', 'hat': 'cap'},
   'argument_local_blocks': {'colourPrimary': '#d37e0a'},
 };
