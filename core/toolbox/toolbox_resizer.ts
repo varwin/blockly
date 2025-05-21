@@ -180,7 +180,7 @@ export class ToolboxResizer implements Blockly.IComponent {
   }
 
   onMouseDown_(e: MouseEvent): void {
-    e.preventDefault();
+    this.workspace_.hideChaff();
     this.initialClientX = e.clientX;
     this.initialWidth = this.toolboxHtmlDiv.offsetWidth;
 
