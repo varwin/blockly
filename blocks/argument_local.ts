@@ -24,6 +24,7 @@ import {
   LegacyContextMenuOption,
 } from '../core/contextmenu_registry.js';
 import * as constants from '../core/constants.js';
+import * as eventUtils from '../core/events/utils.js';
 
 // For local argument block of this block type should rename label and value equally.
 const blockTypesRenameValue = [
@@ -210,6 +211,13 @@ const renameOptionCallbackFactory = function (block: Block) {
   return function () {
     const callback = (newName: string | null) => {
       const parentBlock = block.getParent();
+      eventUtils.fire(
+        new (eventUtils.get(eventUtils.LOCAL_ARGUMENT_RENAME))(
+          block as ArgumentLocalBlock,
+          newName || '',
+          parentBlock
+        ),
+      );
       (block as ArgumentLocalBlock).changeArgumentName.call(
         block as ArgumentLocalBlock,
         newName || '',

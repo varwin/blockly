@@ -111,6 +111,11 @@ export const VAR_DELETE = 'var_delete';
 export const VAR_RENAME = 'var_rename';
 
 /**
+ * Name of event that renames a local argument.
+ */
+export const LOCAL_ARGUMENT_RENAME = 'local_argument_rename';
+
+/**
  * Name of generic event that records a UI change.
  */
 export const UI = 'ui';

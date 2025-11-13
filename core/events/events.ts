@@ -169,6 +169,7 @@ export const VAR_CREATE = eventUtils.VAR_CREATE;
 export const VAR_DELETE = eventUtils.VAR_DELETE;
 export const VAR_RENAME = eventUtils.VAR_RENAME;
 export const VIEWPORT_CHANGE = eventUtils.VIEWPORT_CHANGE;
+export const LOCAL_ARGUMENT_RENAME = eventUtils.LOCAL_ARGUMENT_RENAME;
 
 // Event utils.
 export const clearPendingUndo = eventUtils.clearPendingUndo;
