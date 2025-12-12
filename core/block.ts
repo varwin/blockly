@@ -1899,7 +1899,7 @@ export class Block implements IASTNodeLocation {
         json = restoredDefinition;
         json['removed'] = true;
       } else {
-        console.error(warningPrefix + 'cannot get block definition for stored signature: ' + this.signature)
+        console.error(warningPrefix + 'cannot get block definition for stored signature: ' + this.signature);
         this.signature = currentSignature;
       }
     } else {
@@ -2026,7 +2026,6 @@ export class Block implements IASTNodeLocation {
   private generateSignatureFromJson(json: any): string {
     const output = json?.output ? `:${json?.output}` : '';
     const args = (json?.args0 ?? []).map((arg: any) => {
-      const name = arg?.name ?? "_";
       const argType = arg?.type ?? "Unknown";
 
       let check = "";
@@ -2038,7 +2037,7 @@ export class Block implements IASTNodeLocation {
         }
       }
 
-      return `${name}:${argType}${check}`;
+      return `${argType}${check}`;
     });
 
     return `${this.type}(${args.join(",")})${output}`;
