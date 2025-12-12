@@ -238,6 +238,7 @@ export class Block implements IASTNodeLocation {
   inputsInlineDefault?: boolean;
   workspace: Workspace;
   private moduleId_: string;
+  signature: string | undefined;
 
   /**
    * @param workspace The block's workspace.
@@ -246,6 +247,7 @@ export class Block implements IASTNodeLocation {
    * @param opt_id Optional ID.  Use this ID if provided, otherwise create a new
    *     ID.
    * @param {string=} moduleId Optional module ID.  Use this ID if provided, otherwise use active module.
+   * @param {string=} signature Optional block signature.
    * @throws When the prototypeName is not valid or not allowed.
    */
   constructor(
@@ -253,6 +255,7 @@ export class Block implements IASTNodeLocation {
     prototypeName: string,
     opt_id?: string,
     moduleId?: string,
+    signature?: string,
   ) {
     this.workspace = workspace;
 
@@ -263,6 +266,8 @@ export class Block implements IASTNodeLocation {
     this.moduleId_ = moduleId
       ? moduleId
       : workspace.getModuleManager().getActiveModule().getId();
+
+    this.signature = signature;
 
     /**
      * The block's position in workspace units.  (0, 0) is at the workspace's
@@ -277,18 +282,26 @@ export class Block implements IASTNodeLocation {
     // Copy the type-specific functions and data from the prototype.
     if (prototypeName) {
       this.type = prototypeName;
-      const prototype = Blocks[prototypeName];
+      let prototype = Blocks[prototypeName];
       if (!prototype || typeof prototype !== 'object') {
-        throw TypeError('Invalid block definition for type: ' + prototypeName);
-        // todo: add loading_error back
-        // const errorMessage = `${Msg['UNKNOWN_BLOCK_TYPE']}: "${prototypeName}"`;
-        // eventUtils.fire(
-        //   new (eventUtils.get(eventUtils.LOADING_ERROR))(
-        //     this.workspace,
-        //     errorMessage,
-        //   ),
-        // );
-        // throw TypeError('Unknown block type: ' + this.type);
+        const jsonDefinition = this.signature ? this.workspace.getBlockDefinitionBySignature(this.signature) : undefined;
+        if (jsonDefinition) {
+          jsonDefinition['removed'] = true;
+          prototype = {
+            init: function(this: Block) {
+              this.jsonInit(jsonDefinition);
+            }
+          };
+        } else {
+          const errorMessage = `${Msg['UNKNOWN_BLOCK_TYPE']}: "${prototypeName}"`;
+          eventUtils.fire(
+             new (eventUtils.get(eventUtils.LOADING_ERROR))(
+               this.workspace,
+               errorMessage,
+             ),
+           );
+          throw TypeError('Unknown block definition for type: ' + prototypeName);
+        }
       }
       Object.assign(this, prototype);
     }
@@ -375,6 +388,7 @@ export class Block implements IASTNodeLocation {
 
     this.workspace.removeTypedBlock(this);
     this.workspace.removeBlockById(this.id);
+    this.workspace.removeBlockFromSignaturesDB(this);
 
     if (typeof this.destroy === 'function') this.destroy();
 
@@ -1878,6 +1892,23 @@ export class Block implements IASTNodeLocation {
   jsonInit(json: AnyDuringMigration) {
     const warningPrefix = json['type'] ? 'Block "' + json['type'] + '": ' : '';
 
+    const currentSignature = this.generateSignatureFromJson(json);
+    if (this.signature && this.signature != currentSignature) {
+      const restoredDefinition = this.workspace.getBlockDefinitionBySignature(this.signature);
+      if (restoredDefinition) {
+        json = restoredDefinition;
+        json['removed'] = true;
+      } else {
+        console.error(warningPrefix + 'cannot get block definition for stored signature: ' + this.signature)
+        this.signature = currentSignature;
+      }
+    } else {
+      this.signature = currentSignature;
+    }
+
+    this.workspace.addBlockToSignaturesDB(this);
+    this.workspace.registerBlockDefinition(this.signature, json);
+
     // Validate inputs.
     if (json['output'] && json['previousStatement']) {
       throw Error(
@@ -1990,6 +2021,27 @@ export class Block implements IASTNodeLocation {
         Extensions.apply(extensionNames[j], this, false);
       }
     }
+  }
+
+  private generateSignatureFromJson(json: any): string {
+    const output = json?.output ? `:${json?.output}` : '';
+    const args = (json?.args0 ?? []).map((arg: any) => {
+      const name = arg?.name ?? "_";
+      const argType = arg?.type ?? "Unknown";
+
+      let check = "";
+      if (arg?.check) {
+        if (Array.isArray(arg.check)) {
+          check = `[${arg.check.join("|")}]`;
+        } else {
+          check = `[${arg.check}]`;
+        }
+      }
+
+      return `${name}:${argType}${check}`;
+    });
+
+    return `${this.type}(${args.join(",")})${output}`;
   }
 
   /**

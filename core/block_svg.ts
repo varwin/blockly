@@ -236,14 +236,16 @@ export class BlockSvg
    *     functions for this block.
    * @param opt_id Optional ID.  Use this ID if provided, otherwise create a new ID.
    * @param {string=} moduleId Optional module ID.  Use this ID if provided, otherwise use active module.
+   * @param {string=} signature Optional block signature.
    */
   constructor(
     workspace: WorkspaceSvg,
     prototypeName: string,
     opt_id?: string,
     moduleId?: string,
+    signature?: string,
   ) {
-    super(workspace, prototypeName, opt_id, moduleId);
+    super(workspace, prototypeName, opt_id, moduleId, signature);
 
     if (!workspace.rendered) {
       throw TypeError('Cannot create a rendered block in a headless workspace');

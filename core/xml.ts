@@ -37,6 +37,9 @@ import {Coordinate} from './utils/coordinate.js';
 export function workspaceToDom(workspace: Workspace, skipId = false): Element {
   const treeXml = utilsXml.createElement('xml');
 
+  const signaturesXml = utilsXml.createElement('signatures')
+  treeXml.appendChild(signaturesXml)
+
   const modulesElement = modulesToDom(workspace);
   if (modulesElement.hasChildNodes()) {
     treeXml.appendChild(modulesElement);
@@ -58,6 +61,8 @@ export function workspaceToDom(workspace: Workspace, skipId = false): Element {
     const block = blocks[i];
     treeXml.appendChild(blockToDomWithXY(block, skipId));
   }
+
+  signaturesXml.appendChild(utilsXml.createTextNode(JSON.stringify(workspace.getBlockDefinitionsBySignatures())))
   return treeXml;
 }
 
@@ -235,6 +240,9 @@ export function blockToDom(
 
   const element = utilsXml.createElement(block.isShadow() ? 'shadow' : 'block');
   element.setAttribute('type', block.type);
+  if (block.signature) {
+    element.setAttribute('signature', block.signature);
+  }
   if (!opt_noId) {
     element.id = block.id;
   }
@@ -498,9 +506,18 @@ export function domToWorkspace(xml: Element, workspace: Workspace): string[] {
   }
   let variablesFirst = true;
   try {
-    // first load modules
     for (let i = 0, xmlChild; (xmlChild = xml.childNodes[i]); i++) {
-      if (xmlChild.nodeName.toLowerCase() === 'modules') {
+      if (xmlChild.nodeName.toLowerCase() === 'signatures') {
+        const signaturesText = xmlChild.textContent;
+        if (signaturesText) {
+          try {
+            const blockDefinitions = JSON.parse(signaturesText);
+            workspace.registerBlockDefinitions(blockDefinitions);
+          } catch (e) {
+            console.error('Failed to parse signatures JSON', e);
+          }
+        }
+      } else if (xmlChild.nodeName.toLowerCase() === 'modules') {
         domToModules(xmlChild as Element, workspace);
       }
     }
@@ -1081,13 +1098,18 @@ function domToBlockHeadless(
     throw TypeError('Block type unspecified: ' + xmlBlock.outerHTML);
   }
   const id = xmlBlock.getAttribute('id') ?? undefined;
-  let moduleId = '';
 
+  let moduleId = undefined;
   if (xmlBlock.hasAttribute('module')) {
     moduleId = xmlBlock.getAttribute('module')!;
   }
 
-  block = workspace.newBlock(prototypeName, id, moduleId);
+  let signature = undefined;
+  if (xmlBlock.hasAttribute('signature')) {
+    signature = xmlBlock.getAttribute('signature')!;
+  }
+
+  block = workspace.newBlock(prototypeName, id, moduleId, signature);
 
   // Preprocess childNodes so tags can be processed in a consistent order.
   const xmlChildNameMap = mapSupportedXmlTags(xmlBlock);

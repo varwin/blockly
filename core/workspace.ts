@@ -35,6 +35,7 @@ import {IProcedureMap} from './interfaces/i_procedure_map.js';
 import {ObservableProcedureMap} from './observable_procedure_map.js';
 import {ModuleManager} from './module_manager.js';
 import {WorkspaceSvg} from './workspace_svg.js';
+import {BlockDefinition} from "./blocks";
 
 /**
  * Class for a workspace.  This is a data structure that contains blocks.
@@ -110,6 +111,8 @@ export class Workspace implements IASTNodeLocation {
   protected redoStack_: Abstract[] = [];
   private readonly blockDB = new Map<string, Block>();
   private readonly typedBlocksDB = new Map<string, Block[]>();
+  private readonly blockDefinitionBySignatureDB = new Map<string, BlockDefinition>();
+  private readonly blocksBySignatureDB = new Map<string, Block[]>();
   private variableMap: VariableMap;
   private procedureMap: IProcedureMap = new ObservableProcedureMap();
 
@@ -295,6 +298,169 @@ export class Workspace implements IASTNodeLocation {
   }
 
   /**
+   * Add a block by signature.
+   *
+   * @param block Block to add.
+   */
+  addBlockToSignaturesDB  (block: Block) {
+    if (!block.signature) {
+      return
+    }
+
+    if (!this.blocksBySignatureDB.has(block.signature)) {
+      this.blocksBySignatureDB.set(block.signature, []);
+    }
+    this.blocksBySignatureDB.get(block.signature)!.push(block);
+  }
+
+  /**
+   * Remove a block from the list of blocks keyed by signature.
+   * Delete block definition if all blocks by signature deleted.
+   *
+   * @param block Block to remove.
+   */
+  removeBlockFromSignaturesDB(block: Block) {
+    if (!block.signature) {
+      return
+    }
+
+    arrayUtils.removeElem(this.blocksBySignatureDB.get(block.signature)!, block);
+    if (!this.blocksBySignatureDB.get(block.signature)!.length) {
+      this.blocksBySignatureDB.delete(block.signature);
+      this.unregisterBlockDefinition(block.signature);
+    }
+  }
+
+  /**
+   * Get a block definition by its signature.
+   *
+   * Block definitions are stored by signature to allow dynamic loading
+   * and registration of block types at runtime.
+   *
+   * @param signature The unique signature identifying the block definition.
+   * @returns The block definition if found, undefined otherwise.
+   */
+  getBlockDefinitionBySignature(signature: string): BlockDefinition|undefined {
+    return this.blockDefinitionBySignatureDB.get(signature);
+  }
+
+  /**
+   * Register a single block definition by signature.
+   *
+   * This method registers a single block definition in the workspace's registry.
+   * If a definition with the same signature already exists, it will not be added.
+   *
+   * @param signature The unique signature identifying the block definition.
+   * @param definition The block definition to register.
+   * @returns True if the definition was registered, false if it already exists.
+   * @example
+   * workspace.registerBlockDefinition('custom_block', {
+   *   'message0': 'Custom block %1',
+   *   'args0': [{
+   *     'type': 'input_value',
+   *     'name': 'VALUE'
+   *   }],
+   *   'output': 'Number',
+   *   'colour': 160
+   * });
+   */
+  registerBlockDefinition(signature: string, definition: BlockDefinition) {
+    if (!this.blockDefinitionBySignatureDB.has(signature)) {
+      this.blockDefinitionBySignatureDB.set(signature, definition);
+    }
+  }
+
+  /**
+   * Register multiple block definitions to the workspace.
+   *
+   * This method registers block definitions keyed by their signatures in the
+   * workspace's internal registry. This allows blocks with these signatures
+   * to be dynamically created and managed.
+   *
+   * @param blockDefinitions An object mapping block signatures to their
+   *     corresponding block definitions. Each key should be a unique signature
+   *     string, and each value should be a BlockDefinition object containing
+   *     the block's configuration and behavior.
+   * @example
+   * workspace.registerBlockDefinitions({
+   *   'custom_block_signature': {
+   *     'message0': 'Custom block %1',
+   *     'args0': [{
+   *       'type': 'input_value',
+   *       'name': 'VALUE'
+   *     }],
+   *     'output': 'Number',
+   *     'colour': 160
+   *   }
+   * });
+   */
+  registerBlockDefinitions(blockDefinitions: {[key: string]: BlockDefinition}) {
+    for (const signature in blockDefinitions) {
+      if (blockDefinitions.hasOwnProperty(signature)) {
+        this.registerBlockDefinition(signature, blockDefinitions[signature]);
+      }
+    }
+  }
+
+  /**
+   * Unregister a block definition by signature.
+   *
+   * This method removes a block definition from the workspace's registry.
+   * Existing blocks created from this definition will continue to function,
+   * but new blocks cannot be created from this signature.
+   *
+   * @param signature The unique signature identifying the block definition to remove.
+   * @returns True if the definition was removed, false if it didn't exist.
+   * @example
+   * workspace.unregisterBlockDefinition('custom_block');
+   */
+  unregisterBlockDefinition(signature: string): boolean {
+    return this.blockDefinitionBySignatureDB.delete(signature);
+  }
+
+  /**
+   * Clear all block definitions stored by signature.
+   *
+   * This method removes all block definitions that have been added via
+   * {@link registerBlockDefinitions}. Note that this only clears the definition
+   * registry; existing blocks created from these definitions will continue to
+   * function, but new blocks cannot be created from the cleared signatures.
+   *
+   * To completely remove a signature, you must also remove all blocks
+   * with that signature using {@link removeBlockFromSignaturesDB}.
+   */
+  clearBlockDefinitions() {
+    this.blockDefinitionBySignatureDB.clear();
+  }
+
+  /**
+   * Get all block definitions stored by signature.
+   *
+   * Returns a copy of all block definitions currently registered in the
+   * workspace, keyed by their signatures. This can be used for serialization
+   * or to inspect available block types at runtime.
+   *
+   * @returns An object mapping block signatures to their definitions.
+   * @example
+   * const definitions = workspace.getBlockDefinitionsBySignatures();
+   * // definitions might look like:
+   * // {
+   * //   'custom_block_signature': {
+   * //     'message0': 'Custom block %1',
+   * //     'args0': [...],
+   * //     'output': 'Number'
+   * //   }
+   * // }
+   */
+  getBlockDefinitionsBySignatures(): {[key: string]: BlockDefinition} {
+    const result: {[key: string]: BlockDefinition} = {};
+    this.blockDefinitionBySignatureDB.forEach((definition, signature) => {
+      result[signature] = definition;
+    });
+    return result;
+  }
+
+  /**
    * Adds a comment to the list of top comments.
    *
    * @param comment comment to add.
@@ -404,6 +570,7 @@ export class Workspace implements IASTNodeLocation {
       }
 
       this.getModuleManager().clear();
+      this.clearBlockDefinitions();
     } finally {
       this.isClearing = false;
     }
@@ -555,9 +722,10 @@ export class Workspace implements IASTNodeLocation {
    * @param opt_id Optional ID.  Use this ID if provided, otherwise create a new
    *     ID.
    * @param {string=} moduleId Optional module ID.  Use this ID if provided, otherwise use active module.
+   * @param {string=} signature Optional block signature.
    * @returns The created block.
    */
-  newBlock(prototypeName: string, opt_id?: string, moduleId?: string): Block {
+  newBlock(prototypeName: string, opt_id?: string, moduleId?: string, signature?: string): Block {
     throw new Error(
       'The implementation of newBlock should be ' +
         'monkey-patched in by blockly.ts',

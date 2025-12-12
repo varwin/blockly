@@ -377,16 +377,18 @@ Workspace.prototype.newBlock = function (
   prototypeName: string,
   opt_id?: string,
   moduleId?: string,
+  signature?: string,
 ): Block {
-  return new Block(this, prototypeName, opt_id, moduleId);
+  return new Block(this, prototypeName, opt_id, moduleId, signature);
 };
 
 WorkspaceSvg.prototype.newBlock = function (
   prototypeName: string,
   opt_id?: string,
   moduleId?: string,
+  signature?: string,
 ): BlockSvg {
-  return new BlockSvg(this, prototypeName, opt_id, moduleId);
+  return new BlockSvg(this, prototypeName, opt_id, moduleId, signature);
 };
 
 Workspace.prototype.newComment = function (
