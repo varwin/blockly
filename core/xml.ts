@@ -37,8 +37,8 @@ import {Coordinate} from './utils/coordinate.js';
 export function workspaceToDom(workspace: Workspace, skipId = false): Element {
   const treeXml = utilsXml.createElement('xml');
 
-  const signaturesXml = utilsXml.createElement('signatures')
-  treeXml.appendChild(signaturesXml)
+  const signaturesXml = utilsXml.createElement('signatures');
+  treeXml.appendChild(signaturesXml);
 
   const modulesElement = modulesToDom(workspace);
   if (modulesElement.hasChildNodes()) {
@@ -62,7 +62,7 @@ export function workspaceToDom(workspace: Workspace, skipId = false): Element {
     treeXml.appendChild(blockToDomWithXY(block, skipId));
   }
 
-  signaturesXml.appendChild(utilsXml.createTextNode(JSON.stringify(workspace.getBlockDefinitionsBySignatures())))
+  signaturesXml.appendChild(utilsXml.createTextNode(JSON.stringify(workspace.getBlockDefinitionsBySignatures())));
   return treeXml;
 }
 
