@@ -39,7 +39,6 @@ import {BlockSvg} from '../block_svg';
  */
 export class MoveBlockToModule extends AbstractEvent {
   override isBlank = true;
-  override type = eventUtils.MOVE_BLOCK_TO_MODULE;
 
   blockId: string = '';
   workspaceId: string = '';
