@@ -34,7 +34,7 @@ import {BlockSvg} from './block_svg.js';
 import * as Events from './events/events.js';
 import * as idGenerator from './utils/idgenerator.js';
 import * as common from "./common.js";
-import * as Blockly from "./blockly.js";
+import {MoveBlockToModule} from './events/events.js';
 
 /**
  * Class for a module management.
@@ -219,6 +219,81 @@ export class ModuleManager {
       }
       try {
         Events.fire(new Events.ModuleCreate(module));
+      } finally {
+        if (!existingGroup) {
+          Events.setGroup(false);
+        }
+      }
+    }
+  }
+
+  /**
+   * Move block to module.
+   *
+   * @param {Blockly.BlockSvg} block The block.
+   * @param {ModuleModel} module Target module.
+   */
+  moveBlockToModule(block: BlockSvg, module: ModuleModel) {
+    const newModuleId = module.getId();
+    const previousModuleId = block.getModuleId();
+
+    if (newModuleId === previousModuleId) {
+      return;
+    }
+
+    const existingGroup = Events.getGroup();
+    if (!existingGroup) {
+      Events.setGroup(true);
+    }
+
+    try {
+      block.getDescendants(false).forEach(function (descendant: BlockSvg) {
+        descendant.setModuleId(module.getId());
+      });
+      block.unplug();
+      block.removeRender();
+
+      Events.disable();
+      this.activateModule(module);
+      Events.enable();
+
+      this.workspace.centerOnBlock(block.id);
+
+      block.select();
+
+      Events.fire(new MoveBlockToModule(block, newModuleId, previousModuleId));
+    } finally {
+      if (!existingGroup) {
+        Events.setGroup(false);
+      }
+    }
+  }
+
+  /**
+   * Fire a delete event for module.
+   *
+   * Null for a blank event.
+   *
+   * @param block
+   * @param {string} newModuleId The new module id.
+   * @param {string} previousModuleId The previous module id.
+   * @augments {Events.ModuleBase}
+   * @private
+   */
+  private fireMoveBlockToModule_(
+    block: BlockSvg,
+    newModuleId: string,
+    previousModuleId: string,
+  ) {
+    if (Events.isEnabled()) {
+      const existingGroup = Events.getGroup();
+      if (!existingGroup) {
+        Events.setGroup(true);
+      }
+      try {
+        Events.fire(
+          new MoveBlockToModule(block, newModuleId, previousModuleId),
+        );
       } finally {
         if (!existingGroup) {
           Events.setGroup(false);
