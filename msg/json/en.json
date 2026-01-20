@@ -6,6 +6,8 @@
 		"messagedocumentation" : "qqq"
 	},
 	"VARIABLES_DEFAULT_NAME": "item",
+	"BLOCK_MOVE_TO_MODULE": "Move to '%1'",
+	"BLOCK_MOVE_TO_NEW_MODULE": "Move to new tab",
 	"UNNAMED_KEY": "unnamed",
 	"TODAY": "Today",
 	"OBSOLETE_WARNING": "Warning: This block is obsolete but still usable. Recommended to replace with a new similar.",

@@ -33,6 +33,7 @@ import {ModuleDelete} from './events_module_delete.js';
 import {ModuleActivate} from './events_module_activate.js';
 import {ModuleRename} from './events_module_rename.js';
 import {ModuleMove} from './events_module_move.js';
+import {MoveBlockToModule} from './events_move_block_to_module.js';
 import {CommentBase, CommentBaseJson} from './events_comment_base.js';
 import {CommentChange, CommentChangeJson} from './events_comment_change.js';
 import {CommentCreate, CommentCreateJson} from './events_comment_create.js';
@@ -94,6 +95,7 @@ export {ModuleDelete};
 export {ModuleActivate};
 export {ModuleRename};
 export {ModuleMove};
+export {MoveBlockToModule};
 export {CommentBase};
 export {CommentBaseJson};
 export {CommentChange};
@@ -170,6 +172,7 @@ export const VAR_DELETE = eventUtils.VAR_DELETE;
 export const VAR_RENAME = eventUtils.VAR_RENAME;
 export const VIEWPORT_CHANGE = eventUtils.VIEWPORT_CHANGE;
 export const LOCAL_ARGUMENT_RENAME = eventUtils.LOCAL_ARGUMENT_RENAME;
+export const MOVE_BLOCK_TO_MODULE = eventUtils.MOVE_BLOCK_TO_MODULE;
 
 // Event utils.
 export const clearPendingUndo = eventUtils.clearPendingUndo;
