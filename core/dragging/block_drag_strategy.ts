@@ -376,7 +376,7 @@ export class BlockDragStrategy implements IDragStrategy {
       this.block.setDragging(false);
     }
 
-    if (this.connectionCandidate) {
+    if (!this.block.isDeadOrDying() && this.connectionCandidate) {
       // Applying connections also rerenders the relevant blocks.
       this.applyConnections(this.connectionCandidate);
     } else {
