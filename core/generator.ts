@@ -251,6 +251,9 @@ export class CodeGenerator {
       // Skip past insertion markers.
       return opt_thisOnly ? '' : this.blockToCode(block.getChildren(false)[0]);
     }
+    if (block.isRemoved()) {
+      return opt_thisOnly ? '' : this.blockToCode(block.getNextBlock());
+    }
 
     // Look up block generator function in dictionary - but fall back
     // to looking up on this if not found, for backwards compatibility.
