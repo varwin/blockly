@@ -1462,12 +1462,14 @@ export class WorkspaceSvg extends Workspace implements IASTNodeLocationSvg {
    * @param opt_id Optional ID.  Use this ID if provided, otherwise create a new
    *     ID.
    * @param {string=} moduleId Optional module ID.  Use this ID if provided, otherwise use active module.
+   * @param {string=} signature Optional block signature.
    * @returns The created block.
    */
   override newBlock(
     prototypeName: string,
     opt_id?: string,
     moduleId?: string,
+    signature?: string,
   ): BlockSvg {
     throw new Error(
       'The implementation of newBlock should be ' +

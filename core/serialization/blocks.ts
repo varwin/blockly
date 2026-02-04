@@ -51,6 +51,7 @@ export interface State {
   type: string;
   id?: string;
   module?: string;
+  signature?: string;
   x?: number;
   y?: number;
   collapsed?: boolean;
@@ -111,6 +112,7 @@ export function save(
     'type': block.type,
     'id': saveIds ? block.id : undefined,
     'module': saveModule ? block.getModuleId() : undefined,
+    'signature': block.signature ? block.signature : undefined,
   };
 
   if (addCoordinates) {
@@ -496,7 +498,7 @@ function appendPrivate(
   if (!state['type']) {
     throw new MissingBlockType(state);
   }
-  const block = workspace.newBlock(state['type'], state['id'], state['module']);
+  const block = workspace.newBlock(state['type'], state['id'], state['module'], state['signature']);
   block.setShadow(isShadow);
   loadCoords(block, state);
   loadAttributes(block, state);
